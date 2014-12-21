@@ -1,0 +1,472 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/wordBlog/adam/static/jquery.form.js"></script>
+        <script type="text/javascript" src="/wordBlog/adam/static/jquery.imgareaselect.js"></script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/imgareaselect-animated.css'>
+        <script>
+            
+            $.fn.tryResize = function(){
+                
+                var limit = 400
+                var flag = 0
+                $.file.tmpWidth = $.file.width
+                $.file.tmpHeight = $.file.height
+                
+                var k =Math.max.apply(Math,[$.file.width,$.file.height])
+                
+                if (k == $.file.width && $.file.width > limit){
+                    
+                    var resizeRatio = limit/$.file.width
+                    $.file.tmpWidth = limit
+                    $.file.tmpHeight = $.file.height * resizeRatio
+                    flag = 1          
+                                    
+                }
+                if (flag == 0 && k == $.file.height && $.file.height > limit){
+                    var resizeRatio = limit/$.file.height
+                    $.file.tmpWidth = $.file.width * resizeRatio
+                    $.file.tmpHeight = limit
+                    flag = 1
+                
+                }
+                if (flag == 1){
+                    $('#cropBox').css('width',$.file.tmpWidth)
+                    $('#cropBox').css('height',$.file.tmpHeight)
+
+                }
+                
+            }
+            
+            
+            
+        
+        
+       
+            $.fn.getDimensions = function(){
+                $.file.flag2 = 1
+                var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var img = new Image;
+                        
+                        img.onload = function() {
+                        
+                          $.file.width = img.width
+                          $.file.height =  img.height
+                          if (img.width < 48 || img.height < 48){
+                                $('#trian5').attr('src','/static/wrong.jpg')
+                                $.file.flag2 = 0
+                                
+                             }else{
+                                $('#trian5').attr('src','/static/is.jpg')
+                             }
+                             
+                             
+                             
+                             
+                             if ($.file.flag1 == 1 & $.file.flag2 == 1 & $.file.flag3 == 1){
+                               
+                                $('#uplInput').attr('value',$.cookie('csrftoken'))
+                                $('#progressbar').css('width','0')
+                                
+                                $('#saveImageForm').ajaxSubmit($.file.options);
+                                
+                                
+                             }else{
+                                $('#picStatus').show()
+                                $('#square').hide()
+                             }
+                          
+                          
+                          
+                          
+                        };
+
+                        
+                        
+                        img.src = reader.result; 
+                  };
+                  reader.readAsDataURL($("#id_picture")[0].files[0]);
+            }
+            
+            
+            
+            $.fn.addSetDefaultPicHandler = function(){
+                $('#setDefaultPic').click(function(){
+                    $('#setDefaultPicToken').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#setDefaultPicForm')
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        beforeSend: function(){
+
+                        },
+                        cache: false,
+                                  
+                        success: function (msg) {
+                            $('#photo').attr('src','/pics/default.jpg?'+ Math.random()+'')
+                            $.pic.isPicture = false;
+                            $.fn.unlockBackground()
+                            
+                                         
+                        },
+                        error: function(msg) {
+                        alert('error')
+                        },
+                        complete:function(msg){
+                            
+                            
+                        },
+                    }).done(function(){
+
+                    
+                    })
+                    
+                })
+            }
+        
+        
+        
+        
+            $.fn.buildUpload = function(){
+            
+            
+            
+                var i = 0
+                var addon = []
+                addon[i++] = "<div style='border: 1px solid #7A858D;min-height:250px'>"
+                
+                    
+                    addon[i++] = "<div style='border-top-right-radius: 6px;border-top-left-radius: 6px'>"
+                        addon[i++] = "<div id='topLDiv' style=';margin:25px'>"
+                            addon[i++] = "<div style='display:inline-block;font-size:18px'>"
+                                addon[i++] = "Vyber profilovú fotku"
+                            addon[i++] = "</div>"
+                            addon[i++] = "<div id='close-btn' class='close-btn6' style=''>"
+                            addon[i++] = "</div>"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"    
+                    
+                    
+                
+                    addon[i++] = "<div style='padding-bottom:25px;border-top: 1px solid #e5e5e5;background: #fff;border-bottom-right-radius: 6px;border-bottom-left-radius: 6px;'>"
+                        addon[i++] = "<div class='contento' style=''>"
+                            
+                 
+                            
+                            addon[i++] = "<div id='picStatus' style='margin-top:20px;'>"
+                                addon[i++] = "<div style='line-height:25px'>"
+                                    addon[i++] = "<div style='display:inline-block'>"
+                                        addon[i++] = "<img width='10px' height='10px' id='trian1' src='{{ STATIC_URL }}triangle.jpg'>"
+                                    addon[i++] = "</div>"
+                                    addon[i++] = "<div style='display:inline-block;margin-left:5px;vertical-align:top'>"
+                                        addon[i++] = "Obrázok je v jednom z formátov JPG,JPEG,PNG"
+                                    addon[i++] = "</div>"
+                                addon[i++] = "</div>"
+                                addon[i++] = "<div style='line-height:25px'>"
+                                    addon[i++] = "<div style='display:inline-block'>"
+                                        addon[i++] = "<img width='10px' height='10px' id='trian5' src='{{ STATIC_URL }}triangle.jpg'>"
+                                    addon[i++] = "</div>"
+                                    addon[i++] = "<div style='display:inline-block;margin-left:5px;vertical-align:top'>"
+                                        addon[i++] = "Obrázok má rozmery aspoň 70x70 pixelov"
+                                    addon[i++] = "</div>"
+                                addon[i++] = "</div>"
+                                addon[i++] = "<div style='line-height:25px'>"
+                                    addon[i++] = "<div style='display:inline-block'>"
+                                        addon[i++] = "<img width='10px' height='10px' id='trian2' src='{{ STATIC_URL }}triangle.jpg'>"
+                                    addon[i++] = "</div>"
+                                    addon[i++] = "<div style='display:inline-block;margin-left:5px;vertical-align:top'>"
+                                        addon[i++] = "Veľkosť súboru je maximálne 1 MB"
+                                    addon[i++] = "</div>"
+                                addon[i++] = "</div>"
+                            addon[i++] = "</div>"
+                            addon[i++] = "<div id='cor' style='display:none;line-height:20px;margin-top:10px'>"
+                                addon[i++] = "<div style='display:inline-block'>"
+                                    addon[i++] = "<img width='10px' height='10px' id='trian3' src='{{ STATIC_URL }}wrong.jpg'>"
+                                addon[i++] = "</div>"
+                                addon[i++] = "<div style='display:inline-block;margin-left:5px;vertical-align:top'>"
+                                    addon[i++] = "Súbor je poškodený"
+                                addon[i++] = "</div>"
+                            addon[i++] = "</div>"
+                            
+                            
+                            
+                            
+                            
+                            addon[i++] = "<center>"
+                                addon[i++] = "<div id='progressbox' style='display:none;margin-top:40px'>"
+                                    addon[i++] = "<div id='progressbar' style=''>"
+                                    addon[i++] = "</div>"
+                                    addon[i++] = "<div id='statustxt' style=''>"
+                                        addon[i++] = '0%'
+                                    addon[i++] = "</div>"                              
+                                addon[i++] = "</div>"                              
+                                addon[i++] = "<div id='output' style='margin-top:20px'>"
+                                addon[i++] = "</div>"
+                                addon[i++] = "<div style='display:none;line-height:25px' id='square'>"
+                                    addon[i++] = "Pohybom kurzora ohranič svoj profilový obrázok"
+                                addon[i++] = "</div>"
+                                
+                                
+                                
+                                
+                            addon[i++] = "</center>"
+                            
+                            
+                                
+                                
+                            addon[i++] = "<form enctype='multipart/form-data' id ='saveImageForm' action='/app/adam/saveImage/' method='post' >"
+                                addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='uplInput'>"
+                        
+                                addon[i++] = '{{ form.picture }}'
+                            addon[i++] = "</form>"
+                            
+                                
+                                
+                            
+                            addon[i++] = "<form id ='finishCroppingForm' action='/app/adam/finishCropping/' method='post'>"
+                                addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='fCropToken'>"
+                                addon[i++] = "<input style='display:none' name='dic' value='' id ='fCropInput'>"
+                            addon[i++] = "</form>"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                addon[i++] = "</div>"
+                $('#mainU').append(addon.join(''))
+                $('#id_picture').addClass('fp')
+                $('#id_picture').wrap('<table  cellpadding="0" cellspacing="0" border="0" id="butPanel" style=""><tr><td><div id="upInput" style="width:90px" class="buttonDiv" ></div></td></tr></table>')
+                var i = 0
+                var addon = []
+                addon[i++] = "<td id='cr' style='display:none'>"
+                    addon[i++] = "<div id ='Fcrop' class ='buttonDiv' style=''>"
+                        addon[i++] = "OK"
+                    addon[i++] = "</div>"
+                addon[i++] = "</td>"
+                addon[i++] = "<td id='setDefaultP' style='display:none;padding-left:214px'>"
+                    addon[i++] = "<div id ='setDefaultPic' class ='buttonDiv' style='width:110px'>"
+                        addon[i++] = "Nastaviť východzí"
+                    addon[i++] = "</div>"
+                    addon[i++] = "<form enctype='multipart/form-data' id ='setDefaultPicForm' action='/app/adam/setDefaultPic/' method='post' >"
+                        addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='setDefaultPicToken'>"
+                    addon[i++] = "</form>"
+                addon[i++] = "</td>"
+                $('#butPanel > tbody:last').find('tr:last').append(addon.join(''))
+                
+                $('#upInput').prepend('<span id="upText" style="">Vybrať obrázok </span>')
+                $.fn.addCloseButtonHandler();
+                {% if user.isPicture == True %}
+                    $('#setDefaultP').show()
+                    $.fn.addSetDefaultPicHandler();
+           
+                {% endif %}
+
+                
+                $("#id_picture").on('change',function(){
+                    $.file.flag1 = 1
+                    $.file.flag3 = 1
+                    
+                    $('#output').children().remove()
+                     $('#cor').css('display','none')
+                     $.file.type= ($("#id_picture")[0].files[0].type).split('\/')[1]
+                     if ($.inArray($.file.type,['jpg','jpeg','png']) == -1){
+                        $('#trian1').attr('src','/static/wrong.jpg')
+                        $.file.flag1 = 0
+                        
+                     }else{
+                        $('#trian1').attr('src','/static/is.jpg')
+                     }
+                    
+                     if ($("#id_picture")[0].files[0].size/ 1048576 > 1){
+                        $('#trian2').attr('src','/static/wrong.jpg')
+                        $.file.flag3 = 0
+                        
+                     }else{
+                        $('#trian2').attr('src','/static/is.jpg')
+                     }
+                     
+                     
+                    
+                     $.fn.getDimensions()
+                     $(".imgareaselect-selection").parent().remove();
+                     $(".imgareaselect-outer").remove();
+                       
+                     
+                     
+                     
+                })
+                                
+                
+            }
+            $.fn.setProfilePicture = function(){
+                $('#photo').attr('src','/pics/'+'{{ user.username }}'+'.jpg?'+ Math.random()+'')
+                $.pic.isPicture = true;
+                $.fn.unlockBackground()
+            }        
+            
+            function OnProgress(event, position, total, percentComplete){
+                //Progress bar
+                $('#progressbar').css('width',(percentComplete + '%')) //update progressbar percent complete
+                
+                $('#statustxt').text(percentComplete + '%'); //update status text
+                if(percentComplete>50){
+                    $('#statustxt').css('color','#fff'); //change status text to white after 50%
+                }
+            }
+            
+            $.fn.addFCropFunctionality = function(num){
+                 $('#Fcrop').click(function(){
+                    if (num == 1){
+                        $('#fCropToken').attr('value',$.cookie('csrftoken'))
+                        var dic = {}
+                        dic['border-top-width'] = parseInt($('#outer').css('border-top-width'))*$.file.width/$.file.tmpWidth
+                        dic['border-right-width'] = parseInt($('#outer').css('border-right-width'))*$.file.height/$.file.tmpHeight
+                        dic['border-bottom-width'] = parseInt($('#outer').css('border-bottom-width'))*$.file.width/$.file.tmpWidth
+                        dic['border-left-width'] = parseInt($('#outer').css('border-left-width'))*$.file.height/$.file.tmpHeight
+                        dic = JSON.stringify(dic)
+                        $('#fCropInput').attr('value',dic)
+                        
+                        
+
+                        var frm = $('#finishCroppingForm')
+                        $.ajax({
+                            type: frm.attr('method'),
+                            url: frm.attr('action'),
+                            data: frm.serialize(),
+                            beforeSend: function(){
+
+                            },
+                            cache: false,
+                                      
+                            success: function (msg) {
+                                $("#selection").remove();
+                                $("#outer").remove();
+                                $.fn.setProfilePicture()
+                                
+                                             
+                            },
+                            error: function(msg) {
+                            alert('error')
+                            },
+                            complete:function(msg){
+                                
+                                
+                            },
+                        }).done(function(){
+
+                        
+                        })
+                    }else{
+                        $.fn.setProfilePicture()
+                        
+                        
+                    }
+                    
+                })
+                
+            
+            
+            
+            
+            }
+            
+            $.fn.addInitialCrop = function(){
+                if ($.file.tmpHeight != $.file.height){
+                        var height = $.file.tmpHeight
+                    }else{
+                        var height = $.file.height
+                    }
+                    if ($.file.tmpWidth != $.file.width){
+                        var width = $.file.tmpWidth
+                    }else{              
+                        var width = $.file.width
+                    }
+                    var coorX1 = width/2 - 25
+                    var coorY1 = height/2 - 25
+                    var coorX2 = width/2 + 25
+                    var coorY2 = height/2 + 25
+                    
+                    var ias = $('#cropBox').imgAreaSelect({ fadeSpeed: 400, handles: true,x1: coorX1, y1: coorY1, x2: coorX2 , y2: coorY2,
+                    instance: true,aspectRatio: '1:1', minWidth:48,minHeight:48,handles: true,onSelectEnd: $.fn.onCropFinish });
+                    
+                   
+
+            
+            
+            
+            }
+        
+        
+            $( document ).ready(function(){
+                $.file = new Object();
+                $.file.options = { 
+                    target: function(){}, 
+                    beforeSubmit: function(){
+                        $('#output').children().remove()
+                        $('#picStatus').hide()
+                        $('#butPanel').hide()
+                        $('#progressbox').show()
+                        $('#square').hide()
+                        $('#Fcrop').unbind() 
+                        
+                         
+
+                    },
+                    uploadProgress: OnProgress, //upload progress callback 
+                    success: function(msg){
+                        $('#progressbox').hide()
+                        $('#butPanel').show()
+                        
+                        if (msg == 0){
+                            $('#Fcrop').css('display','none')
+                            $('#cor').css('display','block')
+                        }
+                        if (msg == 1 || msg == 2){
+                            $('#output').append('<img id ="cropBox" width="" height="" src="/pics/{{ user.username }}.jpg?'+Math.random()+'">');
+                            $('#picStatus').hide()
+                            $('#cr').css('display','block')
+                            $('#setDefaultP').hide()
+                            $('#upText').text('Vybrať iný')
+                            $('#upInput').css('width','60px')
+                            
+                            
+                        }
+                        if (msg == 1){
+                            $.fn.tryResize()
+                            $.fn.addInitialCrop()
+                            $.fn.addFCropFunctionality(1)
+                            $('#square').css('display','block')
+                            
+                            
+                            
+                            
+                        }
+                        if (msg == 2){
+                            $.fn.addFCropFunctionality(0)
+                        }
+                        
+                        
+                    },
+                    resetForm: true  
+                };
+                
+                
+                
+                
+                
+                $.fn.buildUpload()
+                       
+                 
+            
+            })
+            
+        
+        </script>
+    </head>
+    <body>
+        <div id='mainU' class='upload'>
+        </div>
+
+    </body>
+</html>
+            
+            
+

@@ -1,0 +1,23 @@
+$.fn.buildDescriptionAdmin = function(idCampaign){
+    var i = 0
+    var addon = []
+    addon[i++] = '<table id="descriptionTable" cellpadding="0" cellspacing="0" border="0" style=";position:relative;border: 0px double #ddd;margin-top:25px">'
+        addon[i++] = '<thead>'
+            addon[i++] = '<tr>'
+                addon[i++] = '<th class="addWord">'
+                    addon[i++] = 'Item'
+                addon[i++] = '</th>'
+                addon[i++] = '<th class="addWord">'
+                    addon[i++] = 'Value'
+                addon[i++] = '</th>'
+            addon[i++] = '</tr>'
+        addon[i++] = '</thead>'
+        addon[i++] = '<tbody>'
+        addon[i++] = '</tbody>'
+    addon[i++] = '</table>'
+    addon[i++] = '<div id="previewDiv">'
+    addon[i++] = '</div>'
+    
+    
+    return addon.join('')
+}

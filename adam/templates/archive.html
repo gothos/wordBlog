@@ -1,0 +1,1930 @@
+<!-- archive.html -->
+
+<meta http-equiv="content-script-type" content="text/javascript">
+<html>
+    <head>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery.ajaxq.js">
+        </script>
+
+        
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}common.js"></script>
+
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.timeago.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jScrollPane.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.mousewheel.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jescape.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}focusUnfocusField.js"></script>
+        <script language="JavaScript" type="text/javascript">
+            
+            $.fn.addSpace = function(idcko,idParentComment){
+                if (idParentComment == null){
+                    $('#placeUnderCommentDiv'+idcko+'').css('padding-left','64px')
+                    $('#moreCommentsButtonComment'+idcko+'').css('padding-left','64px')
+
+                    
+                }
+                if (idParentComment != null){
+
+                    $('#bodyComment'+idcko+'').css('width','380px')
+                    $('#dateComment'+idcko+'').css('width','130px')
+                }
+            }
+        
+            $.fn.countPosts = function(){
+                
+                    
+                var m = 0
+                var posts = $('#content').children()
+                
+                for (var i = 0, len = posts.length; i < len; i += 1) {
+                    if (posts[i].id[0] == 'p'){
+                        m = m + 1
+                    }
+                        
+                    
+                }
+                    
+                return m
+                    
+                    
+                    
+                
+            }
+        
+        
+        
+            $.fn.buildReply = function(flag,id){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<td>"
+                    addon[i++] = "<div id = 'replyButtonDiv"+add+id+"' class='replyButton' style='display:inline;' >";
+                     
+                        addon[i++] = "<input id ='replyButton"+add+id+"' type='button' class='button gray'  value='Reagovať'>";
+                    addon[i++] = "</div>";
+                addon[i++] = "</td>"
+                
+                var $area = $('#subButTable'+add+id+'> tbody:last').find('tr:last')
+                $area.append(addon.join(''));
+                
+                $('#replyButton'+add+id+'').css('cursor','pointer');
+                $('#replyButton'+add+id+'').click(function(){
+                    
+
+                    
+                    if ($('#createCDiv'+add+id+'').css('display')=='none'){
+                        $('div[id^="createCDiv"]').not(this).css('display','none');
+                    
+                        $('#createCDiv'+add+id+'').show()
+                    }
+                    else{
+                        
+                        $('#createCDiv'+add+id+'').hide()
+                    }
+                })
+                $('#createCButton'+add+id+'').click(function(){
+                    
+                    
+                    var frmCreateC = $('#createCForm'+add+id+'');
+                            
+                    $.ajaxq('c',{
+                        type: frmCreateC.attr('method'),
+                        url: frmCreateC.attr('action'),
+                        data: frmCreateC.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                        
+                            if ($('#isHumanComment'+id+'').val().length != 0 || $('#isHuman').val() != 'adam'){
+                               
+                                return false
+                            }
+
+                        },
+                                   
+                        success: function (message) {
+                                      
+                            $('#createCDiv'+add+id+'').hide();
+                            $("#djangoCFormDiv"+add+id+" textarea").val('');
+                            $('#countdownCSpan'+add+id+'').text(' 500 ')
+                            
+                            var data = $.parseJSON(message);
+                                                    
+
+                            $.fn.buildBaseForComment(flag,id,data.pk,1,data.canRemove,0,data.idPost,data.idParentComment,0,data.personName,data.Re,data.timestampCom,data.comment);
+                            $.fn.buildComment(data.pk,1,data.canRemove,0,data.idPost,data.idParentComment,0,data.personUsername,data.isPicture)
+
+                            
+                                  
+                   
+                        },
+                        complete: function(message){
+                            
+                            
+                        },
+                        error: function(message) {
+                            alert('[e][archive.html]');
+                            
+                        },
+                    }).done(function(){
+                        jQuery("div.date").timeago();
+                        
+                        $.fn.updateNumOfComments(flag,id,1)
+                        
+                    })
+                
+                
+                });                   
+            
+            }
+                
+                
+            $.fn.updateNumOfComments = function(flag,id,sign){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                
+                var frmUpdateNumOfC = $('#SCUpdateNumForm'+add+id+'');
+                            
+                
+                    $.ajaxq('c',{
+                        type: frmUpdateNumOfC.attr('method'),
+                        url: frmUpdateNumOfC.attr('action'),
+                        data: frmUpdateNumOfC.serialize(),
+                        cache: false,
+                        beforeSend:function(){
+                            
+                            //sign = 1 @ createC
+                            //sign = 2 @ showCommentsBut
+                            $('#SCButton'+add+id+'').css('display','block');
+                            if ( $('#SCNumDiv'+add+id+'').attr('value') == '1'){
+                                if (sign == 2){
+                                    return false;
+                                
+                                }
+                                if (sign == 1){
+                                    var numOfC = $.fn.countNumOfComments(flag,id)
+                                    if (numOfC > 0){
+                                        return false;
+                                    }
+                                    
+                                }
+                            }
+                            
+                        },
+                                   
+                        success: function (numOfComments) {
+                            
+                            if (numOfComments != 0 ) {
+                                $('#SCAllCSpan'+add+id+'').attr('value',numOfComments)
+                                $('#SCAllCSpan'+add+id+'').text(numOfComments)
+                                if (sign == 1 & (flag == 1 & numOfComments <= 2 || flag == 2)){
+                                    $('#SCNumDiv'+add+id+'').css('display','none')
+                                    $('#SCNumDiv'+add+id+'').attr('value','1')
+                                }
+                                if (sign == 1){
+                                    $('#firstCDiv'+add+id+'').css('display','block');
+                                }
+                            }else{
+                                
+                                $('#SCButton'+add+id+'').css('display','none');
+                            
+                            }
+
+                            
+                        },
+                        error: function(message) {
+                            alert('[e][archive.html2]');
+                            
+                        },
+                    }).done(function(){
+
+                    });
+                    
+                    
+                   
+
+            
+            }
+                
+                
+            $.fn.buildLikeDislike = function(flag,id,canLike,numOfLikes){
+                if (flag == 1){
+                    var add = 'Post';   
+                }
+                else{
+                    var add = 'Comment';
+                }
+                
+                    
+                    
+                         
+                    
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<td style='width:12px;padding:0px;background-color:white' align='center' >"
+                    addon[i++] = "<div id = 'LDButtonDiv"+add+id+"' class='' style='display:inline-block' >";
+                        
+                    
+                            
+                        addon[i++] = "<form id= 'DForm"+add+id+"' action= '/app/adam/dislike"+add+"/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+id+"'>"
+                        addon[i++] = "</form>";
+                        addon[i++] = "<form id= 'LForm"+add+id+"' action= '/app/adam/like"+add+"/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+id+"'>";
+                        addon[i++] = "</form>";
+                        if (canLike == 0){
+                            var src = 'star6.jpg';
+                        }
+                        else{
+                            var src = 'star0.jpg';
+                        }
+                        addon[i++] = "<img width='10px' height='10px'  src='{{ STATIC_URL }}"+src+"' class='' style='margin-top:2px;cursor:pointer;padding:3px;background-color:white;cursor:pointer' id='buttonLD"+add+id+"'>";
+                    addon[i++] = "</div>";
+                addon[i++] = "</td>"
+                addon[i++] = "<td style='width:12px;padding:2px;background-color:white' align=''>"
+                    addon[i++] = "<div class='remove gray' id='numOfLikesSpan"+add+id+"' style='font-size:11px;margin-top:1px'>";
+                        if (numOfLikes != 0){
+                            addon[i++] = ""+numOfLikes+""
+                        }
+                    addon[i++] = "</div>";
+                addon[i++] = "</td>"
+                
+                var $area = $('#subButTable'+add+id+'> tbody:last').find('tr:last')                       
+                $area.append(addon.join(''));
+                
+                {% if user.id != None %}
+                
+                    $('#buttonLD'+add+id+'').click(function(){
+                                         
+                        if (canLike == 0){
+                            
+                            var formLD = $('#DForm'+add+id+'');
+                            
+                            if (numOfLikes != 0){
+                                numOfLikes = numOfLikes - 1;
+                                if (numOfLikes != 0){
+                                    $('#numOfLikesSpan'+add+id+'').text(numOfLikes);
+                                }
+                                else{
+                                    $('#numOfLikesSpan'+add+id+'').text('');
+                                }
+                            }
+                            canLike = 1;
+                        }
+                        else{
+                               
+                            var formLD = $('#LForm'+add+id+'');
+                            numOfLikes = numOfLikes + 1;
+                            $('#numOfLikesSpan'+add+id+'').text(numOfLikes);
+                            canLike = 0;
+                            
+                        
+                        }
+                        
+                        $.ajaxq('c',{
+                            
+                            type: formLD.attr('method'),
+                            url: formLD.attr('action'),
+                            data: formLD.serialize(),
+                            cache: false,
+                                       
+                            success: function (message) {
+                            
+                            if (canLike == 0){
+                                var src = 'star6.jpg';
+                            }
+                            else{
+                                var src = 'star0.jpg';
+
+                            }
+                            
+                            
+                            
+                            
+
+                            $('#buttonLD'+add+id+'').attr('src','{{ STATIC_URL }}'+src+'')
+                            
+                              
+                            },
+                            error: function(message) {
+                                alert('[e][archive.html3]');
+                            },
+                        })
+                            
+                        
+                        
+                    })
+                {% else %}
+                    $('#buttonLD'+add+id+'').css('cursor','default')
+                    
+                
+                {% endif %}
+            }
+                
+            $.fn.buildRemove = function(flag,id,signal,idParent){
+            
+                
+                if (flag == 1){
+                    var add = 'Post';
+                    var addo = 'príspevok'; 
+                    
+                    
+                }
+                else{
+                    var add = 'Comment';
+                    var addo = 'komentár';
+                    
+                    
+                }
+            
+                var entity = add.toLowerCase()
+                       
+                var i = 0
+                var addon = []
+                    addon[i++] = "<div id='RDiv"+add+id+"' style='display:none;float:right'>";
+                        addon[i++] = "<form id= 'RForm"+add+id+"' action= '/app/adam/remove"+add+"/' method='post' >{% csrf_token %}";
+                            addon[i++] = "<input style='display: none;' name='ids' value='"+id+"'>";
+                        addon[i++] = "</form>";
+                            addon[i++] = "<span id= 'RButton"+add+id+"' class='close-btn6' style='cursor:pointer;font-size:14px'>";
+                            addon[i++] = "</span>";
+                    addon[i++] = "</div>";
+                var $area = $('#header'+add+id+'')
+                
+                $area.append(addon.join(''));
+                var div =  $('#RDiv'+add+id+'')
+                $('#body'+add+id+'').hover(function(){div.css('display','inline-block')},function(){div.css('display','none')})
+                
+                
+                
+                
+                $('#RButton'+add+id+'').click(function() {
+                             
+                    //var x = add.toLowerCase()
+                    var r=confirm("Chcete naozaj odstrániť tento "+addo+"");
+                    if (r==true){
+                        var formRemove = $('#RForm'+add+id+'');
+                        $.ajaxq("c",{
+                            type: formRemove.attr('method'),
+                            url: formRemove.attr('action'),
+                            data: formRemove.serialize(),
+                            cache: false,
+                            beforeSend: function(){
+                                
+                                
+                            
+                            },
+                                     
+                            success: function (numOfComments) {
+                            
+                            
+                                if (flag == 1){
+              
+                                    var part = $('#post'+id+'')
+                                    var name = 'Príspevok'
+                                    
+                                    
+                                }else{
+                                    var part = $('#comment'+id+'')
+                                    var name = 'Komentár'
+                                    
+                                    
+                                    
+                                }
+                            
+                            
+                                
+                                var i = 0
+                                var addon = [] 
+                                
+
+                                addon[i++] = "<div id='RNotif"+add+id+"' style='margin-bottom:15px;'>";
+                                    addon[i++] = "<div>";
+                                        addon[i++] = ""+name+" bol úspešne odstránený";
+                                    addon[i++] = "</div>";
+                                    addon[i++] = "<input type='button' class='button gray' style='display: block;padding-left:32px;' id='RNotifButton"+add+id+"' value='OK' >";
+                                addon[i++] = "</div>";
+                                part.before(addon.join(''))
+                                if (flag == 2){
+                                    $('#RNotif'+add+id+'').css('margin-top','15px')
+                                }
+                                $('#RNotifButton'+add+id+'').css('cursor','pointer');
+                                $('#RNotifButton'+add+id+'').click(function(){
+                                    $('#RNotif'+add+id+'').remove()
+                                })    
+                                part.remove();
+                                
+                                
+                                
+                                if(flag == 2){
+                                    
+                                    if (numOfComments == 0){
+                                        if (signal == 2){
+                                            $('#SCButtonComment'+idParent+'').css('display','none');
+                                        }else{
+                                            $('#SCButtonPost'+idParent+'').css('display','none');
+                                        }
+                                        
+                                    }
+
+                                    $('#SCAllCSpanPost'+idParent+'').text(numOfComments);
+
+                                }
+                                    
+                                                             
+                                    
+                  
+                                
+                            },
+                            complete:function(message) {
+                                
+                                
+                                           
+                            },
+                            error: function(message) {
+                                alert('error');
+                            },
+                        }).done(function(){
+                            
+                            
+                        });
+
+
+
+
+
+
+
+
+
+                    }
+
+                });                                            
+                
+            }
+                
+
+
+
+                
+            $.fn.countNumOfComments = function(flag,id){
+            
+                if (flag == 1){
+                    var add = 'Post';
+                }else{
+                    var add = 'Comment';
+                }    
+                
+            
+                m = 0
+                var comments = $('#firstCDiv'+add+id+'').children()
+                
+                for (var i = 0, len = comments.length; i < len; i += 1) {
+                    if (comments[i].id[0] == 'c'){
+                        m = m + 1
+                    }
+                        
+                    
+                }
+                    
+                return m
+                
+                  
+            
+            }
+                
+                
+                
+                
+            $.fn.buildShowComments = function(flag,id,numOfComments){
+                
+                                    
+                if (flag == 1){
+                    var add = 'Post';
+                    var idComment = 0
+                    var idPost = id 
+                    }
+                else{
+                    var add = 'Comment';
+                    var idComment = id
+                    var idPost = 0 
+                }
+                
+                
+                var i = 0
+                var addon = []
+                var hiddenData = "<input style= 'display: none;' name='ids' value='"+idPost+"'><input style= 'display: none;' name='idComment' value='"+idComment+"' >";
+                addon[i++] = "<td style='width:35px;padding-left:3px;' align='center'>"
+                    addon[i++] = "<div id='SCDiv"+add+id+"' style='width:80px;display:inline'>";
+                    
+                        addon[i++] = "<form id= 'SCForm"+add+id+"' action= '/app/adam/showComments/' method='post' >{% csrf_token %}";
+                            addon[i++] = hiddenData;
+                            addon[i++] = "<input id = 'SCFromInput"+add+id+"' style='display: none;' name='from' value= 0 >";
+                        addon[i++] = "</form>";
+                        addon[i++] = "<form id= 'SCUpdateNumForm"+add+id+"' action= '/app/adam/updateNumOfComments/' method='post' >{% csrf_token %}";
+                            addon[i++] = hiddenData;
+                        addon[i++] = "</form>";
+                        addon[i++] = "<div class='button gray' style='display: inline;' id='SCButton"+add+id+"'>";
+                            addon[i++] = "<table cellpadding='0' cellspacing='0' border='0' style='margin-top:5px'>"
+                                addon[i++] = "<tr>"
+                                    addon[i++] = "<td style='padding-right:3px;padding-left:3px;padding-top:2px;padding-bottom:2px;cursor:pointer;background-color:white' id='SCPic"+add+id+"'>"
+                                        addon[i++] = "<img width='11px' height='10px' src= '{{ STATIC_URL }}com1.jpg' style='' >"
+                                    addon[i++] = "</td>"
+                                    addon[i++] = "<td style='vertical-align:top;background-color:white'>"
+                                        addon[i++] = "<div id = 'SCNumDiv"+add+id+"' style='display: block;padding-left:2px' value='0'>";
+                                            addon[i++] = " (<span id = 'SCAllCSpan"+add+id+"' value="+numOfComments+">";
+                                                addon[i++] = numOfComments
+                                            addon[i++] = "</span>)";
+                                                
+                                        addon[i++] = "</div>";
+                                    addon[i++] = "</td>"
+                                addon[i++] = "</tr>"
+                            addon[i++] = "</table>"        
+                    
+                        addon[i++] = "</div>";
+                    
+                    
+                    
+                    addon[i++] = "</div>";
+                addon[i++] = "</td>"
+                var $area = $('#subButTable'+add+id+'> tbody:last').find('tr:last') 
+                $area.append(addon.join(''));
+                
+                if (flag == 1 && numOfComments <= 2){
+                    $('#SCNumDiv'+add+id+'').css('display','none')
+                    $('#SCNumDiv'+add+id+'').attr('value','1')
+                }
+                                
+                
+                if (numOfComments == 0 ){
+                    $('#SCButton'+add+id+'').css('display','none');
+                }
+                //if (flag == 1 && numOfComments <= 2){
+                //    $('#SCNumDiv'+add+id+'').css('display','none')
+                //}
+                
+
+
+                $('#SCPic'+add+id+'').click(function(){
+                    
+
+  
+
+                    if ($('#SCNumDiv'+add+id+'').attr('value') == '0'){                   
+                        $('#firstCDiv'+add+id+'').css('display','block');
+                        
+                        $.fn.giveMeLastCID(flag,id,1)
+                        $.fn.reloadAllComments(flag,id);
+                        $('#SCNumDiv'+add+id+'').hide();
+                        $('#SCNumDiv'+add+id+'').attr('value','1')
+                        
+                    }            
+                       
+                          
+                    else{
+                        $('#firstCDiv'+add+id+'').css('display','none')
+                        $('#firstCDiv'+add+id+'').children().remove();
+                        $('#moreCommentsButton'+add+id+'').css('display','none');
+                        $('#SCNumDiv'+add+id+'').css('display','inline-block')
+                        $('#SCNumDiv'+add+id+'').attr('value','0')
+                        $.fn.updateNumOfComments(flag,id,2);
+                        
+                        
+                        
+                        
+                                
+                    }
+                                     
+                });                      
+                
+            }
+                
+                
+            $.fn.generateComments = function(data,flag,id,isInitial){
+                                                                                    
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+           
+                }
+
+                                
+                
+                for (var i = 0, len = data.length; i < len; i++){
+                    
+                
+                
+                
+                
+                
+                
+                
+                
+                    if (isInitial == 1){
+                         
+                        values = {'personName': data[i].personName,'timestamp': data[i].timestampCom, 'comment': data[i].comment, 'canRemove': data[i].canRemove, 'dic': data[i].dic, 'canLike': data[i].canLike, 'numOfLikes': data[i].lenLikedsIDs,'idPost': data[i].idPost,'personUsername': data[i].personUsername,'isPicture': data[i].isPicture,'idParentComment':data[i].idParentComment,'Re':data[i].Re};
+                        
+                        
+                        
+                    }
+                    else{
+                        
+                        values = {'personName': data[i].fields.personName,'timestamp': data[i].fields.timestampCom, 'comment': data[i].fields.comment, 'canRemove': data[i].fields.canRemove, 'dic': data[i].fields.dic, 'canLike': data[i].fields.canLike, 'numOfLikes': data[i].fields.lenLikedsIDs, 'Re': data[i].fields.Re , 'idParentComment': data[i].fields.idParentComment, 'idPost': data[i].fields.idPost,'personUsername': data[i].fields.personUsername,'isPicture': data[i].fields.isPicture };
+                        
+                    }
+                    
+                    
+                    if ($('#comment'+data[i].pk+'').length == 0){
+                        
+                        $.fn.buildBaseForComment(flag,id,data[i].pk,values['canLike'],values['canRemove'],values['numOfLikes'],values['idPost'],values['idParentComment'],values['dic'],values['personName'],values['Re'],values['timestamp'],values['comment']);
+
+                        $.fn.buildComment(data[i].pk,values['canLike'],values['canRemove'],values['numOfLikes'],values['idPost'],values['idParentComment'],values['dic'],values['personUsername'],values['isPicture']);
+                        
+                    }
+                    
+                }
+                
+                
+                
+                
+                 
+                    
+            }
+                
+                
+                
+            $.fn.buildBaseForComment = function(flag,id,idcko,canLike,canRemove,numOfLikes,idPost,idParentComment,numOfComments,personName,Re,timestampCom,comment){
+                
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+                    
+                }
+                
+                var addon = []
+                var i = 0    
+                addon[i++] = "<div id='comment"+idcko+"' class='comment' style=''>";
+                    addon[i++] = "<table cellpadding='0' cellspacing='0' border='0' style='width:100%;display:inline-block' >"
+                        addon[i++] = "<tbody style='width:100%;display:inline-block'>"
+                            addon[i++] = "<tr style='width:100%;display:inline-block'>"
+                                addon[i++] = "<td style='vertical-align:top;display:inline-block'>"
+                                    addon[i++] = "<div id='photoComment"+idcko+"' style=''></div>"
+                                addon[i++] = "</td>"
+                                addon[i++] = "<td id='bodyComment"+idcko+"' style='border:0px solid black;vertical-align:top;display:inline-block;width:444px'>"
+                                    addon[i++] = "<div class='' style=''>"
+                                
+                                        addon[i++] = "<div id='headerComment"+idcko+"' class='header' style='border:0px solid black'>";
+                                            //addon[i++] = "id:"+idcko+"parent:"+idParentComment+"";
+                                            addon[i++] = "<div class='username gray' style='display:inline;'>";
+                                                addon[i++] = personName
+                                                
+                                            addon[i++] = "</div>";    
+                                            addon[i++] =  "<div id = 'dateComment"+idcko+"' class='date' style='display:inline-block;' title="+timestampCom+">";
+                                                addon[i++] = timestampCom
+                                            addon[i++] = "</div>";
+                                            
+                                            if (Re){
+                                                
+                                                addon[i++] = "<div class='reinfo' style='display:inline;' >";
+                                                    addon[i++] = "<i>";
+                                                        addon[i++] = "Re: ";
+                                                        addon[i++] = "<b>";
+                                                            addon[i++] = Re.inReplyToName
+                                                        addon[i++] = "</b> ";
+                                                        addon[i++] = Re.text
+                                                        addon[i++] = "...";
+                                                    addon[i++] = "</i>";
+                                                addon[i++] = "</div>";
+                                                    
+                                            }
+                                        addon[i++] = "</div>";
+                                            addon[i++] = "<div style='margin-top:5px'>"
+                                                addon[i++] = "<div id='mainBodyComment"+id+"' class='p' style= 'text-align: justify;width:100%;word-wrap: break-word' >";
+                                                    addon[i++] = comment  
+                                                addon[i++] = "</div>";
+                                                addon[i++] = "<div class='submenu submenu-buttons' style='width:100%'>";
+                                                    addon[i++] = "<table id='subButTableComment"+idcko+"' class='submenu-buttons'>";
+                                                        addon[i++] = "<tr>"
+                                                        addon[i++] = "</tr>"
+                                                    addon[i++] = "</table>"                               
+                                                addon[i++] = "</div>";
+                                                
+                                                
+                                                
+                                            addon[i++] = "</div>"
+                                                                                       
+                                        addon[i++] = "</div>";
+                                    addon[i++] = "</div>";
+                                addon[i++] = "</td>"
+                            addon[i++] = "</tr>"
+                        addon[i++] = "</tbody>"
+                    addon[i++] = "</table>";
+                    addon[i++] = "<div id = 'placeUnderCommentDiv"+idcko+"' style='' >";
+                    addon[i++] = "</div>";
+                    addon[i++] = "<input id = 'moreCommentsButtonComment"+idcko+"' type='button' class='button gray'  value='' style = 'display:none;cursor:pointer;margin-bottom:12px'>"; 
+                    //addon[i++] = "</div>";
+                addon[i++] =  "</div>";
+                
+                       
+                
+                var list = ['c','d','R','D']  
+                var sign = 0
+                
+                       
+                var comments = $('#firstCDiv'+add+id+'').children()
+                for (var i = 0, len = comments.length; i < len; i++){
+                    
+                    if (sign == 0 && parseInt(comments[i].id.match(/[0-9 ]+/)) < idcko && $.inArray(comments[i].id[0],list) != - 1){
+                        var newComment = document.createElement('div');
+                        newComment.setAttribute('id','comment'+idcko+'');
+                        newComment.setAttribute('class','comment');
+                        newComment.setAttribute('style','width:100%;display:inline-block;margin-bottom:0px');
+                        newComment.innerHTML = addon.slice(1,addon.length-2).join('');
+                        document.getElementById('firstCDiv'+add+id+'').insertBefore(newComment,comments[i]);
+                        sign = 1
+                        $.fn.addSpace(idcko,idParentComment)
+                        return false;
+                            
+                    }
+                
+                
+                    
+                    
+                    
+                    
+
+                }
+                if (sign != 1){
+                    $('#firstCDiv'+add+id+'').append(addon.join(''));
+                        
+                    
+                }
+                $.fn.addSpace(idcko,idParentComment)
+                
+                
+
+                   
+                
+                
+            }
+                
+            $.fn.buildComment = function(idcko,canLike,canRemove,numOfLikes,idPost,idParentComment,numOfComments,personUsername,isPicture){
+            
+                
+                if (idParentComment == null){
+                    
+                    var ids = idPost;
+                    var signal = 1
+                }
+                else{
+                    var ids = idParentComment
+                    var signal = 2
+                }
+                {% if user.is_authenticated %}
+                    $.fn.buildCreateComment(2,idcko,idParentComment);
+                    $.fn.buildReply(2,idcko);
+                    
+                    
+                {% endif %}
+                
+                $.fn.buildPlaceForComments(2,idcko);
+                $.fn.buildPhoto(2,idcko,0,personUsername,isPicture);
+                $.fn.buildLikeDislike(2,idcko,canLike,numOfLikes);
+                $.fn.buildShowComments(2,idcko,numOfComments);
+                
+                
+                {% if user.is_authenticated %}
+                    if (canRemove == 1){
+                        $.fn.buildRemove(2,idcko,signal,ids);
+                    }
+                {% endif %}
+                
+                
+            
+            }
+                
+
+                
+                
+            $.fn.buildPosts = function(idcko,canLike,numOfLikes,numOfComments,canRemove,comments,character,personUsername,isPicture){                            
+                {% if user.is_authenticated %}
+                    $.fn.buildCreateComment(1,idcko,0);
+                    
+                    $.fn.buildReply(1,idcko);
+                    
+                    
+                    
+                    
+                {% endif %}
+                $.fn.buildPlaceForComments(1,idcko);
+                $.fn.buildPhoto(1,idcko,character,personUsername,isPicture);
+                $.fn.buildLikeDislike(1,idcko,canLike,numOfLikes);
+                $.fn.buildShowComments(1,idcko,numOfComments);
+                {% if user.is_authenticated %}
+                    if (canRemove == 1){
+                        $.fn.buildRemove(1,idcko,0,0);
+                    }
+                {% endif %}
+                
+                if (comments.length > 0){
+                    $.fn.generateComments(comments,1,idcko,1);
+                }
+                
+                
+                
+                
+            }
+                
+
+             
+
+                
+                
+            $.fn.reloadTheOne = function(){
+                var frm = $("#discussForm");
+                $('#discussInput').attr('value', $.general.token )
+                var jqxhr = $.ajax({
+                    type: frm.attr('method'),
+                    cache: false,
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    
+                    success: function (msg) {
+                        
+                        var data = $.parseJSON(msg)
+                        if (data.afterPost > 0){
+                            $('#content').append("<input id = 'moreNewPostsButton' type='button' class='button gray'  value='' style='display:none;cursor:pointer'>")
+                            
+                            $("#moreNewPostsButton").click(function(){
+                                
+                                $.fn.giveMeLastID(1,1)
+                    
+                                $.fn.reloadAllPosts(1);
+                                
+                            })
+                        }
+                        $.fn.displayMorePostsBut(data.beforePost,data.afterPost,1,1)
+                        $.fn.buildBaseForPost(0,data.pk,data.personName,data.timestamp,data.coreText);
+                        $.fn.buildPosts(data.pk,data.canLike,data.lenLikedsIDs,data.dic,data.canRemove,data.comments,data.character,data.personUsername,data.isPicture,1);
+                        jQuery("div.date").timeago();
+
+                        
+                    },
+                    error: function(msg){
+                    },
+                    
+                }).done(function(){
+
+                })
+            }
+             
+                
+            $.fn.reloadAllPosts = function(flag){
+                var frmPosts = $("#give_me_posts");
+                $('#gInput').attr('value', $.general.token )
+                var rest = false; 
+                var jqxhr = $.ajaxq('c',{
+                    type: frmPosts.attr('method'),
+                    cache: false,
+                    url: frmPosts.attr('action'),
+                    dataType:'html', 
+                    data: frmPosts.serialize(),
+                    
+                    beforeSend:function(){
+                        
+                    },
+                    
+                    
+                    
+                    
+                    success: function (msg) {
+                        
+                        if (msg != 'OK'){
+                                          
+                            
+                            var data = $.parseJSON(msg)
+                            
+                            for (var i = 0, len = data.data.length; i < len; i++){
+                                
+                                 
+                                 
+                                $.fn.buildBaseForPost(0,data.data[i].pk,data.data[i].fields.personName,data.data[i].fields.timestamp,data.data[i].fields.body);
+                                  
+                                $.fn.buildPosts(data.data[i].pk,data.data[i].fields.canLike,data.data[i].fields.lenLikedsIDs,data.data[i].fields.dic,data.data[i].fields.canRemove,data.data[i].fields.comments,data.data[i].fields.character,data.data[i].fields.personUsername,data.data[i].fields.isPicture,0);
+                                
+                            }
+                            
+                            jQuery("div.date").timeago();
+                            if (flag == 0){
+                                $.fn.displayMorePostsBut(data.beforePost,data.afterPost,1,0);
+                            }else{
+                                $.fn.displayMorePostsBut(data.beforePost,data.afterPost,0,1)                         }
+                                
+                                
+                        }      
+                                
+                                
+                                
+                            
+                                     
+                        
+                    },
+
+                    error: function(msg) {
+                        
+                        alert('error')
+                    },
+                    complete:function(msg){
+            
+                    },
+                        
+                        
+                })
+                
+                jqxhr.done(function(){
+                   
+                   
+               
+                    //$.fn.giveMeLastID(2,0);
+                    
+                    
+                    
+                })
+                
+                
+            };
+        
+            
+            
+            
+            
+            
+            
+    
+                 
+                
+            $.fn.buildBaseForPost = function(creating,pk,personName,timestamp,body){
+                
+                
+                var base = []
+                var i = 0
+                
+                base[i++] = "<div id='post"+pk+"' style='width:100%;display:inline-block;margin-bottom:15px'>"
+                    base[i++] = '<table id="outerDiv" cellpadding="0" cellspacing="0" border="0" style="width:100%;display:inline-block;border:0px solid black">'
+                        base[i++] = '<tbody style="width:100%;display:inline-block">'
+                            base[i++] = "<tr style='width:100%;display:inline-block'>"
+                                base[i++] = "<td style='vertical-align:top;display:inline-block'>"
+                                    base[i++] = "<div id='charPost"+pk+"' style='height:50px;border-left:5px solid white;'></div>"
+                                base[i++] = "</td>"
+                                base[i++] = "<td style='vertical-align:top;display:inline-block'>"
+                                    base[i++] = "<div id='photoPost"+pk+"' style=''></div>"
+                                base[i++] = "</td>"
+                                base[i++] = "<td id='bodyPost"+pk+"' style='vertical-align:top;display:inline-block;;border:0px solid red;width:503px'>"
+                                    base[i++] = "<div class='' style=''>"
+                                        base[i++] = "<div id='headerPost"+pk+"' class='' style='border:0px solid black;'>";
+                                            base[i++] = "<div id='usr"+pk+"' class='username blue' style='display:inline-block' >" +personName + "</div>";
+                                            base[i++] = "<div class='date' title="+timestamp+" style='display:inline-block'>"+timestamp+"</div>";  
+                                        base[i++] = "</div>";
+                                        
+                                        base[i++] = "<div style='margin-top:5px'>"
+                                            base[i++] = "<div class='p' style='word-wrap: break-word;' >"+ body +"</div>";                                
+                                            base[i++] = "<div class='submenu submenu-buttons'>";
+                                                base[i++] = "<table id='subButTablePost"+pk+"' class='submenu-buttons' style=''>";
+                                                    base[i++] = "<tr>"
+                                                    base[i++] = "</tr>"
+                                                base[i++] = "</table>"                               
+                                            base[i++] = "</div>";
+                                        base[i++] = "</div>"
+                                    base[i++] = "</div>";
+                                base[i++] = "</td>"
+                            base[i++] = "</tr>"
+                        base[i++] = '</tbody>'
+                    base[i++] = "</table>"
+                    base[i++] = "<div id='placeUnderPostDiv"+pk+"' class='placeUnderPostDiv' style='padding-left:64px' >";
+                    base[i++] = "</div>";
+                    base[i++] = "<input id = 'moreCommentsButtonPost"+pk+"' type='button' class='button gray'  value='' style = 'display:none;padding-left:64px;cursor:pointer;'>"; 
+                base[i++] = "</div>";
+                
+
+                
+
+                var list = ['p','d','R','D']  
+                sign = 0
+                posts = $('#content').children()
+                
+                
+                if ($('#switcher').attr('value') == 0){
+                    
+                    for (var i = 0, len = posts.length; i < len; i++){
+                        if (sign == 0 && parseInt(posts[i].id.match(/[0-9 ]+/)) < pk && $.inArray(posts[i].id[0],list) != -1 ){
+                            var newPost = document.createElement('div');
+                            newPost.setAttribute('id','post'+pk+'');
+                            newPost.setAttribute('style','width:100%;display:inline-block;margin-bottom:15px');
+                            newPost.innerHTML = base.slice(1,base.length-2).join('');
+                            document.getElementById('content').insertBefore(newPost,posts[i]);
+                            sign = 1
+                            return false;
+                                
+                        }
+                        
+                        
+                        
+                        
+
+                    }
+                    
+                    if (sign != 1){
+                        
+                        $('#content').append(base.join(''));
+                                          
+                    }
+                }else{
+                    if (creating == 1){
+                        
+                        $('#content').prepend(base.join(''));
+                    }else{
+                        
+                        $('#content').append(base.join(''));
+                    }
+                }                
+           
+                
+            }
+                
+
+                
+                        
+
+                
+                
+                
+            $.fn.reloadAllComments = function(flag,id){
+                if (flag == 1){
+                    var add = 'Post';                
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                
+                
+                
+                var frmReloadC = $('#SCForm'+add+id+'');    
+                var jqxhr = $.ajax({
+                    type: frmReloadC.attr('method'),
+                    url: frmReloadC.attr('action'),
+                    data: frmReloadC.serialize(),
+                    cache: false,          
+                    success: function (message){
+                        
+                        
+                        if (message != 'OK'){
+                            var data = $.parseJSON(message)                                          
+                            
+                            $.fn.generateComments(data.data,flag,id,0,0);
+                            $.fn.displayMoreCommentsBut(flag,id,data.beforeComment)
+                            
+                            jQuery("div.date").timeago();                                                           
+                        }
+                        
+                        
+
+                    },
+                    error: function(message) {
+                        alert('error');
+                    },    
+                });
+                jqxhr.done(function(){
+
+                    //$.fn.giveMeLastCID(flag,id,2);
+                    //$.fn.displayMoreCommentsBut(flag,id);
+                })
+            };
+
+
+            $.fn.buildPlaceForComments = function(flag,id){
+                                
+                if (flag == 1){
+                    var add = 'Post';
+                    var $area = $('#placeUnderPostDiv'+id+'');
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    var $area = $('#placeUnderCommentDiv'+id+'');
+                    
+                }
+                
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<div id = 'allOfCDiv"+add+id+"' class='allOfCDiv' style='' >";
+                    addon[i++] = "<div id='firstCDiv"+add+id+"' style='display:block'>";
+                    addon[i++] = "</div>";
+
+             
+                    //addon[i++] = "<input id = 'moreCButton"+add+id+"' type='button' class='button gray'  value='More' style = 'display:none'>";
+                
+                
+                addon[i++] = "</div>";
+                
+                
+                
+                $area.append(addon.join(''));
+                
+                //$('#moreCommentsButton'+add+id+'').css('cursor','pointer');
+                $('#moreCommentsButton'+add+id+'').click(function(){
+                    
+                    $.fn.giveMeLastCID(flag,id,1)
+                    
+                    
+                    
+                    $.fn.reloadAllComments(flag,id);
+                
+                })
+
+          
+            }
+                
+                
+                
+            $.fn.buildCreateComment = function(flag,id,idParentComment){
+            
+                if (flag == 1){
+                    var add = 'Post';
+                    var $area = $('#placeUnderPostDiv'+id+'');
+                    var idPost = id
+                    var idComment = 0
+                    }
+                else{
+                    add = 'Comment';
+                    var $area = $('#placeUnderCommentDiv'+id+'');
+                    var idComment = id
+                    var idPost = 0
+                    
+                }
+                    
+                                               
+                var addon = []
+                var i = 0                               
+                addon[i++] = "<div id = 'createCDiv"+add+id+"' style='display: none;margin-left:5px'>";
+                    addon[i++] = "<div id ='createCFormDiv"+add+id+"'>";
+                        addon[i++] = "<form action= '/app/adam/comment/' id='createCForm"+add+id+"' method='post' >{% csrf_token %}";
+                            addon[i++] = "<input style='display: none;' name='idPost' value='"+idPost+"'>";
+                            addon[i++] = "<input style='display: none;' name='idComment' value='"+idComment+"'>";
+                            addon[i++] = "<input style='display: none;' type='text' id='isHumanComment"+id+"'>";
+                            addon[i++] = "<div style='position:relative'>";
+                              
+                                addon[i++] = "<div id = 'djangoCFormDiv"+add+id+"' class='indata2' style='height:100%'>";
+                                    addon[i++] = '{{ commentsForm.comment }}';
+                                    addon[i++] = "<span id='CSpan"+add+id+"' style='position:absolute;top:6px;left:6px'>"
+                                        addon[i++] = "Zanechaj komentár..."
+                                    addon[i++] = "</span>"
+                                    
+                                addon[i++] = "</div>";
+                            addon[i++] = "</div>";
+                            
+                        addon[i++] = "</form>";
+                    addon[i++] = "</div>";
+                    //addon[i++] = "<div id='huhu"+add+id+"'>"+id+"idParentComment"+idParentComment+"</div>"          
+                    addon[i++]= "<table cellpadding='0' cellspacing='0' border='0' style=';position:relative;margin-top:10px'>"
+                        addon[i++]= "<tr>"
+                            addon[i++]= "<td>"
+                                addon[i++] = "<div id='createCButtonDiv"+add+id+"' style=''>";
+                                    addon[i++] = "<input id ='createCButton"+add+id+"' type='button' class='disabled'  value='Komentovať' style='width:82px;text-align:center'>";
+                                addon[i++] = "</div>";
+                            addon[i++]= "</td>"
+                            addon[i++]= "<td style='padding-left:15px'>"
+                                addon[i++]= "<div>Zostáva<span id='countdownCSpan"+add+id+"'> 500 </span>znakov</div>"
+                            addon[i++]= "</td>"
+                        addon[i++]= "</tr>"
+                        
+                    addon[i++]= "</table>"
+                addon[i++] = "</div>";
+                
+                $area.append(addon.join(''));
+                var comSpan = $("#djangoCFormDiv"+add+id+"").children().first()
+                comSpan.autosize()
+                $.fn.addFadeOutSpanHandler(comSpan,$('#CSpan'+add+id+''))
+                
+                comSpan.focus(function(){
+                    $.fn.changeOpacity(0,$('#CSpan'+add+id+''))
+                    $("#djangoCFormDiv"+add+id+"").addClass('foc')
+                    
+                })
+                comSpan.focusout(function(){
+                    $.fn.changeOpacity(1,$('#CSpan'+add+id+''))
+                    $("#djangoCFormDiv"+add+id+"").removeClass('foc')
+                    
+                })
+                
+                
+                
+                
+                
+                if (idParentComment == null ){
+                    
+                    $('#djangoCFormDiv'+add+id+'').css('width','100%')
+                    $('#djangoCFormDiv'+add+id+'').children().first().css('width','430px')
+                }else{
+                    if (idParentComment != 0){
+                        //$('#huhu'+add+id+'').append(1)
+                        $('#djangoCFormDivComment'+id+'').css('width','100%')
+                        //$('#textareaSpanComment'+id+'').children().first().css('width','360px')
+                        //var a = parseInt($('#djangoCFormDivComment'+id+'').width()) - 10
+                        $('#djangoCFormDivComment'+id+'').children().first().css('width','360px')
+                        $('#createCDivComment'+id+'').css('padding-left','64px')
+                        
+                    }
+                }
+                $("#createCButton"+add+id+"").prop("disabled",true);
+                $("#djangoCFormDiv"+add+id+" textarea").on('change keyup keydown paste',function(){
+                    $.fn.checkEnability(2,flag,id)
+                    
+              
+                })
+                
+            
+            
+            
+            
+            }
+            $.fn.buildPhoto = function(flag,id,character,personUsername,isPicture){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                var picName = 'default'
+                var i = 0
+                var addon = []
+                addon[i++] = "<div style='width:50px;height:50px;padding-left:0px;padding-right:10px'>"
+                    if (isPicture == true){
+                        picName = personUsername
+                    }          
+                    addon[i++] = "<img class='photo' width='48px' height='48px' src='{{ MEDIA_URL }}"+picName+".jpg?"+Math.random()+"'>"
+                addon[i++] = "</div>"
+                var $area = $('#photo'+add+id+'');
+                $area.append(addon.join(''));
+                if (flag == 1){
+                    if (character == 1){
+                        $('#char'+add+id+'').css('border-left','5px solid green')
+                    }
+                    if (character == 2){
+                        $('#char'+add+id+'').css('border-left','5px solid red')
+                    }
+                }
+
+                                    
+            }
+                
+            $.fn.displayMorePostsBut = function(beforePost,afterPost,before,after){
+               
+                if (before == 1 ){
+                    var selector = $('#morePostsButton')
+                    $.fn.more(beforePost,selector,0,0)
+                }           
+                                    
+
+                    
+                    
+                if (after == 1 ){
+                    var selector = $('#moreNewPostsButton')
+                    $.fn.more(afterPost,selector,0,1)
+                }
+
+            };
+            //$.fn.displayMoreCommentsBut(flag,id,data[i].pk,beforeC,afterC,sigil)    
+            $.fn.displayMoreCommentsBut = function(flag,id,beforeC){
+               if (flag == 1){
+                var add = 'Post'
+                
+               }else{
+                var add = 'Comment'
+               }
+                
+                var selector = $('#moreCommentsButton'+add+id+'')
+                
+                $.fn.more(beforeC,selector,1,0)
+                         
+                                    
+
+    
+            };
+                
+                
+                
+                
+
+            $.fn.giveMeLastCID = function(flag,id,sign){
+            
+             
+            
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+                }
+                
+                
+                
+                
+                if ($.fn.countNumOfComments(flag,id) > 0){
+                    var L = []
+                    var comments = $('#firstCDiv'+add+id+'').children()
+                    for (var i = 0, len = comments.length; i < len; i++){
+                        if (comments[i].id[0] == 'c'){
+                            L.push(comments[i].id.match(/[0-9 ]+/))
+                            
+                        }
+                    }
+                    
+                    
+                        
+                    lastCID = L[L.length-1]
+                    
+         
+                }
+                 
+                else{
+                    var lastCID = 0
+                }
+                
+                        
+                
+                
+                if (sign == 1){
+                    $('#SCFromInput'+add+id+'').attr('value',lastCID)
+                }else{
+                    $('#CFromDisp'+add+id+'').attr('value',lastCID )
+                }
+
+          
+            
+            
+             
+            }
+
+
+            $.fn.giveMeLastID = function(sign,old){
+                var ids
+                if ($.fn.countPosts() > 0){
+                    var posts = $('#content').children()
+                    var L = []
+                    for (var i = 0, len = posts.length; i < len; i++){
+                        if (posts[i].id[0] == 'p'){
+                            L.push(posts[i].id.match(/[0-9 ]+/))
+                            if (old == 1 && L.length == 1){
+                                break
+                            }
+                            
+                        }
+                    }
+                    if (old == 0){
+                        $('#lifter').attr('value',0)
+                        ids = L[L.length-1]
+                    }else{
+                        $('#lifter').attr('value',1)
+                        ids = L[0]
+                    }
+                     
+                    
+                }else{
+                    ids = 0
+                }
+                
+                if (sign == 1){
+                    $('#postsFrom').attr('value',ids)
+                    
+                }else{
+                    $('#oldestPostId').attr('value',ids)
+                }
+
+                
+            }
+                
+                
+                
+            $.fn.checkWordLength = function(obj,c){
+            
+                var i = 0
+                
+                for (var j = 0, len1 = c.length; j < len1; j += 1) {
+                    if (c[j].length > 2){
+                            i = i + 1
+                        }
+                    }
+                if (i > 1){
+                    obj.wl.css('display','none')
+                    return 1
+                
+                
+                
+                    
+                }else{
+                    obj.wl.css('display','inline-block')
+                    if (i == 0){
+                        
+                        obj.mv.css('display','none')
+                    }else{
+                        obj.mv.css('display','inline-block')
+                    }
+                    //obj.num.text(2-i)
+                    
+                    
+                    obj.num.text('')
+                    var a = 2 - i
+                    obj.num.text(' '+a+'')
+                    if (a == 1){ 
+                        obj.sing.text(' slovo')
+                    }else{
+                        obj.sing.text(' slová')
+                    }
+                    //obj.num.text(2-i)
+                    
+                                
+                    
+                }
+            }
+            
+            $.fn.checkText = function(sign,flag,id){
+                
+                var txt
+
+                if (sign == 1){
+                    txt = $.trim($("textarea#id_body").val())
+
+                    
+                    
+                }else{
+                    if (flag == 1){
+                        var add = 'Post';
+                  
+                    }
+                    else{
+                        var add = 'Comment';
+                    
+                    }
+                    txt = $.trim($("#djangoCFormDiv"+add+id+" textarea").val())
+
+                }
+                
+                return txt.length
+                
+            }
+            
+            
+            
+            
+            $.fn.isChecked = function(){
+                //return 1
+                var ch = document.getElementsByClassName('ch')
+                for(var i = 0,len=ch.length; i < len; i++){
+                
+                
+                
+                    if (ch[i].checked == true){
+                        return 1
+
+
+                        
+                        
+                    }
+                    
+                }
+                return 0
+            }
+            
+            $.fn.checkEnability = function(sign,flag,id){
+                
+                
+                var can = 0
+                var but
+                if (sign == 1){
+                    but = $('#createPostButton')
+                    var textLength = $.fn.checkText(1,0,0)
+                    if (textLength > 0 & $.fn.isChecked() === 1 ){
+                        can = 1
+                    }
+                    var char = 500 - textLength;
+                    $('#countdownPostSpan').text(' '+char+' ')
+          
+                }else{
+                    if (flag == 1){
+                        var add = 'Post';
+                  
+                    }
+                    else{
+                        var add = 'Comment';
+                    
+                    }
+                    but = $("#createCButton"+add+id+"")
+                    var textLength = $.fn.checkText(2,flag,id) 
+                    if (textLength > 0 ){
+                        can = 1
+                    }
+                    var char = 500 - textLength;
+                    $('#countdownCSpan'+add+id+'').text(' '+char+' ')
+                }
+                
+                 
+                
+                
+                if (can === 1){
+                    but.prop("disabled",false);
+                    but.removeClass('disabled')
+                    but.addClass('s')
+                    
+                    
+                }else{
+                    but.prop("disabled",true);
+                    but.removeClass('s')
+                    but.addClass('disabled')
+                    
+                }
+            }
+            
+            
+            
+            
+            
+            $.fn.checkCheckbox = function(){
+                
+                $('#createPostButton').prop("disabled",true);
+                
+                /*
+                var ch = document.getElementsByClassName('ch')
+                for(var i = 0,len=ch.length; i < len; i++){
+                    ch[i].addEventListener('click',$.fn.checkEnability(1,0,0),true)
+                    //this.checked = true;
+                }
+                */
+                
+
+                
+                $('input[class="ch"]').on('click',function() {
+                    $('input[class="ch"]').not(this).prop("checked", false);
+
+
+                    $.fn.checkEnability(1,0,0)
+                    
+                });
+                
+                
+
+                $("textarea#id_body").on('change keyup keydown paste',function(){
+                    $.fn.checkEnability(1,0,0)
+                    
+                    
+                })
+            }
+        
+        
+        
+        
+        
+        
+            $.fn.checkWordCount = function(obj,c){        
+                if (c.length > 3){
+                    obj._length.css('display','none')
+                    return 1
+                    
+                }else{
+                    obj._length.css('display','inline-block')
+                    if (c.length == 0){
+                        obj._more.css('display','none')
+                        
+                    }else{
+                        obj._more.css('display','inline-block')
+                        
+                    }
+                    obj._num.text('')
+                    var a = 4-c.length
+                    obj._num.text(' '+a+'')
+                    if (a == 1){ 
+                        obj._sing.text(' slovo')
+                    }else{
+                        obj._sing.text(' slová')
+                    }
+                    
+                   
+                    
+                
+                }
+            }
+            $.fn.loadInitial = function(){
+                var addon = []
+                var i = 0
+                {% if user.is_authenticated %}
+                    addon[i++] = "<div id = 'createPost'>"
+                        addon[i++] = "<div id='createPostFormDiv' style='display:block;'>"
+                            addon[i++] = "<form id = 'createPostForm' action= '/app/adam/create/' name = 'inputField' method=post>{% csrf_token %}"
+                                addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                                addon[i++]= "<input style='display: none;' name='' value='' type='text' id='isHumanPost'>"
+                                //addon[i++]= "<div>"
+                                    addon[i++]= '<div style="position:relative">'
+                                        addon[i++]= "<div id='textareaPostDiv' class='indata1' style='height:100%'>"
+                                            addon[i++]= '{{ form.body }}'
+                                            
+                                        addon[i++]= "</div>"
+                                        addon[i++]= "<span id='bodySpan' style='position:absolute;top:7px;left:8px'>"
+                                            addon[i++]= "Zanechaj príspevok..."
+                                        addon[i++]= "</span>"
+                                    addon[i++]= '</div>'
+                                    addon[i++]= "<table cellpadding='0' cellspacing='0' border='0' style='line-height:40px;position:relative'>"
+                                        addon[i++]= "<tr style=''>"
+                                            addon[i++]= "<td style='padding-left:0px'>"
+                                                addon[i++]= "<span class='fs12 caaa' style=''>"
+                                                    addon[i++]= "Charakter príspevku:"
+                                                addon[i++]= "</span>"
+                                            addon[i++]= "</td>"
+                                            addon[i++]= "<td style='padding-left:5px'>"
+                                                addon[i++]= "<input name='positive' type='checkbox' class='ch'>"
+                                            addon[i++]= "</td>"
+                                            addon[i++]= "<td style='padding-left:5px'>"
+                                                addon[i++]= "pozitívny"
+                                            addon[i++]= "</td>"
+                                            addon[i++]= "<td style='padding-left:10px'>"
+                                                addon[i++]= "<input name='negative' type='checkbox' class='ch' >"
+                                                
+                                            addon[i++]= "</td>"
+                                            addon[i++]= "<td style='padding-left:5px'>"
+                                                addon[i++]= "negatívny"
+                                            addon[i++]= "</td>"
+                                            
+                                            addon[i++]= "<td style='padding-left:10px'>"
+                                                addon[i++]= "<input name='informative' type='checkbox' class='ch' checked>"
+                                            addon[i++]= "</td>"
+                                            addon[i++]= "<td style='padding-left:5px'>"
+                                                addon[i++]= "informatívny"
+                                            addon[i++]= "</td>"
+                                        addon[i++]= "</tr>"
+                                    addon[i++]= "</table>" 
+                                //addon[i++]= "</div>"
+                                
+                            addon[i++]= "</form>"
+                            
+                            {% if param == 1 %}
+                                addon[i++] = "<form id ='discussForm' action='/app/adam/discuss/' method='post'>"
+                                    addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='discussInput'>";
+                                    addon[i++] = "<input style='display:none' name='idcko' value='{{ idPost }}'>";
+                                addon[i++] = "</form>"
+                            {% endif %}
+                            
+                            
+                        addon[i++]= "</div>"
+                        
+                        addon[i++]= "<table cellpadding='0' cellspacing='0' border='0' style='line-height:40px;position:relative'>"
+                            addon[i++]= "<tr>"
+                                addon[i++]= "<td>"
+                                    addon[i++]= "<div id='createPostButtonDiv'>"
+                                        addon[i++]= "<input id ='createPostButton' type='button' class='disabled'  value='Prispieť' style='width:70px;'>"
+                                    addon[i++]= "</div>"
+                                addon[i++]= "</td>"
+                                addon[i++]= "<td style='padding-left:15px'>"
+                                    addon[i++]= "<div>Zostáva<span id='countdownPostSpan'> 500 </span>znakov</div>"
+                                addon[i++]= "</td>"
+                            addon[i++]= "</tr>"
+                            
+                        addon[i++]= "</table>"
+                    addon[i++]= "</div>"
+                    
+                    
+                    $('#mains').append(addon.join(''));
+                    
+                    $('#id_body').autosize()
+
+                    $.fn.addFadeOutSpanHandler($('#id_body'),$('#bodySpan'))
+
+                    $('#id_body').focus(function(){
+                        $.fn.changeOpacity(0,$("#bodySpan"))
+                        $('#textareaPostDiv').addClass('foc')
+                        
+                    })
+                    $('#id_body').focusout(function(){
+                        $.fn.changeOpacity(1,$("#bodySpan"))
+                        $('#textareaPostDiv').removeClass('foc')
+                        
+                    })
+                    $('#textareaPostDiv').hover(function(){
+                        $('#textareaPostDiv').addClass('hovero')},function(){$('#textareaPostDiv').removeClass('hovero')}
+                    )
+
+                    
+                    
+                    $('#createPostButton').click(function(){
+                        var createForm = $('#createPostForm');
+                        
+                        
+                        
+                        
+                        $.ajaxq('c',{
+                            type: createForm.attr('method'),
+                            url: createForm.attr('action'),
+                            data: createForm.serialize(),
+                            beforeSend: function(){
+                                
+                                if ($('#isHumanPost').val().length != 0 || $('#isHuman').val() != 'adam'){
+                                    alert('spambot')
+                                    return false
+                                }
+
+                            },
+                            cache: false,
+                                      
+                            success: function (msg) {
+                                
+                                
+                                $("textarea#id_body").val('');
+                                var data = $.parseJSON(msg);
+                                
+                                
+                                
+
+                                $.fn.buildBaseForPost(1,data.pk,data.personName,data.timestamp,data.body);   
+                                $.fn.buildPosts(data.pk,1,0,0,data.canRemove,'',data.character,data.personUsername,data.isPicture,0);
+                                
+                                
+                                jQuery("div.date").timeago();
+                                
+                                
+                                var ch = document.getElementsByClassName('ch')
+                                for(var i = 0,len=ch.length; i < len; i++){
+                                    
+                                    if (ch[i].name == 'informative'){
+                                        ch[i].checked = true;
+                                    }else{
+                                        ch[i].checked = false;
+                                    }
+                                }
+                                $('#countdownPostSpan').text(' 500 ')
+                                //$('input[class="ch"').prop('checked', false);
+                                $('#createPostButton').prop("disabled",true);
+                                $('#createPostButton').removeClass('s')
+                                $('#createPostButton').addClass('disabled')
+                                $.fn.hideSpan($('#id_body'),$('#bodySpan'))
+
+                                
+                         
+                            },
+                            error: function(msg) {
+                            alert('error')
+                            },
+                            complete:function(msg){
+                                
+                                
+                            },
+                        }).done(function(){
+
+                       
+                        })      
+                    });
+                    
+                
+                
+                
+                
+
+                {% endif %}
+
+                var addon = []
+                var i = 0
+                addon[i++]= "<form action= '/app/adam/giveMePosts/' id = 'give_me_posts' name = 'give_me_posts' method=post>"
+                    addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='gInput'>"
+                    addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                    addon[i++]= "<input id = 'postsFrom' style='display: none;' name='from' value = 0 >"
+                    addon[i++]= "<input id = 'switcher' style='display: none;' name='switch' value = 0 >"
+                    addon[i++]= "<input id = 'lifter' style='display: none;' name='lift' value = 0 >"
+                addon[i++]= "</form>"
+                
+                addon[i++]= "<form action='/app/adam/displayMorePostsButton/' id = 'displayMorePostsButtonForm' name = 'more_posts' method=post>"
+                    addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='dInput'>"
+                    addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                    addon[i++]= "<input id = 'oldestPostId' style='display: none;' name='from' value= 0 >"
+                    addon[i++]= "<input id = 'switcherP' style='display: none;' name='switch' value = 0 >"
+                addon[i++]= "</form>"
+                
+                addon[i++]= "<div id='buttonPanel' class='caaa fs12' style=''>"
+                    addon[i++]= "<div id='categoryNewest' value='0' style='display:inline-block;cursor:default;opacity:0.4;padding-right:10px;line-height:60px' class=''>Najnovšie"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryMostFavourite' value='1' style='display:inline-block;cursor:pointer;padding-right:10px;'>Najpopulárnejšie"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryOnlyPositive' value='2' style='display:inline-block;cursor:pointer;padding-right:10px;'>Pozitívne"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryOnlyNegative' value='3' style='display:inline-block;cursor:pointer'>Negatívne"
+                addon[i++]= "</div>"
+                    
+                addon[i++]= "<div>"
+                    addon[i++]= "<div id = 'content'>"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div>"
+                        addon[i++]= "<input id = 'morePostsButton' type='button' class='button gray'  value='More' style='display:none;cursor:pointer'>"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<input style='display: none;' name='' value='adam' type='text' id='isHuman'>"
+                addon[i++]= "</div>"    
+
+                
+                $('#mains').append(addon.join(''));
+                
+                $.fn.addCategoryHandlers();
+                
+                
+                $('#morePostsButton').click(function(){
+                    
+                    
+                    $.fn.giveMeLastID(1,0)
+                   
+                    $.fn.reloadAllPosts(0);
+                                 
+                });
+            }
+            $.fn.takeCareOfContent = function(num){
+                $('#switcher').attr('value',num)
+                $('#switcherP').attr('value',num)
+                $('#content').text('')
+                $('#oldestPostId').attr('value',0)
+                $('#postsFrom').attr('value',0)
+                
+                $.fn.reloadAllPosts(0)
+            }
+            $.fn.addCategoryHandlers = function(){
+                $('div[id^="category"]').click(function(){
+                    var categoryNum = $(this).attr('value')
+                    var switcherNum = $('#switcher').attr('value')
+                    if (categoryNum != switcherNum){
+                        $.fn.takeCareOfContent(categoryNum)
+                        $(this).css('cursor','default');
+                        $('div[id^="category"]').not(this).css('cursor','pointer');
+                        $('div[id^="category"]').not(this).css('opacity','1.0');
+                        $(this).css('opacity','0.4')
+                        
+                        
+                         
+                    }
+                })
+                //$(this).click(function()
+                               
+
+            }
+                           
+            $( document ).ready(function() {
+                $.fn.loadInitial()
+       
+                
+                {% if user.is_authenticated %}
+                    $.fn.checkCheckbox();
+                    
+                {% endif %}
+  
+               
+                {% if param == 0 %}
+                    $.fn.reloadAllPosts(0);
+                {% else %}
+                    $.fn.reloadTheOne();
+                {% endif %}
+                              
+                    
+            });
+            
+        </script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'> 
+         
+    </head>
+    <body OnLoad="" style="">
+        <div id='mains' style=''>
+        </div>
+        
+        
+    
+    </body>
+</html>
+
+
+

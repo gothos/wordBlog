@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery-1.10.2.js'></script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'>
+        <script>
+            $( document ).ready(function() {
+                setTimeout(function(){
+                    //window.location.replace("http://192.168.1.105/exe/py/hello.py");
+                    window.location.replace("http://localhost/py/hello.py");
+                                
+                },3000)
+            })
+        </script>
+    </head>
+    <body>
+        <div id="authent" style="border:0px solid black;display:block;top:30px" class="z">
+            <center>
+                <div style='font-size:18px'>
+                    {% if account %}
+                        Aktivácia účtu bola úspešne dokončená !
+                    {% else %}
+                        Tento účet bol už raz aktivovaný !
+                    {% endif %}
+                </div>
+            </center>
+        </div>
+    </body>
+</html>

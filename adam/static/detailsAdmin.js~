@@ -1,0 +1,102 @@
+(function ($) {
+$.fn.buildDetailsAdmin = function(){
+    var i = 0
+    var addon = []
+    addon[i++] = $.fn.buildBudgetAdmin()
+    addon[i++] = $.fn.buildDescriptionAdmin()
+    addon[i++] = $.fn.buildKeywordAdmin()
+    $('#menuDetails').children().remove()
+    $('#menuDetails').append(addon.join(''))
+}
+
+$.fn.buildKeywordAdmin = function(){
+    var i = 0
+    var addon = []
+    
+    addon[i++] = '<table id="chosenWords" cellpadding="0" cellspacing="0" border="0" style="position:relative;font-size:12px;border: 1px double #ddd;margin-top:25px">'
+        addon[i++] = $.fn.buildChosenWordsTableCore(2)
+    addon[i++] = '</table>'
+    
+    return addon.join('')
+
+}
+
+
+$.fn.buildBudgetAdmin = function(){
+    var i = 0
+    var addon = []
+    addon[i++] = '<table id="budgetTable" cellpadding="0" cellspacing="0" border="0" style="">'
+        addon[i++] = '<tr style="font-size:12px">'
+            addon[i++] = '<td>'
+                addon[i++] = '<div id="adBudgetDiv" class="" style="">'
+                    addon[i++] = 'Daily budget'
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+            addon[i++] = '<td style="padding-left:25px">'
+                addon[i++] = '<div id="adBudget" style="display:inline-block">'
+                addon[i++] = '</div>'
+                addon[i++] = '<div id="characterAdBudgetDiv" class="" style="display:inline-block;padding-left:10px">'
+                    addon[i++] = '&#128'
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+        addon[i++] = '</tr>'
+    addon[i++] = '</table>'
+    return addon.join('')
+
+}
+
+
+$.fn.buildDescriptionAdmin = function(idCampaign){
+    var i = 0
+    var addon = []
+    addon[i++] = '<table id="descriptionTable" cellpadding="0" cellspacing="0" border="0" style=";position:relative;border: 0px double #ddd;margin-top:25px">'
+        addon[i++] = '<thead>'
+            addon[i++] = '<tr>'
+                addon[i++] = '<th class="addWord">'
+                    addon[i++] = 'Item'
+                addon[i++] = '</th>'
+                addon[i++] = '<th class="addWord">'
+                    addon[i++] = 'Value'
+                addon[i++] = '</th>'
+            addon[i++] = '</tr>'
+        addon[i++] = '</thead>'
+        addon[i++] = '<tbody>'
+        addon[i++] = '</tbody>'
+    addon[i++] = '</table>'
+    addon[i++] = '<div id="previewDiv">'
+    addon[i++] = '</div>'
+    
+    
+    return addon.join('')
+}
+
+
+$.fn.insertDescriptionDataAdmin = function(dataFields){
+    var i = 0
+    var addon = []
+    var descriptionFields = ['Title','First line description','Second line description','Displayed URL','Target URL']
+
+    for (var k = 0,len=dataFields.length;k<len;k++){
+        addon[i++] = '<tr>'
+            addon[i++] = '<td class="addWord">'
+                addon[i++] = '<div>'
+                    addon[i++] = descriptionFields[k]
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+            addon[i++] = '<td class="addWord">'
+                addon[i++] = '<div>'
+                    addon[i++] = dataFields[k]
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+        addon[i++] = '</tr>'
+        
+    }
+    
+    $('#descriptionTable > tbody:last').append(addon.join(''))
+
+}
+
+$.fn.insertBudgetDataAdmin = function(budget){
+    $('#adBudget').text(budget)
+}
+})(jQuery);

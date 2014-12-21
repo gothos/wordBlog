@@ -1,0 +1,55 @@
+(function ($) {
+    $.fn.fillCampaignContentAdmin = function(idCampaign){
+        console.log('clicked')
+        $.fn.deleteMenus()
+        $.gen.campaignIdCampaign = idCampaign
+        $.fn.buildDetailsAdmin()                  
+        $.fn.buildChangesAdmin(1,0)
+        $.fn.buildOverAdmin(idCampaign)
+        $.fn.buildEditCampaignStat(idCampaign,2)
+        $.fn.buildEditCampaignCPCs(idCampaign,2) 
+        $.gen.keywordIDs = []
+        console.log('tady',idCampaign)
+        $('#fillCampaignContentInput'+idCampaign+'').attr('value',$.cookie('csrftoken'))
+        var frm = $('#fillCampaignContentForm'+idCampaign+'')
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            cache: false,
+            beforeSend: function(){
+
+            },
+                     
+            success: function (msg) {
+                console.log(msg)
+                var data = $.parseJSON(msg);
+                var dataFields = [data.description.title,data.description.description1,data.description.description2,data.description.url1,data.description.url2]
+                $.fn.insertDescriptionDataAdmin(dataFields)
+                $.fn.insertBudgetDataAdmin(data.description.budget)
+                
+                $.fn.fillCampaignDetail(data,2)
+                $.fn.makePreview(data.typeOfCampaign,dataFields,2)
+                
+                if (data.changes != 0){
+                    $('#isChanges').show()
+                    $('#noChanges').hide()
+                    $.fn.checkNavigationPanelVisibility(data.changes.length,'1','Changes')
+                    $.fn.resetChanges(data.changes.length)
+                    $.fn.buildChangesSet(data.changes)
+
+                    $.fn.insertPeriods(2,data.changesPeriodsExtent)
+                    
+                                                    
+                    
+                }else{
+                    $('#isChanges').hide()
+                    $('#noChanges').show()
+                }
+                
+            },
+            error: function(msg){
+            },
+        })
+    }
+})(jQuery);

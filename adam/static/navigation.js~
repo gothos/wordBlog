@@ -1,0 +1,167 @@
+(function ($) {
+$.fn.buildNavigationPanel = function(num){
+
+    var names = ['camp','over','CPCs','stat','changes','mainChanges']
+    var suffix = capitaliseFirstLetter(names[num])
+    var i = 0
+    var addon = []
+        
+    addon[i++] = '<table id="navigation'+suffix+'Table" cellpadding="0" cellspacing="0" border="0" style=";position:relative;">'
+        addon[i++] = '<tr>'    
+            addon[i++] = '<td id="'+names[num]+'NavigationPanel" style="width:800px;display:none">'
+                addon[i++] = '<div style="position:relative;text-align:left;white-space: nowrap;padding-right: 0;float:right;height:30px">'
+                    
+                    addon[i++] = '<div class="navigationText">'
+                        addon[i++] = "<span class='navigationTextSpan' style='font-size:12px'><span id='from"+suffix+"' style='font-weight:bold'>1</span>-<span id='to"+suffix+"' style='font-weight:bold'></span> z <span id='totalSum"+suffix+"' style='font-weight:bold'></span>"
+                        addon[i++] = "</span>"
+                    addon[i++] = '</div>'
+                    
+                    addon[i++] = '<div class="'+names[num]+'NavigationDiv" id="previousPage'+suffix+'" value="1" style="background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);border-top-left-radius: 2;border-bottom-left-radius: 2;">'
+                        addon[i++] = '<span class="navSpan">'
+                            addon[i++] = '&nbsp'
+                        addon[i++] = '</span>'
+                        addon[i++] = '<img  id="leftArrowImg'+suffix+'" src="/static/cleardot.gif" class="arrow leftArrow" style="opacity:0.333">'
+                        
+                    addon[i++] = '</div>'
+                    addon[i++] = '<div class="'+names[num]+'NavigationDiv" id="nextPage'+suffix+'" style="cursor:pointer;margin-left: -1px;border-left: 1px solid rgba(0,0,0,0.1);background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);border-top-right-radius: 2;border-bottom-right-radius: 2;" value="2">'
+                        addon[i++] = '<span class="navSpan">'
+                            addon[i++] = '&nbsp'
+                        addon[i++] = '</span>'
+                        addon[i++] = '<img id="rightArrowImg'+suffix+'" src="/static/cleardot.gif" class="arrow rightArrow" style="cursor:pointer;opacity:0.555">'
+                    addon[i++] = '</div>'
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'    
+        addon[i++] = '</tr>'
+    addon[i++] = '</table>'
+    return addon.join('')
+    
+
+
+}
+
+
+$.fn.addNavigationDivHoveringEffect = function(num){
+    
+    var names=['camp','stat','over','CPCs','Changes','mainChanges']
+    
+    $('div[class="'+names[num]+'NavigationDiv"]').hover(function(){
+        var curs = [$.gen.curCamp,$.gen.curStat,$.gen.curOver,$.gen.curCPCs,$.gen.curChanges,$.gen.curMainChanges]
+        var extents = [$.gen.extentCamp,$.gen.extentStat,$.gen.extentOver,$.gen.extentCPCs,$.gen.extentChanges,$.gen.extentMainChanges]
+        
+        var name = capitaliseFirstLetter(names[num])
+        
+        
+        var value = $(this).attr('value')
+        if (value == '1' && curs[num] ==1){
+            return
+        }  
+        if (value == '2' && curs[num] == extents[num] ){
+            return
+        }
+        
+        if (value == '1'){
+            var selector = $('#leftArrowImg'+name+'')
+        }else{
+            var selector = $('#rightArrowImg'+name+'')
+        }
+        
+        
+        $(this).css ('background-image', '-webkit-linear-gradient(top,#f8f8f8,#f1f1f1)').css('border','1px solid #c6c6c6').css('color','#333')
+        selector.css('opacity','0.9')
+    },function(){
+        var curs = [$.gen.curCamp,$.gen.curStat,$.gen.curOver,$.gen.curCPCs,$.gen.curChanges,$.gen.curMainChanges]
+        var extents = [$.gen.extentCamp,$.gen.extentStat,$.gen.extentOver,$.gen.extentCPCs,$.gen.extentChanges,$.gen.extentMainChanges]
+        var name = capitaliseFirstLetter(names[num])
+        
+        var value=$(this).attr('value')
+        
+        if (value == '1' && curs[num] == 1){
+            return
+        }  
+        if (value == '2' && curs[num] == extents[num] ){
+            return
+        }
+        
+        if (value == '1'){
+            var selector = $('#leftArrowImg'+name+'')
+        }else{
+            var selector = $('#rightArrowImg'+name+'')
+        }
+        $(this).css ('background-image', '-webkit-linear-gradient(top,#f5f5f5,#f1f1f1)').css('border','1px solid rgba(0,0,0,0.1)').css('color','#444')
+        
+        
+        selector.css('opacity','0.55')
+    })
+}
+
+
+$.fn.checkNavigationPanelVisibility = function(len,add1,str){
+    if (add1 == '1' || add1 == '3'){
+        var prefix = str.toLowerCase()
+    }else{
+        var prefix = str
+    }
+    if (add1 == '3'){
+        var num = 5;
+    }
+    if (add1 < 3){
+        var num = 15;
+    }
+
+
+    if (len > num){
+        $('#'+prefix+'NavigationPanel').show()
+        $('#previousPage'+str+'').css('cursor','default')
+        $('#leftArrowImg'+str+'').css('cursor','default')
+        $('#leftArrowImg'+str+'').css('opacity','0.333')
+        
+        $('#nextPage'+str+'').css('cursor','pointer')
+        $('#rightArrowImg'+str+'').css('cursor','pointer')
+        $('#rightArrowImg'+str+'').css('opacity','0.555')
+        
+    }else{
+        $('#'+prefix+'NavigationPanel').hide()
+    }    
+}
+
+
+
+
+$.fn.checkPagesNavigators = function(num){
+    
+    var extents = [$.gen.extentCamp,$.gen.extentStat,$.gen.extentCPCs,$.gen.extentOver,$.gen.extentChanges,$.gen.extentMainChanges]
+    var curs = [$.gen.curCamp,$.gen.curStat,$.gen.curCPCs,$.gen.curOver,$.gen.curChanges,$.gen.curMainChanges]
+    var suffixes = ['Camp','Stat','CPCs','Over','Changes','MainChanges']
+                        
+    var extent = extents[num]
+    var cur = curs[num]
+    var previousPage = $('#previousPage'+suffixes[num]+'')
+    var nextPage = $('#nextPage'+suffixes[num]+'')
+    var leftArrowImg = $('#leftArrowImg'+suffixes[num]+'')
+    var rightArrowImg = $('#rightArrowImg'+suffixes[num]+'')
+
+
+    if (cur == 1){
+        previousPage.css('cursor','default')
+        leftArrowImg.css('cursor','default')
+        leftArrowImg.css('opacity','0.333')
+    
+    }else{
+        previousPage.css('cursor','pointer')
+        leftArrowImg.css('cursor','pointer')
+        leftArrowImg.css('opacity','0.555')
+    }
+    if (cur == extent){
+        
+        nextPage.css('cursor','default')
+        rightArrowImg.css('cursor','default')
+        rightArrowImg.css('opacity','0.333')
+    
+    }else{
+        nextPage.css('cursor','pointer')
+        rightArrowImg.css('cursor','pointer')
+        rightArrowImg.css('opacity','0.555')
+    }
+}
+})(jQuery);
+

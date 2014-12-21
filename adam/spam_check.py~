@@ -1,0 +1,2 @@
+from akismet import spam_checks
+from akismet.utils import do_spam_check

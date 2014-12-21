@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src="{{ STATIC_URL }}jquery-1.10.2.js">
+        </script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js">
+        </script>
+        <script type="text/javascript" src="{{ STATIC_URL }}common.js">
+        </script>
+        <link rel='stylesheet' type='text/css' href="{{ STATIC_URL }}style.css">
+        <script language='JavaScript' type='text/javascript' src="{{ STATIC_URL }}jquery.qtip.js"></script>
+        <link rel='stylesheet' type='text/css' href="{{ STATIC_URL }}jquery.qtip.css">
+        <script>
+            
+            $.fn.eraseCoreDiv = function(selector){
+                $('#core').children().remove()
+                selector.css('opacity','1.0')
+                selector.css('cursor','pointer')  
+            }
+            
+            
+            $.fn.buildSettings = function(){
+                
+                var i = 0
+                var addon = []
+                
+ 
+                addon[i++] = "<div id='profilePicDiv' style='display:inline-block'>"
+                    addon[i++]= "<img id ='profilePic' src='' style='width:70px;height:70px;' class='photo'>"
+                addon[i++] = "</div>"
+                addon[i++] = "<div id='profileInfoDiv' style='display:inline-block;margin-left:10px;vertical-align:top'>"
+                    addon[i++] = "<div style='display:inline-block'>"
+                        addon[i++] = "<span style='display:block'>Užívateľské meno</span>"
+                        addon[i++] = "<span style='display:block'>Email</span>"
+                        addon[i++] = "<span style='display:block'>Rok narodenia</span>" 
+                    addon[i++] = "</div>"
+                    addon[i++] = "<div style='display:inline-block;margin-left:10px'>"
+                        addon[i++] = "<span style='display:block'><span id='doubleDotNickname' style='margin-right:5px'>:</span><span id='nickname'>{{ user.nickname }}</span></span>"
+                        addon[i++] = "<span style='display:block'><span id='doubleDotEmail' style='margin-right:5px'>:</span><span id='email'>{{ user.email }}</span></span>"
+                        addon[i++] = "<span style='display:block'><span id='doubleDotYearOfBirth' style='margin-right:5px'>:</span><span id='yearOfBirth'></span></span>"
+                    addon[i++] = "</div>"
+                addon[i++] = "</div>"
+                
+                
+                
+                addon[i++] = "<div id='settingsDiv'>"
+                    addon[i++] = "<div style='display:inline-block'>"
+                        addon[i++] = "<div id='optionsDiv' >"
+                            addon[i++] = "<div id='uploadImage' style='cursor:pointer'>Zmeniť obrázok";                          
+                            addon[i++] = "</div>";
+                            addon[i++] = "<br>";
+                            addon[i++] = "<div id='changePassword' style='cursor:pointer'>Zmeniť heslo";
+                            addon[i++] = "</div>";
+                        addon[i++] = "</div>"
+                        addon[i++] = "<div>"
+                            addon[i++] = "<input type='button' class='s' style='display:block;width:auto;padding-left:10px;padding-right:10px;' value='Späť' id = 'return'>";
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                    
+                    addon[i++] = "<div id='core' class='' style='display:inline-block;vertical-align:top'>"
+                    addon[i++] = "</div>"
+                    
+                    
+                addon[i++] = "</div>"
+                $('#mainS').append(addon.join(''));
+                {% if user.isPicture == 1 %}
+                
+                    $('#profilePic').attr('src','/pics/'+'{{ user.username }}'+'.jpg?'+Math.random()+'')
+                {% else %}
+                    $('#profilePic').attr('src','/pics/default.jpg')
+                
+                {% endif %}
+                {% if user.yearOfBirth != None %}
+                    $('#yearOfBirth').append('{{ user.yearOfBirth }}')
+                {% else %}
+                    $('#yearOfBirth').append('Neuvedené')
+                {% endif %}
+                $('#changePassword').click(function(){
+                    if ($('#changePasswordDiv').length == 0){
+                        $('#core').children().remove()
+                        var i = 0
+                        var addon = []
+                        addon[i++] = "<div id='changePasswordDiv' style='width:auto;height:auto;margin-left:5px'>"
+                            addon[i++] = "<div class='arrow-left' style='display:inline-block;margin-bottom:165px;'>"
+                            addon[i++] = "</div>"
+                            addon[i++] = "<div id='changePasswordContent' class='wino' style='display:inline-block;border:1px solid black;width:auto;height:auto;'>"
+                                addon[i++] = '<div id="closeBtnChPasswordDiv" class="close-btn2">'
+                                addon[i++] = '</div>'
+                                addon[i++] = '<div id="changePasswordSpace" class="" style="margin:25px">'
+                                addon[i++] = '</div>'
+                            addon[i++] = "</div>"
+                        addon[i++] = "</div>"
+                        $('#core').append(addon.join(''));
+                        $('#closeBtnChPasswordDiv').click(function(){
+                            $.fn.eraseCoreDiv($('#changePassword'))
+                            
+                        })
+                        $('#authent').addClass("z") 
+                        $('#changePasswordSpace').load('/app/accounts/password/change/')
+                        
+                        $.fn.swapButtonStyles($(this),$('#optionsDiv'))
+                        
+                    }
+                    
+                    
+                    
+                    
+                    
+        
+                })
+                $('#uploadImage').click(function(){
+                    if ($('#uploadDiv').length == 0){
+                    
+                        $('#core').children().remove()
+                        var i = 0
+                        var addon = []
+                        addon[i++] = "<div id='uploadDiv' style='width:auto;height:auto;margin-left:5px'>"
+                            addon[i++] = "<div class='arrow-left' style='display:inline-block;margin-bottom:195px;'>"
+                            addon[i++] = "</div>"
+                            addon[i++] = "<div id='uploadContent' class='wino' style='display:inline-block;border:1px solid black;width:auto;height:auto;vertical-align:top'>"
+                                addon[i++] = '<div id="closeBtnUploadDiv" class="close-btn2">'
+                                addon[i++] = '</div>'
+                                addon[i++] = '<div id="uploadSpace" class="" style="margin:25px">'
+                                addon[i++] = '</div>'
+                            addon[i++] = "</div>"
+                        addon[i++] = "</div>"
+                        $('#core').append(addon.join(''));
+                        $('#closeBtnUploadDiv').click(function(){
+                            $("#selection").remove();
+                            $("#outer").remove();
+                            $('#profilePic').attr('src','/pics/'+'{{ user.username }}'+'.jpg?'+Math.random()+'')
+                            $.fn.eraseCoreDiv($('#uploadImage'))
+                        })
+                        $('#uploadSpace').load('/app/adam/uploadImage/')
+                        $.fn.swapButtonStyles($(this),$('#optionsDiv'))
+                    }
+
+        
+                })
+                $.fn.addReturnHandler() 
+                
+
+            
+            }
+        
+                   
+        
+        
+        
+            $( document ).ready(function() {
+                $.fn.buildSettings()
+                $(document).keyup(function(e){
+
+                    if (e.keyCode == 27) {
+                        $('#core').children().remove()
+                        $('#optionsDiv').children().css('opacity','1.0')
+                        $('#optionsDiv').children().css('cursor','pointer') 
+                    }
+                })
+            
+            
+   
+            
+            })
+        </script>
+    </head>
+    <body>
+        <div id = 'mainS'>
+        </div>
+    </body>
+</html>

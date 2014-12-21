@@ -1,0 +1,250 @@
+{% if not user.id in currentTopicLikeds %}
+                    <a href="javascript:;" onclick="submitForm(7,{{currentTopic}})" ><span class="remove blue">Recommend 
+                    {% if lenTopicLikeds != 0 %}
+                    ({{ lenTopicLikeds }})
+                    {% endif %} 
+                    
+                    </span></a><br><br>
+                {% else %}
+                    <a href="javascript:;" onclick="submitForm(8,{{currentTopic}})"><span class="remove blue">Unrecommend 
+                    {% if lenTopicLikeds != 0 %}
+                    ({{ lenTopicLikeds }})
+                    {% endif %}
+                    
+                    </span></a><br><br>
+                {% endif %}</span>
+
+def give_me_comments(request):
+    if request.method == "POST" and request.is_ajax():
+        currentTopic = request.POST.get('currentTopic')
+        idUser = request.user.id
+        posts = BlogPost.objects.filter(idTopic=currentTopic)
+        dick = {}
+        comments=[]
+        if posts:
+            for post in posts:
+                comments = list(itertools.chain(comments, BlogComment.objects.filter(idPost=post.id)[:2]))
+        if comments:
+            data = serializers.serialize("python", comments)
+            for i in range(len(data)):
+                for k in data[i].keys():
+                    if k == 'fields':
+                        
+                        personName= User.objects.get(pk= data[i][k]['idPerson']).username
+                        data[i][k].update({'personName':personName})
+                        dick[data[i]['pk']] = 0
+                        likeds = LikeComment.objects.filter(idComment = data[i]['pk'])
+                        likedsIDs = []
+                        for z in likeds:
+                            likedsIDs.append(z.idPerson.id)
+                        if idUser == data[i][k]['idPerson']:
+                            data[i][k].update({'canRemove':1})
+                        else:
+                            data[i][k].update({'canRemove':0})
+                        if idUser in likedsIDs:
+                            data[i][k].update({'canLike':0})
+                        else:
+                            data[i][k].update({'canLike':1})
+                        data[i][k].update({'lenLikedsIDs':len(likedsIDs)})
+                        subcomments = BlogComment.objects.filter(idPost=data[i][k]['idPost'],idParentComment = data[i]['pk'])
+                        data[i][k].update({'dic':len(subcomments)})
+
+        return HttpResponse(json.dumps(data,cls=DjangoJSONEncoder))
+    return HttpResponse('NOTOK')
+
+"var frm = $('#give_me_comments1');"+
+                                                    "frm.ready( function(){"+
+                                                       
+                                                        "$.ajax({"+
+                                                            "type: frm.attr('method'),"+
+                                                            "url: frm.attr('action'),"+
+                                                            "data: frm.serialize(),"+           
+                                                            "success: function (msg) {"+
+                                                                
+                                                                "var data = $.parseJSON(msg);"+
+                                                                "$.each(data, function(key, val) {"+
+                                                                    "if(val.pk="+val.pk+"){"+
+                                                                        "addon='<div id=\"commentDiv'+val.pk+'\" class = \"\" style=\"width:450px;white-space:normal;padding-left: 2em;text-indent: -2em; \" >';"+
+                                                                        "addon = addon +  '<span class=\"username gray\" style=\"padding-left:32px\">'+val.fields.personName+'</span><span class=\"date\">'+val.fields.timestampCom+'</span>';"+
+                                                                    
+                                                                        "if (val.fields.Re){"+    
+                                                                            "addon = addon + '<span class=\"reinfo\"><i>'+val.fields.Re +'<b>'+val.fields.inReplyToName+'</b>'+val.fields.text + val.fields.add+'</i></span><br>';"+
+                                                                        "}"+
+                                                                    "addon = addon + '<br><span class=\"p\" style=\"\" >'+val.fields.comment+'</span><br></div><br>';"+
+                                                                    
+                                                                    "$('#firstTwoCommentsDiv"+val.pk+"').append(addon);"+
+                                                                    "}"+                                                            
+                                                                                                                            
+                                                                "});"+
+                                                            "},"+
+                                                            "error: function(msg) {"+
+                                                                "alert('error');"+
+                                                            "},"+
+                                                        "});"+
+                                                    "});"+
+                                                    
+                                                    "if (values['dicken'] == values['anka']){"+    
+                                                        "$('#firstTwoCommentsDiv"+val.pk+"').append('ahoj');"+
+                                                    "}"+
+                                                     "$.fn.reloadAllComments();"+
+
+
+            $("#submit").click( function() {
+             
+                var frm = $('#my_form');
+ 
+                $.ajax({
+                    type: frm.attr('method'),
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    success: function (msg) {
+                  
+                        var data = $.parseJSON(msg)
+                        $.each(data, function(key, val) {
+                            $("#output").append("Object id is: " + val.pk + ' of model: ' + val.model);
+                            $("#divC12").append("<div id="+val.pk+">hello world</div>");
+                            $.each(val.fields, function(fieldname, field) {
+                                $("#output").append(fieldname + ' : ' + field);
+                        });
+                        }); 
+                       
+                        },
+                    
+                    error: function(msg) {
+                        alert('error')
+                        
+                        
+                    },
+                    
+                    });
+                    return false;
+                
+                
+                
+                
+                
+                
+                });
+                });
+
+<form action="/adam/giveMeComments/" id = "give_me_comments" name = "give_me_comments" method=post>{% csrf_token %}
+        <input style="display: none;" name="currentTopic" value="{{ currentTopic }}">
+        </form>
+        
+        
+        
+        
+        addon = addon + "<a href='javascript:;' id='LDCommentButton"+valC.pk+"' >";
+                                addon = addon + "<span class='remove gray'  id='LDCommentButtonSpan"+valC.pk+"'>";
+                                
+                                
+                                
+                                if (valC.canLike == 0){
+                                    addon = addon + "<form id= 'dislikeCommentForm"+valC.pk+"' action= '/adam/dislikeComment/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+valC.pk+"'></form>";
+                                    addon = addon + "Dislike";
+                                }
+                                else{
+                                    addon = addon + "<form id= 'likeCommentForm"+valC.pk+"' action= '/adam/likeComment/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+valC.pk+"'></form>";
+                                    addon = addon + "Like";
+                                }
+                                addon = addon + "</span></a>"; 
+                                
+                                
+                                
+addon = addon + "<form id= 'removeCommentForm"+valC.pk+"' action= '/adam/removeComment/' method='post' >{% csrf_token %}<input style= 'display: none;' name='ids' value='"+valC.pk+"'></form>";
+                                    addon = addon + "<a id= 'removeCommentButton"+valC.pk+"' href='javascript:;' >";
+                                    addon = addon + "<span class='remove gray'>";
+                                    addon = addon + "Remove";
+                                    addon = addon + "</span></a>";
+                                    
+                                    
+                                    if (flag == 1){
+                            var add = 'ForPost';
+                            
+                        }
+                        else{
+                            var add = 'ForComment';
+                            
+                        }
+
+
+                            addonC = addonC + "<form id= 'showCommentsForm"+valC.pk+"' action= '/adam/showComments/' method='post' >{% csrf_token %}<input style= 'display: none;' name='ids' value='"+valC.pk+"'><input style= 'display: none;' name='idParentComment' value='"+valC.pk+"' ></form>";
+                                addonC = addonC + "<input type='button' class='button gray' style='display: inline;' id='showCommentsForCommentButton"+valC.pk+"' value='Comments ("+valC.dic+")'>";
+
+
+
+
+                  
+                                    addon= "<div id='C"+add+"Div"+id+"' class = '' style='width:450px;white-space:normal;padding-left: 2em;text-indent: -2em;' >";
+                                    addon = addon + "<span class='username gray' style='padding-left:32px'>"+value.fields.personName+"</span><span class='date'>"+value.fields.timestampCom+"</span>";
+                                    
+                                    if (value.fields.Re){    
+                                        addon = addon + "<span class='reinfo'><i>"+value.fields.Re +"<b>"+value.fields.inReplyToName+"</b>"+value.fields.text + value.fields.add+"</i></span><br>";
+                                        }
+                                    addon = addon + "<br><span class='p' style='' >"+value.fields.comment+"</span><br></div><br>";
+                                
+                                    if (index < 2){
+                                        $('#firstTwoCommentsDiv'+val.pk+'').append(addon);    
+                                    }
+                                    if (index >= 2){
+                                        $('#restOfCommentsDiv'+val.pk+'').append(addon);
+                                    }
+                                    
+                                    
+                                    
+                                    $.each(data, function(index, value) {
+                                    
+                                    
+                                    
+                                    
+                                    if (numOfComments == 0){
+                            $('#SCButton'+add+id+'').css('display','none');
+                        }
+                        
+                        
+                            if (flag == 1){
+                                if (keyC < 2){
+                                    $('#firstTwoCDiv'+add+id+'').append(addonC);    
+                                }
+                                if (keyC >= 2){
+                                    $('#restOfCDiv'+add+id+'').append(addonC);
+                                }
+                            }
+                            else{
+                                
+                            }
+                            
+                            
+                            $.fn.buildPlaceForComments(2,valC.pk);
+                            
+                            
+                            
+                            $.fn.buildPlaceForComments(2,id);
+                                $('#allOfCDiv'+add+id+'').append(addonC);
+                                
+                                
+                            $.fn.buildPlaceForComments(2,valC.pk);
+                                $('#allOfCDiv'+add+valC.pk+'').append(addonC);
+                                
+                            if (flag == 2){
+                                $.fn.buildPlaceForComments(2,id);
+                            }
+
+if (values['Re'] && values['Re'].length > 0 ){
+                                $.each(values['Re'], function(keyRe, valRe) {
+                                alert('aa')
+                               
+                                    addonC = addonC + "<div id ='"+valRe.text+valRe.inReplyToName+"'></div>";
+                                    
+                                });
+                                    
+                            }
+                            
+                            if (flag == 2){
+                                            $('#allOfCDiv'+add+id+'').css('display','block');
+                                            $('#firstTwoCDiv'+add+id+'').css('display','inline');
+                                        }
+                            if (valC.idParentComment != None){
+                                    alert('ano');
+                                    values.update({'idPost': valC.idPost})
+                                } 

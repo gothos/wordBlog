@@ -1,0 +1,210 @@
+var source   = $("#templ").html();
+                                                var template = Handlebars.compile(source);
+                                                var context = {name: "My New Post", body: "This is my first post!"}
+                                                var html    = template(context);
+                                                 $("#posts").append("{% endverbatim %}"+
+                                                 
+                                                 
+                                                 
+                                                 "{% verbatim %}");
+                                              
+                                                
+                                                $("#posts").append("{% endverbatim %}"+
+                                                
+                                                var script = document.createElement( "script" );
+                                script.id = "idScript";
+                                script.type = "text/html";
+                                script.append("ahoj");
+                                
+                                $("#posts").append(script);
+                                <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jqueryTemplates.js">
+        </script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}render.js">
+        </script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}handlebars.js">
+        </script>
+        "{% verbatim %}");
+                                    var script = document.createElement( "script" );
+                                    script.id = "idScript";
+                                    script.type = "text/javascript";
+                                    script.src = "aha.js";
+                           $("#posts").append(script);              
+                           $("#posts").append("{% endverbatim %}"+
+       
+       
+       "{% if user.id == '"+val.fields.idPerson+"' %}"+
+                                            "<div class='inner2' style='overflow: hidden;position:absolute;margin-left : 100px'>"+
+                                                "<form id= 'forms"+val.pk+"' action= '/adam/removePost/' method='post' >{% csrf_token %}"+
+                                                    "<input style='display: none;' name='ids' value='"+val.pk+"'>"+   
+                                                    "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"+
+                                                "</form>"+
+                                            "</div>"+
+                                        "{% endif %}"+
+                                        
+                                        
+                                        
+                                        "<script>"+
+                                                        "$(document).ready(function() {"+
+                                                        "var $areg = $('#subBut"+val.pk+"');"+
+                                                        "var b={idUser:"+val.fields.idUser+",likedsIDs:"+val.fields.likedsIDs+"};"+
+                                                        "y = '<a href=\"javascript:;\" ><span class=\"remove gray\">Like'"+                                                         
+                                                        "y = Mustache.render(y,b);"+
+                                                        "if (b['idUser'] in b['likedsIDs']){"+
+                                                        "{% verbatim %}"+
+                                                            "$areg.append(b,y);"+
+                                                        "{% endverbatim %}"+
+                                                        "}"+
+                                                        "});"+
+                                                    
+                                                
+                                                    "<\/script>"+
+                                                    
+                                                    
+                                                    $("#posts").append("<div id='"+val.pk+"' class='wrapper' style='overflow: hidden'><br>"+
+                                        
+                                        "<div class='inner' style='float:bottom;overflow: hidden'>"+
+                                            "<span class='username red'>" + val.fields.personName + "</span>"+
+                                            "<span class='date'>"+val.fields.timestamp+"</span><br>"+
+                                            "<span class='p'>"+ val.fields.body +"</span><br>"+
+                                        "</div>"+
+                                        
+                                        "<div class='submenu'>"+
+                                            "<div id='subBut"+val.pk+"' class='submenu-buttons'>"+
+                                                "{% if user.is_authenticated %}"+
+                                                    "<form id= 'formso"+val.pk+"' action= '/adam/like/' method='post' >{% csrf_token %}"+
+                                                        "<input style='display: none;' name='ids' value='"+val.pk+"'>"+   
+                                                        "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"+
+                                                    "</form>"+
+                                                    "<form id= 'formsoo"+val.pk+"' action= '/adam/dislike/' method='post' >{% csrf_token %}"+
+                                                        "<input style='display: none;' name='ids' value='"+val.pk+"'>"+   
+                                                        "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"+
+                                                    "</form>"+
+                                                    
+                                                    "<script>"+
+                                                        "$(document).ready(function() {"+
+                                                        "var $areg = $('#subBut"+val.pk+"');"+
+                                                        "c = {{ user.id }}"+
+                                                        "var b="+val.fields.likedsIDs+""+
+                                                        "y = '<a href=\"javascript:;\" ><span class=\"remove gray\">Like'"+                                                
+                                                        "y = Mustache.render(y,b);"+
+                                                        "if (c in b){"+
+                                                        "{% verbatim %}"+
+                                                            "$areg.append(b,y);"+
+                                                        "{% endverbatim %}"+
+                                                        "}"+
+                                                        "});"+
+                                                    
+                                                
+                                                    "<\/script>"+
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    "{% if not user.id in "+val.fields.likedsIDs+" %}"+
+                                                        "<a href='javascript:;' >"+
+                                                            "<span class='remove gray'>Like"+
+                                                                "{% if "+val.fields.lenLikedsIDs+" != 0 %}"+
+                                                                    "("+val.fields.lenLikedsIDs+")"+
+                                                                "{% endif %}"+
+                                                            "</span>"+
+                                                        "</a>"+
+                                                    "{% else %}"+
+                                                        "<a href='javascript:;' >"+
+                                                            "<span class='remove gray'>Unlike"+ 
+                                                                "{% if "+val.fields.lenLikedsIDs+" != 0 %}"+
+                                                                    "("+val.fields.lenLikedsIDs+")"+
+                                                                "{% endif %}"+
+                                                            "</span>"+
+                                                        "</a>"+
+                                                    "{% endif %}"+
+                                                    "<input type='button' class='button gray' id='buttonn"+val.pk+"' value='Reply'>"+                
+                                                "{% endif %}"+
+                                                "<script>"+
+                                                "$(document).ready(function() {"+
+                                                    "var $arep = $('#subBut"+val.pk+"');"+
+                                                    "var a={idUser:"+val.fields.idUser+",personId:"+val.fields.idPerson+"};"+
+                                                    "z = '<a href=\"javascript:;\"><span class=\"remove gray\">Remove</span></a>';"+
+                                                    "z = Mustache.render(z,a);"+
+                                                    "if (a['idUser'] == a['personId']){"+
+                                                    "{% verbatim %}"+
+                                                        "$arep.append(z);"+
+                                                    "{% endverbatim %}"+
+                                                    "}"+
+                                                    "});"+
+                                                    
+                                                
+                                                "<\/script>"+
+                                                
+                                                
+                            
+                                                
+                                                "{% if "+val.fields.dic+" == user.id %}"+
+                                                    "<input type='button' class='button gray' style='display: inline;' id='buttonCA"+val.pk+"' value='Comments ("+val.fields.dic+")' >"+
+                                                    "<input type='button' class='button gray' style='display: none;' id='buttonCB"+val.pk+"' value='Comments' >"+
+                                                "{% endif %}"+
+                    
+                                            "</div>"+
+                                            "<div class='circle'>></div>"+
+                               
+                                        "</div>"+
+                                        "<div id='dynamic-area'></div>"+
+                                  
+                                        "{% mustachejs 'main' %}"+
+                                        
+      
+                                        "<script>"+
+                                        
+                                        "$(document).ready(function() {"+
+                                        "var $area = $('#dynamic-area');"+
+                                       
+                                        "var a={name:"+val.fields.dic+"};"+
+                                        "template = Mustache.template('main');"+
+                                        "{% verbatim %}"+
+                                        "$area.html(template.render(a));"+
+                                        "{% endverbatim %}"+
+                                        "});"+
+       
+                                        
+      
+                                        "<\/script>"+
+                                                    
+                                       
+                                
+                                        
+                                        "<div id = 'div"+val.pk+"' style='display: block'>"+
+                                            
+                                            "<form action= '/adam/comment/' name = 'formic"+val.pk+"' method='post' >{% csrf_token %}"+
+                                                "<input style='display: none;' name='idcko' value='"+val.pk+"'>"+
+                                                "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"+
+                                                "<div class='indata1'>"+
+                                                 "<span style='display:inline'>"+
+                                                    '{{ commentsForm.comment }}'+
+                                                "</span>"+
+                                                 "</div>"+
+                                                "<input class='s' type= 'submit' value = 'Post'>"+
+                                            "</form>"+
+                                        "</div>"+
+                                        "<div id = 'divC"+val.pk+"' style='display: none;'></div>"+
+                                   "</div><br>");
+                                   
+                                   
+                                   "<div id='dynamic-area'></div>"+
+                                  
+                                        "{% mustachejs 'main' %}"+
+                                        
+      
+                                        "<script>"+
+                                        
+                                        "$(document).ready(function() {"+
+                                        "var $area = $('#dynamic-area');"+
+                                       
+                                        "var a={name:"+val.fields.dic+"};"+
+                                        "template = Mustache.template('main');"+
+                                        "{% verbatim %}"+
+                                        "$area.html(template.render(a));"+
+                                        "{% endverbatim %}"+
+                                        "});"+
+       
+                                        
+      
+                                        "<\/script>"+

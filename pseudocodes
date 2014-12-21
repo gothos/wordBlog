@@ -1,0 +1,211 @@
+##
+
+1. ad building
+
+       a) building bills:if (status of last bill == paid(sum of days since bill is imposed < 31) || sum of bills == 0){ 
+                              global var $.gen.actionButtonEnabled = 1 //user can start campaign
+                         }
+                         else{
+                             $.gen.actionButtonEnabled = 1
+                              //user cant start campaign and there is remark for him to pay the last bill
+                         } 
+                         if (24 < sum of days since bill is imposed < 31){
+                              //there is warning about paying the bill soon
+                         }
+                         bills table rows are created with [4]
+       b) building campaigns: campaigns table rows are created with [7]
+       a) $.fn.builBilling [5] builds billing section; params: 
+            I.billingInfoId - is used to generate saveBillingInfoForm ([5])
+                if (the user has no billing info){
+                    billingInfoId = 0
+                }else{
+                    billingInfoId = ID of the logged in user
+                }
+                
+            II.billingInfoDic -
+                 
+                if (billingInfoDic == 0){
+                    the user hasnt filled billing info yet; 
+                    user is asked to fill billing data first
+                }else{
+                    the user has already filled billing info; 
+                    billingInfoDic is dic containing billing data of the user;
+                    $.fn.addBillingInfoFieldsHandler sets billing value of each field according to billingInfoDic
+                }
+                [5] adds focusing/unfocusing handlers to each billing field
+
+2. $.fn.checkBillingInfoIsComplete: 
+    if (billing data are completely filled by user){
+        $.gen.isBillingInfo = 1 //user can create campaigns
+    }else{
+        $.gen.isBillingInfo = 1 //user is asked to fill his billing data first
+                       
+    }
+
+3. save_billing_info
+    if (billingInfoId == 0){
+        save_billing_info creates new billing record
+    }else{
+        save_billing_info edits existing billing record through billingInfoId
+        
+    }
+
+4.give_me_price checks: 
+    if (the word string is in words table(table [15])){
+        return JSON {isWord: 1 ,CPM,CPC,idWord}  
+    }else{
+        tries to get suggestion
+        return JSON {isWord: 0 ,isSuggestion:0 || 1}
+    }
+5.$.fn.addWordButHandler ajax success
+    if (isWord == 1){
+        the word is built into chosen keywords table by [5]
+        keywords in the table are sorted alphabetically by [4]
+    }else{
+        if (isSuggestion == 1){
+            suggestions are built under the input field
+            if (the user clicks the suggestion word){
+                the suggestion word is built into chosen keywords table ($('#chosenWords')) 
+                keywords in the table are sorted alphabetically by [4]
+            }
+        }else{
+            there emerges warning "there are no suggestions for the word string"
+        }
+        
+    }
+6.save_keywords_changes:
+     if (listOfIDs != ''){
+        if (the keyword ID is not in table[5]){ 
+            the keyword ID is saved into this table
+            at the same time the log record is inserted into table[8]
+            
+        }
+            
+     }
+     
+     if (some idWord from table[5] is not in listOfIDs){
+        the keyword ID is deleted from this table
+        the record is inserted into the table table[11]
+        at the same time the log record is inserted into table[8]
+     }
+     returns JSON dic {'old':[ {idWord:'', wordName:''},{idWord:'', wordName:''},..],'new':[ {idWord:'', wordName:''},{idWord:'', wordName:''},..]}
+ 
+7. $.fn.addSaveKeywordsHandler ajax success:
+    a) if (old){
+        for (each record/dic in old){
+            records from $.gen.defListOver (list for keeping campaign keywords records in their default order) and $.gen.dicOver(dic for keeping campaign keyword records in the order 
+            by the campaign keywords success rates) is deleted by $.fn.deleteFromDefaultList (param:IDWord);
+            removes keyword record from chosen keywords table $('#chosenWords')
+            removes campaign word option from selectKeyword [6] in campaign 'stat' statistics section [6]
+        }
+        
+      }
+      if (new){
+          for (each record/dic in new){
+              record is added to $.gen.defListOver and $.gen.dicOver
+              adds campaign word option to selectKeyword [6] in campaign 'stat' statistics section
+              adds keyword record to chosen keywords table
+                
+          }
+          there begins sorting of keyword options alphabetically in selectKeyword [5]
+          there begins sorting of keyword records alphabetically in chosen keywords table
+      
+      }
+8. show_statistics
+
+    if (there are no such statistics data){
+            return 0
+    }else{
+        
+        a = list of dictionaries([{date,uniqueCountOfViews,uniqueCountOfClicks},{date,uniqueCountOfViews,uniqueCountOfClicks},...]) of the statistics object  
+        (all the records from the table[12] for the given idCampaign and selected  idWord)
+        b = dic 'wordsPeriodsExtent' that contains first and the 15th date of the statistics object  (first 15 records from  the table[12] for the given idCampaign 
+        and selected  idWord): {yearTo,monthTo,dayTo,yearFrom,monthFrom,dayFrom}
+        returns  JSON dic(a + b)
+        
+        
+    }
+9.select success rate
+    if (choosing default order in success rate select tag ){
+        results are taken from $.gen.defList
+    }else{
+        results are taken from $.gen.dic (sorted appropriately)
+    }
+
+10. datepick statistics or CPCs data
+    if (the user datepicks statistics data ){
+        if (there are any Statistics data (table [12]) for the given date interval, idCampaign and idWord){
+            return JSON dic (date,uniqueCountOfViews,uniqueCountOfClicks)
+         }else{
+            return 0
+        }
+    }
+    if (the user datepicks CPCs data ){
+        if (there are any CPCs data (table [9]) for the given date interval, idCampaign){
+            return JSON dic (avgCPC,date,uniqueCountOfViews,uniqueCountOfClicks)
+        }else{
+            return 0
+        }
+    }
+11.create_campaign
+      if (campaignForm is valid){
+            return JSON dic {'status':1,'campaignName': ,'idCampaign': }
+      }else{
+            return JSON dic {'status':0}
+      }
+12.$.fn.addFinishCampaignCreationHandler  ajax success
+    if (status == 1){
+        new campaign dictionary record is added to $.gen.campaignsList (for default campaigns sorting)
+        [6] - if (numOfCampaigns > 5){
+                 campaings section navigationPanel is shown
+              }
+        [7] - styles left arrow and right arrow in navigation panel of campaigns  section  to reflect 
+        whether there are any next/previous batch of results or not
+        
+    }
+13. $.fn.addDeleteCampaignHandler ajax success:
+       if (msg == 1){
+            deletes the campaign from $.gen.campaignsList
+            if (there is no campaign in campaigns list $('#campaignsList')){
+                campaigns list $('#campaignsList') is hidden
+            } 
+        }
+
+14. $.fn.checkField:
+    if (input field value is not in the right format (regex check ) or is not valid (online check:[9])){
+        input field border turns red;
+        there is error message right under the input field
+    }else{
+        nothing happens
+    }
+
+15.
+    if (the user datepicks statistics data ){
+        if (there are any Statistics data (table [12]) for the given date interval, idCampaign and idWord){
+            return JSON dic (date,uniqueCountOfViews,uniqueCountOfClicks)
+         }else{
+            return 0
+        }
+    }
+    if (the user datepicks CPCs data ){
+        if (there are any CPCs data (table [9]) for the given date interval, idCampaign){
+            return JSON dic (avgCPC,date,uniqueCountOfViews,uniqueCountOfClicks)
+        }else{
+            return 0
+        }
+    }
+    
+    if (the user datepicks changes data ){
+        if (there are any changes data (table [7] and table[8]) for the given date interval, idCampaign ){
+            return JSON dic (timestamp,numOfOperation,originalValue)
+         }else{
+            return 0
+        }
+    }
+    if (the user datepicks mainChanges data ){
+        if (there are any mainChanges data (table [16]) for the given date interval, idCampaign){
+            return JSON dic (timestamp,numOfOperation,originalValue)
+        }else{
+            return 0
+        }
+    }

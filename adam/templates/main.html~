@@ -1,0 +1,80 @@
+<html>
+    <head>
+    <script language="JavaScript" type="text/javascript">
+
+            
+    function submitForm(param,formID){
+        if (param == 0){
+            suffix = 'A'
+            }
+        if (param == 1){
+            suffix = 'B'
+            }
+        if (param == 2){
+            suffix = 'C'
+            }
+        if (param == 3){
+            suffix = 'D'
+            }
+        document.getElementById("form"+suffix+formID+"").submit();
+
+        
+        }
+
+        </script>
+    {% load staticfiles %}
+    {% load dictionary_extras %}
+    {% if user.is_authenticated %}
+        <p>User: {{user}} <a href="/accounts/logout/">log out</a> </p>
+    {% else %}
+        <p> For commenting please <a href="/accounts/login/">log in</a> </p>
+    {% endif %}
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'adam/style.css' %}" />
+    </head>
+    <body>
+    <!--
+    
+        TOPICS
+    
+    -->
+    {% for topic in topics %}
+        <div class="topicinfo">
+        
+      
+        <a href="/adam/openTopic/domain/{{ topic.id }}">
+        <span class="username">{{ topic.topicName }}</span></a>
+        
+        <form id= "formC{{topic.id }}" action= "/adam/editTopic/" method="post" >{% csrf_token %}
+            <input style="display: none;" name="ids" value="{{ topic.id }}">   
+        </form>
+        <form id= "formB{{topic.id }}" action= "/adam/removeTopic/" method="post" >{% csrf_token %}
+            {% if user.id == topic.idPerson.id %}
+            <a href="javascript:;" onclick="submitForm(2,{{topic.id}})">
+            <span class="er">Edit</span></a>
+            <span class="er">/</span>
+            <a href="javascript:;" onclick="submitForm(1,{{topic.id}})">
+            <span class="er">Remove</span></a>
+            
+            {% endif %}
+            <input style="display: none;" name="ids" value="{{ topic.id }}">   
+        </form>
+        </div>
+        <form id= "formD" action= "/adam/saveChanges/" method="post" >{% csrf_token %}
+            <input style="display: none;" name="ids" value="{{topic.id}}"> 
+            <p>{{ zform.description }}</p>
+        </form>
+    {% endfor %}
+    <form id= "form" action= "/adam/createTopic/" method="post" >{% csrf_token %}
+        <div class="indata"><div class="inname"><span class="inname">Name</span></div> {{ form.topicName }}</div><br>
+        <div class="indata"><div class="inname"><span class="inname">Description</span></div> {{ form.description }} </div>
+        <!--<p>keyWord:</p> {{ formt.word }}-->
+        
+        <br>
+        <input class="s" type=submit value="Post">
+         
+    </form>
+    <div class="s"><a href="javascript:;" onclick="submitForm(3,{{topic.id}})"><span class="">Save</span></a></div>
+    
+    </body>
+</html>

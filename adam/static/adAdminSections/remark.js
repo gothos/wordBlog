@@ -1,0 +1,27 @@
+(function ($) {
+    $.fn.buildRemark = function(flag){
+        if (flag == 1){
+            var name = 'Pozn.:'
+        }else{
+            var name = 'Remark.:'
+        }
+        
+        var i = 0
+        var addon = []
+        addon[i++] = '<div id="remark" style="">'
+            addon[i++] = '<table id="outerDiv" cellpadding="0" cellspacing="" border="0" style=";position:relative;font-size:12px;margin-top:5px">'
+                addon[i++] = '<tr>'
+                    addon[i++] = '<td style="">'
+                        addon[i++] = name
+                    addon[i++] = '</td>'
+                    addon[i++] = '<td style="width:290px;text-align:left;padding-left:10px">'
+                        addon[i++] = '<div id="remarkCore" style="color:'+$.gen.remarkColor+'">'
+                            addon[i++] = $.gen.remark
+                        addon[i++] = '</div>'
+                    addon[i++] = '</td>'
+                addon[i++] = '</tr>'
+            addon[i++] = '</table>'
+        addon[i++] = '</div>'
+        return addon.join('')
+    }
+})(jQuery);

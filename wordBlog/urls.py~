@@ -1,0 +1,27 @@
+from django.conf.urls import patterns, include, url
+from django.views.generic import RedirectView
+#Uncomment the next two lines to enable the admin:
+from django.contrib import admin
+admin.autodiscover()
+
+
+
+urlpatterns = patterns('',
+    # Examples:
+    # url(r'^$', 'wordBlog.views.home', name='home'),
+    # url(r'^wordBlog/', include('wordBlog.foo.urls')),
+
+    # Uncomment the admin/doc line below to enable admin documentation:
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+    #Uncomment the next line to enable the admin:
+    (r'^$', RedirectView.as_view(url='/app/adam/')),
+    url(r'^adam/', include('adam.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^captcha/', include('captcha.urls')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+    #url(r'^ajax-upload/', include('wordBlog.cicu.urls')),
+    #url(r'^post/ajax/(?P<pk>\d+)/$', BlogPostAJAXView.as_view(), name= 'post-ajax-detail'),
+    #change REDIRECT_FIELD_NAME = '/app/adam/main/' in djago.contrib.auth.__init__.py or add LOGIN_REDIRECT_URL='/app/adam/main' into settings.py of your project
+)
+

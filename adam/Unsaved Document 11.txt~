@@ -1,0 +1,149 @@
+else{
+                            if (('#beforePost'+key+'').text() != val){
+                                ('#beforePost'+key+'').text(val)
+                            
+                            }
+                        
+                        } 
+                        
+                        if (('#beforePost'+key+'').length == 0){
+
+    var incomPostsForm = $('#incomPostForm')
+    
+    var interval = setInterval(function(){
+        
+        $.fn.saveDispPostIDs()
+        
+                        
+        $.ajax({
+            type: incomPostsForm.attr('method'),
+            url: incomPostsForm.attr('action'),
+            data: incomPostsForm.serialize(),                
+            success: function (msg) {
+                
+                if (msg.length == 1 && msg != 0){
+                
+                    if ($('#huva').length > 0){
+                        
+                        if ($('#huva').text() != msg){
+                            $('#huva').text(msg)
+                        }
+                    }else{
+                
+                        $('#content').append('<div>There are <div id="huva" style="display:inline" >'+msg+'</div> new postsA</div>')
+                    }
+                        
+                }
+                
+                    
+                if (msg.length > 2){                                                               
+                    var datos = $.parseJSON(msg);
+                    $.each(datos, function(key, val) {
+                        if ($('#beforePost'+key+'').length > 0){
+                        
+                            if ($('#beforePost'+key+'').text() != val){
+                                $('#beforePost'+key+'').text(val)
+                            }
+                        }
+                        else{      
+                    
+                            $('#post'+key+'').before('<div>There are <div id="beforePost'+key+'" style="display:inline">'+val+'</div> new postsB</div>')
+                        }
+                             
+                        
+                       
+                    })
+                }
+                   
+                    
+                
+            },
+            error: function(msg) {
+            },
+        })
+        
+     
+    },5000);
+    
+    $.when($.fn.reloadAllPosts()).done($.fn.giveMeLastID())
+    
+    … bylo tam mnozstvi rozdilnych nazoru od jednotlivych zpovidanych lidi, ze ve vysledku tezko rict, na jedny strane byl Kurt labilni, byl znechucen slavou a ze musi hrat stejny pisne dokola, na druhe se s Courtney neustale hadal a chtel ji opustit, pry si kupovala drahe veci a on se za to stydel, nutil ji ty veci vracet...,coz ona nechtela samozrejme pripustit..., co si myslim, je ze Courtney je skvela manipulatorka, ktere neni cizi pretvartka a co si jde za svym pres mrtvoly, mozna k te sebevrazde chudaka Kurta dohnala...(coz v dokumentu naznacila chuva)
+
+
+
+
+if (msg.length > 2){                                                               
+                        var datos = $.parseJSON(msg);
+                        $.each(datos, function(key, val) {
+                           
+                            if ($('#beforePost'+key+'').length > 0){
+                                if (val == 0){
+                                    $('#dummyPosts'+key+'').remove()
+                                }
+                                
+                                
+                                if ($('#beforePost'+key+'').text() != val){
+                                    $('#beforePost'+key+'').text(val)
+                                    $('#dummyAmountPInput'+key+'').attr('value',val)
+                                }
+                            }
+                            else{
+                                if (val != 0){
+                                    addonD= "<div id = 'dummyPosts"+key+"' style= 'cursor:pointer' >There are <div id='beforePost"+key+"' style='display:inline'>"+val+"</div> new postsB";
+                                    addonD = addonD + "<form id= 'dummyPostsForm"+key+"' action= '/adam/dummyPosts/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+key+"'><input id = 'dummyAmountPInput"+key+"' style='display: none;' name='amount' value='"+val+"'><input style='display: none' name='currentTopic' value='{{ currentTopic }}'></form>";
+                                    addonD = addonD + "</div>";
+                                
+                                        
+                                
+                                      
+                            
+                                    $('#post'+key+'').before(addonD)
+                                    $('#dummyPosts'+key+'').click(function(){
+                                        var dummyPForm = $('#dummyPostsForm'+key+'')
+                                        $.ajax({
+                                            type: dummyPForm.attr('method'),
+                                            url: dummyPForm.attr('action'),
+                                            data: dummyPForm.serialize(),           
+                                            success: function (msg) {
+                                                var data = $.parseJSON(msg)
+                                                $.each(data, function(keyP, valP) {
+                                                    
+                                                    
+                                                    
+                                                    $.fn.buildBaseForPost(valP.pk,valP.fields.personName,valP.fields.timestamp,valP.fields.body);  
+                                                    $.fn.buildPosts(valP.pk,valP.fields.canLike,valP.fields.lenLikedsIDs,valP.fields.dic,valP.fields.canRemove,valP.fields.comments);
+                                                    
+                                                     
+                                                              
+                                                });
+                                                $('#dummyPosts'+key+'').remove()   
+                                            
+                                            
+                                            },
+                                            error: function(msg) {
+                                                alert('error')
+                                            },    
+                                        })
+                                    
+                                    
+             
+                                    })
+                                
+                                
+                                }
+                                 
+                            
+                            }   
+                        })
+                    }
+                    
+                    hiddenData = hiddenData + "<input id = 'displayedIDs"+add+id+"' style='display: none' name='list' value= 0 >";
+                    
+                    
+                    var hiddenInput = jQuery(document.createElement('input'))
+            hiddenInput.css('display','none');
+            hiddenInput.attr('id','incomDispCIDs'+add+id+'')
+            hiddenInput.attr('name', 'listOfIDs');
+            hiddenInput.attr('value',m)
+            
+            $('#incomCForm'+add+id+'').append(hiddenInput);

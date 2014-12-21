@@ -1,0 +1,634 @@
+while (ids.length > 0){
+            $.each(ids,function(index,value){
+                
+                
+                if ($('#firstCDivComment'+value+'').length > 0){
+                    
+                    
+                    $.each($('#firstCDivComment'+value+'').children(),function(i){
+                        if ($(this).is('[id^=comment]')){
+                            var c = $(this).attr('id').match(/[0-9 ]+/);
+                            dicx[c[0]] = []
+                            all.push(c[0])
+                            ids.push(c[0])
+                            alert('pushed')
+                            alert(c[0])
+                            alert(ids)
+                        }
+                    })
+                    
+                    
+                    
+                    
+                
+                
+                }
+            ids.splice(ids.indexOf(value), 1);
+            alert('removed')
+            alert(ids)
+            })
+            
+        }
+   
+   
+   var datos = $.parseJSON(msg);
+                
+                $.each(datos,function(k,v){
+                    try{
+                        var par = $.parseJSON(v);
+                        
+                        if ($('#beforeCPost'+k+'').length > 0){
+                            if (par == 0){
+                        
+                                $('#dummyCPost'+k+'').remove()                
+                            }
+                            if ($('#beforeCPost'+k+'').text() != par){
+                                $('#beforeCPost'+k+'').text(par)
+                            }
+                        
+                        }else{
+                            
+
+                            if (par != 0){
+                            
+                                $.fn.buildDummyNotifC(1,1,k,par,0)
+                        
+                            }
+                        }
+                        
+                        
+                    }
+                    catch(e){
+                       
+                        $.each(v,function(key,value){
+                        
+                            if ($('#beforeCComment'+key+'').length > 0){
+                                
+                                
+                                if (value == 0){
+                                    $('#dummyCComment'+key+'').remove()
+                                
+                                }
+                            
+                                if ($('#beforeCComment'+key+'').text() != value){
+                                    $('#beforeCComment'+key+'').text(value)
+                                    $('#dummyAmountCInputComment'+key+'').attr('value',value)
+                                }
+                            }else{
+                                
+                                if (value != 0){
+                                    
+                                    $.fn.buildDummyNotifC(2,2,k,value,key)                  
+                        
+                                }
+                         
+                    
+                            } 
+                            
+                       
+                        
+                    
+                        
+                    
+                    
+                        })
+                    }
+                })  
+                
+                var a = $.parseJSON(v);
+                        
+                        var b = $('#firstCDiv'+add+id+'').children().length
+
+
+
+
+
+
+
+
+
+var delC2Form = $('#delC2Form')
+        $.ajax({
+            type: delC2Form.attr('method'),
+            url: delC2Form.attr('action'),
+            data: delC2Form.serialize(),
+                       
+            success: function (msg) {
+                if (msg.length > 2){
+                    var datos = $.parseJSON(msg);
+                    $.each(datos, function(i,j) {
+                    
+
+                                        
+                        
+                        $('#comment'+j+'').before('<div id="DCNotif'+j+'" style = "padding-left:32px"><br><div>Comment was deleted</div><input type="button" class="button gray" style="display: block;" id="DCNotifButton'+j+'" value="OK" ></div>')
+                        $('#DCNotifButton'+j+'').css('cursor','pointer');
+                        $('#DCNotifButton'+j+'').click(function(){
+                            $('#DCNotif'+j+'').remove()
+                        }) 
+                        
+                        
+                        
+                        $('#comment'+j+'').remove()
+                    
+                    
+                    })
+                }    
+               
+                             
+            },
+            error: function(msg) {
+            alert('error')
+            },
+        });
+        
+    
+    
+    if ($('#beforeCPost'+k+'').length > 0){
+                            if (par == 0){
+                        
+                                $('#dummyCPost'+k+'').remove()                
+                            }
+                            if ($('#beforeCPost'+k+'').text() != par){
+                                $('#beforeCPost'+k+'').text(par)
+                            }
+                        
+                        }else{
+                            
+
+                            if (par != 0){
+                            
+                                $.fn.buildDummyNotifC(1,1,k,par,0)
+                        
+                            }
+                        }
+
+
+if (numOfComments != 0 ) {
+                    
+                    
+                        var a = numOfComments
+                        var b = $('#firstCDiv'+add+id+'').children().length
+                        
+                        
+                        if ((numOfComments >= 3 && flag == 1) || (numOfComments > 0 && flag == 2 ) ){
+                       
+                            $('#SCButton'+add+id+'').css('display','inline');
+                        }else{
+                            $('#SCButton'+add+id+'').css('display','none');
+                        }
+
+                        if ((flag == 1 && a > 2 && b < a)|| (flag == 2 && a > 0 && b < a)){
+                            
+                            $('#SCButton'+add+id+'').attr('value','Comments ('+numOfComments+')');
+                            
+                        }else{
+                            $('#SCButton'+add+id+'').attr('value','Comments');
+                            
+                            
+                            
+                        }
+                    
+      
+                        }
+var b = $.fn.countNumOfComments(k)
+
+
+
+
+var numOfComments = v
+                        
+                        
+                        if (numOfComments > 0 ){
+                       
+                            $('#SCButtonComment'+k+'').css('display','inline');
+                            $('#SCButtonComment'+k+'').attr('value','Comments ('+numOfComments+')');
+                        }else{
+                            $('#SCButtonComment'+k+'').css('display','none');
+                        }
+
+
+L = []
+        $.each(ids,function(index,value){
+            
+            if ($('#firstCDivComment'+value+'').length > 0){
+                
+                $.each($('#firstCDivComment'+value+'').children(),function(i){
+                    if ($(this).is('[id^=comment]')){
+                        var c = $(this).attr('id').match(/[0-9 ]+/);
+                        
+                        L.push(c[0])
+                        
+                   }
+                })
+            }
+                    
+        })
+        
+        var K=[].concat(ids);
+        
+alert('c')
+                    alert(value)
+                    alert(c)
+                    
+                    dic[value].push(c[0])
+                }   ids.push(c[0])   
+        
+                
+        
+    
+def check_for_del_comments2(request):
+    if request.method == "POST" and request.is_ajax():
+        idUser = request.user.id
+        listOfIDs = request.POST.get('listOfIDs')
+        listOfIDs = map(int, listOfIDs.split(","))
+        #listOfIDs = eval(listOfIDs)
+        #idList = {}
+        #for i in listOfIDs.keys():
+        #    idList[int(i)] = []
+        #    for j in listOfIDs[i]:
+        #        idList[int(i)].append(int(j))
+        #print('IDLOST',idList)
+        M = []
+        
+        #    L = []
+        #    comments = BlogComment.objects.filter(idPost= int(i),valid=1)
+        #    for com in comments:
+        #        L.append(com.id)
+        #    for j in listOfIDs[i]:
+        #        if int(j) not in L:
+        #            M.append(int(j))         
+        return HttpResponse(json.dumps(M,cls=DjangoJSONEncoder))
+        
+        
+dicx[value].push($('#SCButtonComment'+value+'').attr('value').match(/[0-9 ]+/)[0])
+
+var d = ($('#SCButtonComment'+c[0]+'').attr('value').match(/\(([0-9 ]+)\)/));
+                    if (d != null){
+                        alert(d[1])
+                    }
+                    
+var d = ($('#SCButtonComment'+c[0]+'').attr('value').match(/\(([0-9 ]+)\)/)[1]);
+
+
+
+for i in listOfIDs.keys():
+            if type(listOfIDs[i]) is str:
+                idList[int(i)] = int(listOfIDs[i])
+            else:
+                idList[int(i)] = []
+                for j in listOfIDs[i]:
+                    idList[int(i)].append(int(j))
+                    
+                    
+for i in listOfIDs:
+
+            comment = BlogComment.objects.filter(pk= i,valid=1)
+            if len(comment) == 0:
+                M.append(i)
+    
+if(second < 10){ 
+            time_difference = second + 'seconds ago'
+        }
+        if(minute < 10){
+            time_difference = minute + 'minutes ago'
+        }
+        if(hour < 10){
+            time_difference = hour + 'hour ago'
+        }
+        if(day < 10){
+            time_difference = day + 'day ago'
+        }
+
+
+
+jQuery.timeago.settings.strings = {
+  prefixAgo: "pred",
+  prefixFromNow: null,
+  suffixAgo: null,
+  suffixFromNow: null,
+  seconds: "menej než minútou",
+  minute: "minútou",
+  minutes: "%d minútami",
+  hour: "hodinou",
+  hours: "%d hodinami",
+  day: "1 dňom",
+  days: "%d dňami",
+  month: "1 mesiacom",
+  months: "%d mesiacmi",
+  year: "1 rokom",
+  years: "%d rokmi"
+}
+
+var now = new Date()
+        
+        
+        var date = new Date(timestamp);
+        
+
+        var diff = new Date (now.getTime() - date.getTime())
+        
+        var time_difference = ''
+        
+        var second = diff.getSeconds();
+        var minute = diff.getMinutes();
+        var hour = diff.getHours();
+        var day = diff.getDate();
+        var month = diff.getMonth();
+        var year = diff.getFullYear();
+
+jqxhr.done(function(){
+            $.fn.giveMeLastID(2);
+            $.fn.displayMorePostsBut();
+        })
+        
+
+        else:
+            return HttpResponse(len(posts))
+
+            else:
+                if len(comments) != 0:
+                    dic[i] = len(comments)
+
+
+
+
+
+
+
+
+
+
+
+                        
+                        
+                        
+                        
+                        
+                    }catch(e){
+                    
+                        var datos = $.parseJSON(msg);
+                        $.each(datos, function(key, val) {
+                           
+                            if ($('#beforePost'+key+'').length > 0){
+                                
+             
+                                $('#beforePost'+key+'').text(val)
+                                $('#dummyAmountPInput'+key+'').attr('value',val)
+                                
+         
+                            }
+                            else{
+                                
+                                $.fn.buildDummyNotif(2,key,val)                  
+                  
+                            }   
+                        })
+                            
+                    
+                    }
+                    if ($('#morePostsButton').length != 1){
+
+beforeSend: function(xhr,settings){
+                if ($.fn.countPosts() == 0 && $('#morePostsButton').length == 1 ){
+                    xhr.abort();
+                }
+            },
+
+beforeSend: function(xhr,opt){
+                if ($.fn.countPosts() == 0 && $('#morePostsButton').length == 1 ){
+                    alert('aborted')
+                    xhr.abort();
+                }
+            }, 
+
+        $.fn.check = function(){
+            if(delPJqxhr && delPJQxhr.readyState != 4 && ($.fn.countPosts() == 0 && $('#morePostsButton').length == 1 ) ){
+                alert('aborted')
+                delPJqxhr.abort();
+            }
+        }
+
+
+
+
+
+
+
+$.ajaxq("test",{
+            type: delPostsForm.attr('method'),
+            url: delPostsForm.attr('action'),
+            data: delPostsForm.serialize(),
+            cache: false,
+                       
+            success: function (msg) {
+                
+                if (msg != 'OK'){
+                
+                    if (msg.length > 2){
+                        var datos = $.parseJSON(msg);
+                        $.each(datos, function(i,j) {
+                        
+
+                                            
+                            
+                            $('#post'+j+'').before('<div id="DPNotif'+j+'"><br><div>Post was deleted</div><input type="button" class="button gray" style="display: block;" id="DPNotifButton'+j+'" value="OK" ></div>')
+                            $('#DPNotifButton'+j+'').css('cursor','pointer');
+                            $('#DPNotifButton'+j+'').click(function(){
+                                $('#DPNotif'+j+'').remove()
+                            }) 
+                            
+                            
+                            
+                            $('#post'+j+'').remove()
+                        
+                        
+                        })
+                    }
+                }    
+               
+                             
+            },
+            error: function(msg) {
+            alert('error')
+            },
+        
+        });
+
+
+
+
+def check_for_incom_posts(request):
+    if request.method == "POST" and request.is_ajax():
+        idUser = request.user.id
+        currentTopic = request.POST.get('currentTopic')
+        listOfIDs = request.POST.get('listOfIDs')
+        print('--------------------posts',listOfIDs)
+        print('PPPPPPPPPOOOOR',listOfIDs)
+        aha = []
+        posts = BlogPost.objects.filter(idTopic=currentTopic,valid=1)
+        if listOfIDs != '0':
+            
+            displayedIDs = listOfIDs.split(',')
+            print('DISPPP', displayedIDs)
+            
+            for i in displayedIDs:
+                aha.append(int(i))
+            print('disp',aha)
+        #currentPostId = request.POST.get('currentPostId')
+        #lastPostId = request.POST.get('lastPostId')
+        
+            
+            dicken = {}
+            L = []
+            for i in aha:
+                #dicken[i] = 0
+                for post in posts:
+                    if post.id > i and post.id not in aha and post.id not in L:
+                        if i not in dicken.keys():
+                            dicken[i] = 0    
+                        dicken[i] = dicken[i] + 1
+                        L.append(post.id)
+                #if len(dicken[i]) == 0:
+                #    del dicken[i]
+            
+            print('DICCCCKEN',dicken)
+        
+            if len(dicken) == 0:
+                return HttpResponse('OK')                 
+                        
+            else:
+                return HttpResponse(json.dumps(dicken,cls=DjangoJSONEncoder))
+        if len(posts) == 0:
+            return HttpResponse('OK')
+        else:
+            return HttpResponse(len(posts))
+
+
+
+ #        if int(listOfIDs[i])
+                #idList[int(i)] = []
+                #for j in listOfIDs[i]:
+                #    idList[int(i)].append(int(j))
+        #currentPostId = request.POST.get('currentPostId')
+        #lastPostId = request.POST.get('lastPostId')
+        
+            
+            
+            #for i in aha:
+                #dicken[i] = 0
+            #    for post in posts:
+            #        if post.id > i and post.id not in aha and post.id not in L:
+            #            if i not in dicken.keys():
+            #                dicken[i] = 0    
+            #            dicken[i] = dicken[i] + 1
+            #            L.append(post.id)
+                #if len(dicken[i]) == 0:
+                #    del dicken[i]
+
+
+if ($('#beforeComment'+c+'').length > 0){
+                    dic[m] = $('#beforePost'+m+'').text()
+                    }else{
+                        dic[m] = 0
+                    }
+
+var formRemove = $('#RForm'+add+id+'');
+$.ajax({
+                type: formRemove.attr('method'),
+                url: formRemove.attr('action'),
+                data: formRemove.serialize(),
+                cache: false,
+                         
+                success: function (numOfComments) {
+                
+                
+                    if (flag == 1){
+  
+                        var part = $('#post'+id+'')
+                        var disp = ''
+                        
+                    }else{
+                        var part = $('#comment'+id+'')
+                        var disp = 'padding-left:32px'
+                    
+                    }
+                
+                
+                    
+                    part.before('<div id="RNotif'+add+id+'" style='+disp+' ><br><div>'+add+' was succesfully deleted</div><input type="button" class="button gray" style="display: block;padding-left:32px" id="RNotifButton'+add+id+'" value="OK" ></div>')
+                    $('#RNotifButton'+add+id+'').css('cursor','pointer');
+                    $('#RNotifButton'+add+id+'').click(function(){
+                        $('#RNotif'+add+id+'').remove()
+                    })    
+                    part.remove();
+                    
+                    
+                    
+                    if(flag == 2){
+                        
+                                                 
+                        if ((signal == 1 && numOfComments < 3)||(signal == 2 && numOfComments == 0)){
+                            
+                            $('#SCButtonPost'+idParent+'').css('display','none');
+                        }
+                        else{
+                            $('#SCButtonPost'+idParent+'').attr('value','Comments ('+numOfComments+')');
+                        }
+                        
+      
+                    }
+                },
+                error: function(message) {
+                    alert('error');
+                },
+            });
+
+<script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery.confirm.min.js">
+        </script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}bootstrap.min.js">
+        </script>
+        
+$('#RButton'+add+id+'').confirm({
+                text: "Are you sure you want to delete that comment?",
+                title: "Confirmation required",
+                confirm: function(button) {
+                    // do something
+                },
+                cancel: function(button) {
+                    // do something
+                },
+                confirmButton: "Yes I am",
+                cancelButton: "No",
+                post: true
+            });
+
+
+
+$('#RButton'+add+id+'').click(function() {
+	        var x;
+			var r=confirm("Ok or Cancel ?");
+			if (r==true)
+			{
+				x="You pressed OK!";
+                                        console.log(x);
+			}
+			else
+			{
+				x="You pressed Cancel!";
+                                           console.log(x);
+			}
+        });
+
+
+if (interval != 'undefined'){
+            
+            clearInterval(interval);
+        }
+        alert($.ajaxq.isRunning('test'))
+        if ($.ajaxq.isRunning('test')== true){
+            $.ajaxq.clear('test');  
+        }
+
+if i in dic.keys() and dic[i] == int(listOfIDs[str(i)]):
+                    del dick[i]

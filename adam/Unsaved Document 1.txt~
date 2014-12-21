@@ -1,0 +1,26 @@
+ar a = document.getElementById("div"+x+"")
+	            if (a.innerHTML != ''){
+	            a.innerHTML = ''}
+	            else{
+	            <input id = 'inputC{{post.id}}' style="display: none;" name="stayVisible" value="{{post.stayVisible}}">
+	            
+	            onclick="yes({{post.id}})"
+	            
+	            function yes(x) {
+                
+                var input = document.getElementById("inputC"+x+"")             
+                
+	            input.setAttribute('value','1')}
+	            alert('a')
+	            
+	            onclick="zdarecTy({{comment.id}})"
+	            
+	            
+	            
+<input type="button" style= "margin-left : 80px;" id="button{{post.id}}" value='Reply' >
+<div id = "divComCom{{comment.id }}" style="display: block;"><form action= "/adam/comment/" method="post" >{% csrf_token %}
+<input style="display: none;" name="idcko" value="{{ post.id }}">
+<input style="display: none;" name="parentCommentID" value="{{ comment.id }}">
+<br>
+<span class="indent2">
+<table> {{ commentsForm.comment }}</table><input class="indent2" type=submit></span></form></div>

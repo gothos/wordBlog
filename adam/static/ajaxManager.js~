@@ -1,0 +1,78 @@
+var ajaxManager = (function() {
+ 
+      // this will be the queue for requests
+     var requests = [];
+ 
+	 // returns an object with methods
+     return {
+		// this just appends to the request list
+        addReq:  function(opt) {
+            requests.push(opt);
+        },
+		// this just removes a request
+        removeReq:  function(opt) {
+            if( $.inArray(opt, requests) > -1 )
+                requests.splice($.inArray(opt, requests), 1);
+        },
+		// this sends requests
+        run: function() {
+			// why?
+            var self = this,
+                orgSuc; // what is this??
+ 
+            if( requests.length ) {
+				// if there are any requests
+				// get the completion success attribute of the request
+                oriSuc = requests[0].complete;
+ 
+				// edit the the completion to shift the queue and run
+                requests[0].complete = function() {
+					 // if there was a callback function, call it
+                     if( typeof oriSuc === 'function' ) oriSuc();
+					 // shift the requests
+                     requests.shift();
+					 // what? This is why the var self = this
+					 // otherwise this would refer to this anonymous function
+                     self.run.apply(self, []);
+                };   
+ 
+				// call the request in the front of the line
+				// using jQuery
+                $.ajax(requests[0]);
+ 
+            } else {
+				// if no requests, wait a while and run again
+				// store the timeout id in this.tid
+				self.tid = setTimeout(
+					function() {
+						self.run.apply(self, []);
+					  }, 1000);
+            }
+        },
+        stop:  function() {
+			// clear all requests and remove the timeout
+            requests = [];
+            clearTimeout(this.tid);
+        }
+     };
+}()); // immediate instantiation
+ 
+ 
+/* in use */
+$(function() {
+	// set it to run initially
+	// it will use the timeout to keep running
+    ajaxManager.run(); 
+ 
+    $("a.button").click(function(){
+	   // add a request
+       ajaxManager.addReq({
+           type: 'POST',
+           url: 'whatever.html',
+           params: params,
+           success: function(data){
+              // do stuff
+           }
+       });
+    });
+});

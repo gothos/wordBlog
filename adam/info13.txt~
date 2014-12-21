@@ -1,0 +1,329 @@
+var m = []
+        $.each($('#firstCDiv'+add+id+'').children(),function(i){
+            if ($(this).is('[id^=comment]')){
+                m.push( $(this).attr('id').match(/[0-9 ]+/))
+            }
+        })
+        
+        var m = []
+        $.each($('#content').children(),function(i){
+        
+            if ($(this).is('[id^=post]')){
+            
+                m.push( $(this).attr('id').match(/[0-9 ]+/))
+            
+            }
+            
+        })
+        
+        
+
+        if (m.length != 0){
+            
+            $('#incomDispCIDs'+add+id+'').attr('value',m);
+        
+            
+            
+        }
+        alert (Object.keys(v).length)
+        
+        
+        if (msg.length == 1){
+                
+                    if ($('#beforePost0').length > 0){
+                        
+                        if (msg == 0){
+                            
+                            $('#dummyPosts0').remove()                
+                        }
+                        
+                        
+                        if ($('#beforePost0').text() != msg){
+                            $('#beforePost0').text(msg)
+                        }
+                    }else{
+                        if (msg != 0){
+                           
+                            $.fn.buildDummyNotif(1,0,msg)
+                        }
+                    }
+                        
+                }
+
+
+        if (msg.length > 2){                                                               
+                    var datos = $.parseJSON(msg);
+                    $.each(datos, function(key, val) {
+                       
+                        if ($('#beforePost'+key+'').length > 0){
+                            if (val == 0){
+                                $('#dummyPosts'+key+'').remove()
+                            }
+                            
+                            
+                            if ($('#beforePost'+key+'').text() != val){
+                                $('#beforePost'+key+'').text(val)
+                                $('#dummyAmountPInput'+key+'').attr('value',val)
+                            }
+                            
+                            
+                            
+                        }
+                        else{
+                            if (val != 0){
+                                $.fn.buildDummyNotif(2,key,val)                  
+                            
+                            }
+                             
+                        
+                        }   
+                    })
+                }
+
+
+
+    $.fn.setIntervals = function(flag,id){
+      
+    
+        
+    
+        if (flag == 1){
+            var add = 'Post';
+            
+            }
+        else{
+            var add = 'Comment';
+            
+        }
+        var incomCForm = $("#incomCForm"+add+id+"") 
+        setInterval(function(){
+            $.fn.saveDisplayedIDs(flag,id);
+            
+
+            
+            
+            $.ajax({
+                type: incomCForm.attr('method'),
+                url: incomCForm.attr('action'),
+                
+                data: incomCForm.serialize(),                
+                success: function (msg) {
+                    
+                    if (msg.length == 1){
+                
+                        if ($('#incomingC'+add+id+'').length > 0){
+                            
+                            if (msg == 0){
+                                
+                                $('newCNotif'+add+id+'').remove()                
+                            }
+                            
+                            
+                            if ($('#incomingC'+add+id+'').text() != msg){
+                                $('#incomingC'+add+id+'').text(msg)
+                            }
+                        }else{
+                            if (msg != 0){
+                    
+                    
+                    
+                                
+                                
+                                
+                                
+                                $('#firstCDiv'+add+id+'').append('<div id = "newCNotif'+add+id+'">There are <div id="incomingC'+add+id+'" style="display:inline" >'+msg+'</div> new postsA</div>')
+                            }
+                        }
+                        
+                    }
+                    if (msg.length > 2){                                                               
+                        var datos = $.parseJSON(msg);
+                        $.each(datos, function(key, val) {
+                           
+                            if ($('#beforeC'+add+key+'').length > 0){
+                                if (val == 0){
+                                    $('#dummyC'+add+key+'').remove()
+                                }
+                                
+                                
+                                if ($('#beforeC'+add+key+'').text() != val){
+                                    $('#beforeC'+add+key+'').text(val)
+                                    $('#dummyAmountCInput'+add+key+'').attr('value',val)
+                                }
+                            }
+                            else{
+                                if (val != 0){
+                                    addonD= "<div id = 'dummyC"+add+key+"' style= 'cursor:pointer' >There are <div id='beforeC"+add+key+"' style='display:inline'>"+val+"</div> new postsB";
+                                    addonD = addonD + "<form id= 'dummyCForm"+add+key+"' action= '/adam/dummyPosts/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+key+"'><input id = 'dummyAmountCInput"+add+key+"' style='display: none;' name='amount' value='"+val+"'><input style='display: none' name='currentTopic' value='{{ currentTopic }}'></form>";
+                                    addonD = addonD + "</div>";
+                                
+                                        
+                                
+                                      
+                            
+                                    $('#comment'+key+'').before(addonD)
+                                    $('#dummyC'+key+'').click(function(){
+                                        var dummyCForm = $('#dummyCForm'+add+key+'')
+                                        $.ajax({
+                                            type: dummyCForm.attr('method'),
+                                            url: dummyCForm.attr('action'),
+                                            data: dummyCForm.serialize(),           
+                                            success: function (msg) {
+                                                
+                                                var data = $.parseJSON(msg)
+                                                $.each(data, function(keyP, valP) {
+                                                    
+ 
+                                             
+                                                     
+                                                              
+                                                });
+                                                $('#dummyCForm'+add+key+'').remove()   
+                                            
+                                            
+                                            },
+                                            error: function(msg) {
+                                                alert('error')
+                                            },    
+                                        })
+                                    
+                                    
+             
+                                    })
+                                
+                                
+                                }
+                                 
+                            
+                            }   
+                        })
+                    }  
+                    
+                
+                                     
+                        
+                },
+                error: function(msg) {
+                    
+                    alert('error')
+                    
+                
+                },
+            })
+            
+            
+            
+            
+        
+        
+        
+        
+        
+        
+        },5000)
+    }
+    
+    
+    
+    sign = 0
+            $.each($('#content').children(),function(i){
+            
+                
+            
+            
+            
+            
+                if (sign == 0 && ( $(this).is('[id^=post]') || $(this).is('[id^=dummyPosts]') || $(this).is('[id^=RNotif]') || $(this).is('[id^=DPNotif]') ) && $(this).attr('id').match(/[0-9 ]+/) < pk){
+                    
+                    $(this).before(base)
+                    sign = 1
+                    return false;
+                    
+                }
+            })
+            if (sign != 1){
+                    
+                $('#content').append(base);
+            
+            }
+            
+            
+            
+            if (flag == 2) {                            
+            $('#post'+k+'').before(addonD)
+        }else{
+            $('#content').append(addonD)
+        }
+        
+                alert ($('#content').children().length)
+
+
+
+def check_for_del_comments(request):
+    if request.method == "POST" and request.is_ajax():
+        idUser = request.user.id
+        listOfIDs = request.POST.get('listOfIDs')
+        listOfIDs = eval(listOfIDs)
+        idList = {}
+        for i in listOfIDs.keys():
+            idList[int(i)] = []
+            for j in listOfIDs[i]:
+                idList[int(i)].append(int(j))
+        print('IDLOST',idList)
+        M = []
+        for i in idList.keys():
+            L = []
+            comments = BlogComment.objects.filter(idPost=i,valid=1)
+            for com in comments:
+                L.append(com.id)
+            for j in idList[i]:
+                if j not in L:
+                    M.append(j)         
+        return HttpResponse(json.dumps(M,cls=DjangoJSONEncoder))
+
+
+def check_for_incom_comments(request):
+
+
+    #HttpResponse(status=200)
+    if request.method == "POST" and request.is_ajax():
+        listOfIDs = request.POST.get('listOfIDs')
+        idUser = request.user.id
+        listOfIDs = eval(listOfIDs)
+        idList = {}
+        for i in listOfIDs.keys():
+            idList[int(i)] = []
+            for j in listOfIDs[i]:
+                idList[int(i)].append(int(j))
+        #import ast        
+        #listOfIDs = ast.literal_eval(listOfIDs)
+        print('IDLIST',idList)
+        print('LIST',listOfIDs)
+        print('LISTTYPE',type(listOfIDs))  
+        dic = {}
+        for i in idList.keys():
+            
+            comments= BlogComment.objects.filter(idPost= i,idParentComment = None,valid=1)
+            if len(idList[i]) > 0:
+                #dicken = {}
+                dic[i] = {}
+                L = []
+                for j in idList[i]:
+                    dic[i][j] = 0
+                    for comment in comments:
+                        if comment.id > j and comment.id not in idList[i] and comment.id not in L:
+                            #if i not in dicken.keys():
+                            #    dicken[i] = 0    
+                            dic[i][j] = dic[i][j] + 1
+                            L.append(comment.id)
+            else:
+                dic[i] = len(comments)
+                
+                
+        print('sadaa',dic)
+        return HttpResponse(json.dumps(dic,cls=DjangoJSONEncoder))
+        
+        
+        if(jQuery.inArray(c[0],ids) == -1){
+                            ids.push(c[0])
+                        }

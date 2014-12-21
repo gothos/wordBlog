@@ -1,0 +1,59 @@
+{% load jsonFilter %}
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery-1.10.2.js'></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js"></script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'>
+        
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/jquery-ui-1.9.2.css'>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.9.2.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.timeago.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}common.js"></script>  
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/buildAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campaignHeaders.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/editCampaignAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/userDetailAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/fillCampaignDetail.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/preview.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/bills.js"></script>
+        
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/remark.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/changes.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/navigation.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/datepick.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/description.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/keyword.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/succRate.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/over.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/stat.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/CPCs.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/commonAdAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campContentForm.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campaignsAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/billingAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/dateFilter.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/selectSuccRate.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/selectKeyword.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campContentForm.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/fillCampaignContentAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/detailsAdmin.js"></script>
+          
+        <script>
+
+        $( document ).ready(function() {
+            $.gen = new Object();
+            $.gen.campaignIdCampaign = 0
+
+            $.fn.centerDiv()
+            $.fn.buildAdmin('{{ users | jsonify }}')
+            
+        })
+        </script>
+    </head>
+    <body>
+        <div id="authent" class="" style="min-height:500px;border:1px solid black;width:820px;background-color:white;position:absolute;left:50%;top:10px;z-index:100">
+            <div id='maina' style='width:820px;min-height:500px'>
+            </div>
+        </div>
+    </body>
+</html>

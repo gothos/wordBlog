@@ -1,0 +1,269 @@
+$.general = new Object();
+$.general.prefixReg = '/app/accounts'
+$.general.prefix = '/app/adam'
+
+
+Array.prototype.remove = function(x) { 
+    var i;
+    for(i in this){
+        if(this[i].toString() == x.toString()){
+            this.splice(i,1)
+        }
+    }
+}
+
+$.fn.getDayStr = function(date){
+
+    var month = parseInt(date.slice(5,7)) - 1
+    if (month == -1){
+        month = 0
+    }
+    var a = new Date(parseInt(date.slice(0,4)),month,parseInt(date.slice(8,10)))
+
+
+    var L = ['Ne','Po','Út','St','Št','Pia','So']
+    for (var i = 0,len=L.length;i<len;i++){
+        if (i == a.getDay()){
+            return L[i] 
+        }
+    }
+    
+    
+}
+
+
+
+$.fn.centerDiv = function(){ 
+    var a = parseInt($('#authent').width())/2
+    $('#authent').css('margin-left','-'+a+'px')
+}
+
+$.fn.addBackArrowHandler = function(){
+    $('#backArrow').unbind('click')
+    $('#backArrow').click(function(){
+        window.location.replace("http://localhost/py/hello.py");
+    })
+}
+
+$.fn.giveMeStatus = function(value,flag){
+    if (flag == 1){
+        var names = ['Neaktívna','Aktívna','Pozastavená']
+    }else{
+        var names = ['Inactive','Active','Paused']
+    }
+    if (value == 1 ){
+        var status = names[0]
+        
+    }
+    if (value == 2 ){
+        var status = names[1]
+    }
+    if (value == 3 ){
+        var status = names[2]
+        
+    }
+    return status
+}
+
+$.fn.buildFillCampaignForm = function(idCampaign,flag){
+    var k = 0
+    var str = []
+    str[k++] = '<form action="'+$.general.prefix+'/fillCampaignContent/" method = "post" id="fillCampaignContentForm'+idCampaign+'">'
+        str[k++] = '<input style="display:none" name="csrfmiddlewaretoken" value="" id = "fillCampaignContentInput'+idCampaign+'">'
+        str[k++] = '<input style="display:none" name="idCampaign" value="'+idCampaign+'" id = "" >'
+        str[k++] = '<input style="display:none" name="flag" value="'+flag+'" id = "" >'
+    str[k++] = '</form>'
+    return str.join('')
+}
+
+function capitaliseFirstLetter(string){
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+$.fn.buildFilterTable = function(num){
+
+    var names = ['camp','over','CPCs','stat','changes','mainChanges']
+    var suffix = capitaliseFirstLetter(names[num])
+    var i = 0
+    var addon = []
+    addon[i++] = '<table id="filterTable'+suffix+'" cellpadding="0" cellspacing="0" border="0" style=";position:relative;margin-top:25px">'
+        addon[i++] = '<tr>'
+            addon[i++] = '<td>'
+                addon[i++] = '<div>'
+                    addon[i++] = 'od:'
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+            addon[i++] = '<td style="padding-left:15px">'
+                addon[i++] = '<input id="'+names[num]+'From" type="text" class="blog" style="width:110px">'
+            addon[i++] = '</td>'
+            addon[i++] = '<td style="padding-left:25px">'
+                addon[i++] = '<div>'
+                    addon[i++] = 'do:'
+                addon[i++] = '</div>'
+            addon[i++] = '</td>'
+            addon[i++] = '<td style="padding-left:15px">'
+                addon[i++] = '<input id="'+names[num]+'To" type="text" class="blog" style="display:block;width:110px">'
+            addon[i++] = '</td>'
+        addon[i++] = '</tr>'
+    addon[i++] = '</table>'
+    
+    
+    return addon.join('')
+}
+
+
+$.fn.getActivity = function(num,flag){
+    if (flag == 1){ 
+        var strings = ['adding word','removing word','change of budget','change of title','change of description 1','change of description 2','change of displayed url','change of destination url','starting campaign','stopping campaign']
+    }else{
+        var strings = ['creating campaign','deleting campaign']
+    }
+    
+    for (var i = 1,len=strings.length + 1;i<len;i++){
+        if (num == i){
+            return strings[i-1]
+        }
+    }
+}
+
+$.fn.insertPeriods = function(flag,extent){
+    console.log('inserting',flag)
+    if (flag == 1){
+        var from = $('#statFrom')
+        var to = $('#statTo')
+    }
+    if (flag == 2){
+        var from = $('#changesFrom')
+        var to = $('#changesTo')
+    }
+    if (flag == 3){
+        var from = $('#CPCsFrom')
+        var to = $('#CPCsTo')
+    }
+    if (flag == 4){
+        var from = $('#mainChangesFrom')
+        var to = $('#mainChangesTo')
+    }
+    month = extent.monthFrom - 1
+    from.datepicker("setDate",new Date(extent.yearFrom,month,extent.dayFrom))
+    month = extent.monthTo - 1
+    to.datepicker("setDate",new Date(extent.yearTo,month,extent.dayTo))
+    
+}
+
+$.fn.deleteMenus = function(){
+    var menus = [$('#menuOver'),$('#menuStat'),$('#menuAddKeyword'),$('#menuAdDescription'),$('#menuBudget'),$('#menuCPC')]
+    for(var i = 0,len=menus.length;i<len;i++){
+        menus[i].children().remove()
+        
+    }
+}
+
+$.fn.buildChosenWordsTableCore = function(flag){
+    if (flag == 1){
+        var name = 'Kľúčové slovo'
+    }else{
+        var name = 'Keyword'
+    }
+    var i = 0
+    var addon = []
+    addon[i++] = '<th class="keyw addWord" style="width:350px;text-align:left;padding-bottom:10px;">'
+        addon[i++] = name
+    addon[i++] = '</th>'
+    addon[i++] = '<th class="keyw addWord" style="width:90px;text-align:left;padding-bottom:10px;text-align:center">'
+        addon[i++] = '<span>CPC </span>'
+        addon[i++] = '<span>(&#128)</span>'
+        if (flag == 1){
+            addon[i++] = '<span class="topBarInfo" style="height:10px;margin-left:8px" value="2">i</span>'
+        }
+    addon[i++] = '</th>'
+    addon[i++] = '<th class="keyw addWord" style="width:160px;text-align:left;padding-bottom:10px;text-align:center">'
+        addon[i++] = '<span>CPM </span>'
+        addon[i++] = '<span>(&#128)</span>'
+        if (flag == 1){
+            addon[i++] = '<span class="topBarInfo" style="height:10px;margin-left:8px" value="3">i</span>'
+        }
+    addon[i++] = '</th>'
+    return addon.join('')
+}
+
+$.fn.giveMeColor = function(variable){
+    if (variable == 2){
+        
+        var color = '#A9F5A9'
+        var img = 'pause'
+        
+    }
+    if (variable == 1){
+        
+        var img = 'play'
+        var color = '#D8D8D8'
+    }
+    if (variable == 3){
+        
+        var img = 'play'
+        var color = '#F7BE81'
+    }
+    return [img,color]
+
+
+}
+
+$.fn.addBackToMainAdminPageHandler = function(){
+    $('#backArrow').unbind('click')
+    $('#backArrow').click(function(){
+        $.fn.returnToMainPageAdmin()
+    })
+}
+
+$.fn.addHoveringEffect = function(selector,num){
+    selector.hover(function(){
+        $(this).css('opacity','1.0')},function(){
+        $(this).css('opacity',num)
+        }
+    )
+}
+
+$.fn.addFadeOutSpanHandler = function(selector,span,isCount,numSpan,num){
+    selector.addClass('blog')
+    
+    
+    
+    selector.on('paste input keydown change keyup ',function(){
+        
+                    
+        $.fn.hideSpan(selector,span)
+        if (isCount > 0){
+            $.fn.checkCharacters(isCount,selector,numSpan)
+        }
+
+        if (num > 0){
+            $.fn.showPreview(num,selector)
+
+        }
+    })
+    span.click(function(){
+        selector.focus()
+    })
+    selector.focus(function(){
+        $.fn.changeOpacity(0,span)
+    })
+    selector.focusout(function(){
+        $.fn.changeOpacity(1,span)
+    })
+
+
+}
+
+
+$.fn.addFocusFieldsHandler = function(selector,num,errDiv){
+
+    selector.focus(function(){
+        errDiv.text('')
+    })
+    selector.focusout(function(){
+        $.fn.checkField(selector,errDiv,num) 
+        
+    
+    })
+}

@@ -1,0 +1,93 @@
+
+<html>
+    <head>
+        
+        <script language="JavaScript" type="text/javascript">
+            function auto(){
+                alert(document.URL)
+                if (document.URL == 'http://localhost/app/accounts/register/' ){
+                    document.getElementById('reg').style.display='block';
+                    document.getElementById('login').style.display='none';
+                    }
+                if (document.URL == 'http://localhost/app/accounts/loginsss/' ){
+                    
+                    document.getElementById('login').style.display='block';
+                    document.getElementById('reg').style.display='none';
+                    }
+                }
+        </script>
+        {% load staticfiles %}
+        {% load dictionary_extras %}
+        <link rel="stylesheet" type="text/css" href="{% static 'adam/style.css' %}" />
+    </head>
+    <body OnLoad="auto()" >
+        <div style="" class = "masterchoice0">
+            <div class="masterchoice">
+                <div class="choice">
+                    <a class="choice" href= "/app/accounts/register/" onclick="" ><span class="">Register</span></a>
+                </div>
+                <div class="choice">
+                    <a class="choice" href="/app/accounts/login/"  onclick="" ><span class="">Login</span></a>
+                </div>
+                <div class="choice">
+                    <a class="choice" href="/app/adam/mainAnonym/"  onclick="" ><span class="">Continue as Guest</span></a>
+                </div>
+            </div>
+            <div class = "masterchoice1">
+                <div id = 'reg' class= '' style= "display:none">
+                {% if form.errors %}
+                    <p class="errors">Please correct the errors below: {{ form.non_field_errors }}</p>
+                {% endif %}
+                <h1>Create an account</h1>
+                    <form method="post" action="" class="wide"> {% csrf_token %}
+                        <p><label for="id_username">Username:</label>
+                        {% if form.username.errors %}
+                            <p class="errors">{{ form.username.errors.as_text }}</p>
+                        {% endif %}
+                        {{ form.username }}
+                        </p>
+                        <p><label for="id_email">Email address:</label>
+                        {% if form.email.errors %}
+                            <p class="errors">{{ form.email.errors.as_text }}</p>
+                        {% endif %}
+                        {{ form.email }}
+                        </p>
+                        <p><label for="id_password1">Password:</label>
+                        {% if form.password1.errors %}
+                            <p class="errors">{{ form.password1.errors.as_text }}</p>
+                        {% endif %}
+                        {{ form.password1 }}
+                        </p>
+                        <p><label for="id_password2">Password (type again to catch typos):</label>
+                        {% if form.password2.errors %}
+                            <p class="errors">{{ form.password2.errors.as_text }}</p>
+                        {% endif %}
+                        {{ form.password2 }}
+                        </p>
+                        <p class="submit"><input class = "s" type="submit" value="Register"></p>
+                    </form>
+                </div>
+            <div id = 'login' class= '' style= "display:none;">       
+                <h1>Login</h1>
+                {% if form.errors %}
+                    <p class="error">Please correct the errors below:</p>
+                {% endif %}
+                <form method="post" action="?next={{ next|default:"/" }}">{% csrf_token %}
+                    <dl>    
+                    <dt><label for="id_username">Username:</label>{% if form.username.errors %} <span class="error">{{ form.username.errors|join:", " }}</span>{% endif %}</dt>
+                    <dd>{{ form.username }}</dd>
+                    <dt><label for="id_password">Password:</label>{% if form.password.errors %} <span class="error">{{ form.password.errors|join:", " }}</span>{% endif %}</dt>
+                    <dd>{{ form.password }}</dd>
+                    <!--
+                    <br>
+                    <dt><input id="remember_me" style="float: left; margin-right: 10px;" type="checkbox">Remember me </dt>
+                    -->
+                    <br>
+                    <dt><input type="submit" class = "s" value="Log in" /></dt>
+                    </dl>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+

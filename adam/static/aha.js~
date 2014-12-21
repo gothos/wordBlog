@@ -1,0 +1,9 @@
+$( document ).ready(function() {
+var Golfers = [
+        { ID: "1", "Name": "Bobby Jones", "Birthday": "1902-03-17" },
+        { ID: "2", "Name": "Sam Snead", "Birthday": "1912-05-27" },
+        { ID: "3", "Name": "Tiger Woods", "Birthday": "1975-12-30" }
+    ];
+$("#posts").html($("#user").render(Golfers));
+
+});

@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery-1.10.2.js'></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js"></script>
+        <script>
+            
+            
+            $.fn.addClickAdHandler = function(idCampaign){
+                
+                
+                $('#ad'+idCampaign+'').click(function(){
+                    $('#adInput'+idCampaign+'').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#saveClickInfoForm'+idCampaign+'')
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                            alert('cli')
+                            
+                            
+                            
+                        
+                        },
+                                 
+                        success: function (msg) {
+                            alert(msg)
+                        },
+                    })                        
+                
+                
+                
+                              
+
+                                    
+                })
+                
+                             
+                                        
+                                        
+
+            }    
+            
+        
+        
+        
+            $( document ).ready(function() {
+                $('#searchButton').click(function(){
+                    alert('cl')
+                    var value=$.trim($('#searchField').val())
+                    $('#searchString').attr('value',value)
+                    $('#giveMeAdInput').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#giveMeAdForm')
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                            alert('cl')
+                            
+                            
+                            
+                        
+                        },
+                                 
+                        success: function (msg) {
+                            alert(msg)
+                            $('#adContento').children().remove()
+                            if (msg == 0){
+                                $('#adContento').append('<div style="color:red">No ads to show</div>')
+                            }else{
+                                var data = $.parseJSON(msg);
+                                if (data.ads == 0){
+                                    $('#adContento').append('<div style="color:red">Pre dané kľúčové slovo nie sú momentálne spustené žiadne kampane</div>')
+                                }else{
+                                
+                                
+                                    for(var i = 0,len=data.ads.length;i<len;i++){
+                                        $('#adContento').append('<div id="ad'+data.ads[i].idCampaign+'" style="cursor:pointer">Reklama'+i+'</div><form method="post" action="/app/adam/saveClickInfo/" id="saveClickInfoForm'+data.ads[i].idCampaign+'"><input type="hidden" name="csrfmiddlewaretoken" id="adInput'+data.ads[i].idCampaign+'"><input type="hidden" name="idCampaign" value="'+data.ads[i].idCampaign+'"><input type="hidden" name="idWord" value="'+data.idWord+'"></form>')
+                                        $.fn.addClickAdHandler(data.ads[i].idCampaign)
+                                        
+                                        
+                                    }
+                                }
+                                
+                            }
+                        },
+                    })
+                    
+                    
+                    
+                    
+                })
+            })
+        </script>
+    </head>
+    <body>
+        
+        
+        
+        <input type="text" id="searchField">
+        <input type="button" id="searchButton" value="Go">
+        <form method="post" action="/app/adam/giveMeAd/" id="giveMeAdForm">
+            <input type="hidden" id="giveMeAdInput" name="csrfmiddlewaretoken" value="">
+            <input type="hidden" id="searchString" name="searchString">
+            
+        </form>
+        <div style="" id="adContento">
+
+        </div>
+
+    </body>
+</html>

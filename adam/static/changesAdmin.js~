@@ -1,0 +1,72 @@
+$.fn.buildChangesAdmin = function(flag,idUser){
+    if (flag == 1){
+        console.log('jednicka')
+        var prefix = 'changes'
+        var numero = 3
+        var num = 4
+    }else{
+        console.log('dvojka')
+        var prefix = 'mainChanges'
+        var num = 5
+        var numero = 4
+    }
+    var suffix = capitaliseFirstLetter(prefix)
+    var i = 0
+    var addon = []
+    
+    
+    addon[i++] = '<div id="no'+suffix+'" style="display:none">'
+        addon[i++] = 'No changes data available'
+    addon[i++] = '</div>'
+    addon[i++] = '<div id="is'+suffix+'" style="display:block">'
+        addon[i++] = $.fn.buildNavigationPanel(num) 
+        addon[i++] = $.fn.buildFilterTable(num)
+        addon[i++] = '<div id="noResults'+suffix+'" style="margin-top:25px;display:none">'
+            addon[i++] = $.general.noResultsEN
+        addon[i++] = '</div>'
+        addon[i++] = '<div id="isResults'+suffix+'" >'
+            addon[i++] = '<table id="'+prefix+'" cellpadding="0" cellspacing="0" border="0" style=";position:relative;margin-top:25px">'
+                addon[i++] = '<tr>'
+                    addon[i++] = '<th class="addWord">'
+                        addon[i++] = '<div>'
+                            addon[i++] = 'Timestamp'
+                        addon[i++] = '</div>'
+                    addon[i++] = '</th>'
+                    addon[i++] = '<th class="addWord">'
+                        addon[i++] = '<div>'
+                            addon[i++] = 'Operation'
+                        addon[i++] = '</div>'
+                    addon[i++] = '</th>'
+                    addon[i++] = '<th class="addWord">'
+                        addon[i++] = '<div>'
+                            addon[i++] = 'Original value'
+                        addon[i++] = '</div>'
+                    addon[i++] = '</th>'
+                addon[i++] = '</tr>'
+                addon[i++] = '<tbody>'
+                addon[i++] = '</tbody>'
+            addon[i++] = '</table>'
+        addon[i++] = '</div>'
+        addon[i++] = '<form method="post" action="'+$.general.prefix+'/'+prefix+'/" id="'+prefix+'Form">'
+            addon[i++] = '<input type="hidden" name="csrfmiddlewaretoken" id="'+prefix+'Input">'
+            addon[i++] = '<input type="hidden" name="dateFrom" id="'+prefix+'DateFrom">'
+            addon[i++] = '<input type="hidden" name="dateTo" id="'+prefix+'DateTo">'
+            if (flag == 1){    
+                addon[i++] = '<input type="hidden" name="idCampaign" id="'+prefix+'IdCampaign">'
+            }else{
+                addon[i++] = '<input type="hidden" name="userId" value="'+idUser+'" id ="'+prefix+'IdUser">'
+            }
+        addon[i++] = '</form>'
+    addon[i++] = '</div>'
+    $('#menu'+suffix+'').children().remove()
+    $('#menu'+suffix+'').append(addon.join(''))
+    
+    $.fn.useDatepicker(numero,$('#'+prefix+'From'),$('#'+prefix+'To'),idUser)
+    
+    $.fn.addNavigationDivHoveringEffect(num)
+    if (flag == 1){
+        $.fn.addChangesNavigationDivClickHandler()
+    }else{
+        $.fn.addMainChangesNavigationDivClickHandler()
+    }
+}

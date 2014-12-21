@@ -1,0 +1,100 @@
+(function ($) {
+    $.fn.addFadeOutSpanHandler = function(selector,span,isCount,numSpan,num){
+        selector.addClass('blog')
+        
+        
+        
+        selector.on('paste input keydown change keyup ',function(){
+            
+                        
+            $.fn.hideSpan(selector,span)
+            if (isCount > 0){
+                $.fn.checkCharacters(isCount,selector,numSpan)
+            }
+
+            if (num > 0){
+                $.fn.showPreview(num,selector)
+
+            }
+        })
+        span.click(function(){
+            selector.focus()
+        })
+        selector.focus(function(){
+            $.fn.changeOpacity(0,span)
+        })
+        selector.focusout(function(){
+            $.fn.changeOpacity(1,span)
+        })
+
+
+    }
+
+    $.fn.checkCharacters = function(isCount,selector,span){
+        if (isCount == 1){
+            var maxChars = 35
+        }
+        if (isCount == 5){
+            var maxChars = 70
+        }
+        if (isCount == 2){
+            var maxChars = 24
+        }
+        if (isCount == 3){
+            var maxChars = 1024
+        }
+        if (isCount == 4){
+            var maxChars = 64
+        }
+        var txt = $.trim(selector.val())
+        var res = maxChars - txt.length
+        span.text(res)
+    }
+
+
+
+
+    $.fn.showPreview = function(num,selector){
+        var value = $.trim(selector.val())
+        if (num == 1){
+            if (value.length == 0){
+                $('a[class="preview"]').text($.default_.title)
+            }else{
+                $('a[class="preview"]').text(value)
+            }
+        }
+        if (num == 2){
+            if (value.length == 0){
+                $('span[class="description1"]').text($.default_.description1)
+            }else{
+                $('span[class="description1"]').text(value)
+            }
+        }
+        if (num == 3){
+            if (value.length == 0){
+                $('span[class="description2"]').text($.default_.description2)
+            }else{
+                $('span[class="description2"]').text(value)
+            }
+        }
+        if (num == 4){
+            if (value.length == 0){
+                $('li[class="preview url"]').text($.default_.url)
+            }else{
+                $('li[class="preview url"]').text(value)
+            }
+        }
+    }
+
+
+
+    $.fn.hideSpan = function(el,span){
+        if (el.val().length != 0){
+            span.hide()
+        }else{
+            span.show()
+        }
+
+
+    }
+})(jQuery);

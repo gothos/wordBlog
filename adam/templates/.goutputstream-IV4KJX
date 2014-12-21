@@ -1,0 +1,1560 @@
+<meta http-equiv="content-script-type" content="text/javascript">
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery-1.10.2.js'></script>
+        <script type="text/javascript" src="/wordBlog/adam/static/jquery-ui-1.9.2.min.js"></script>
+            
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/jquery-ui-1.9.2.css'>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/Base.css'>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/BreadCrumb.css'>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}breadCrumb.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.easing.1.3.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}common.js"></script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/jquery-ui-1.9.2.css'>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.9.2.min.js"></script>
+        <script>
+            $.fn.insertInputFieldValues = function(){
+                var divs = ['adNameFinish','adTypeFinish','adBudgetFinish','#adTitleFinish','#adDescription1Finish','adDescription2Finish','adUrl1Finish','#adUrl2Finish']
+                var itemNames = ['Názov reklamy','Typ reklamy', 'Denný rozpočet','Titulok','Popisok 1.riadku','Popisok 2.riadku','Zobrazovaná adresa URL','Cieľová adresa URL']
+                var basicFields = [$('#adName'),'' ,$('#adBudget'),$('#adTitle'),$('#adDescription1'),$('#adDescription2'),$('#adUrl1'),$('#adUrl2')]
+                $('#finish tr').not($('#headerFinish')).remove() 
+                for(var i = 0,len = basicFields.length;i<len;i++){
+                    if (i != 1){
+                        var value = basicFields[i].val()
+                    }else{
+                        var a = $('input[name="adType"]:checked').val()
+                        if (a < 3){
+                            var value = $.gen.headers[0]
+                            if (a == 1){
+                                value = value + ' (Reklama v hornej časti)'
+                            }else{
+                                value = value + ' (Reklama v spodnej časti)'
+                            }
+                        }else{
+                            var value = $.gen.headers[1] + ' (Reklama v panely)'
+                        }
+                    }
+                    var k = 0
+                    var str = []
+                    
+                    str[k++] = '<tr>'
+                        str[k++] = '<td class="addWord">'
+                            str[k++] = '<span>'
+                                str[k++] = itemNames[i]
+                            str[k++] = '</span>'
+                        str[k++] = '</td>'
+                        str[k++] = '<td class="addWord">'
+                            str[k++] = '<div id="'+divs[i]+'">'
+                                str[k++] = value
+                            str[k++] = '</div>'
+                        str[k++] = '</td>'
+                    str[k++] = '</tr>'
+                    $('#finish').append(str.join(''))
+
+                }
+                $('#adBudgetFinish').append(' <span>&#128</span>')
+                
+                
+                var table = document.getElementById("chosenWords");
+                for (var i = 1, row; row = table.rows[i]; i++) {
+                    var m = 0;
+                    var str = []
+                    str[m++] = '<tr>'
+                    str[m++] = '<td>'
+                    //alert(row)
+                   //iterate through rows
+                   //rows would be accessed using the "row" variable assigned in the for loop
+                   /*
+                   for (var j = 1, col; col = row.cells[j]; j++) {
+                        if (j == 4){
+                            break;
+                        }
+                        //alert(col.innerHTML)
+                        alert(col.firstChild.innerHTML)
+                     //iterate through columns
+                     //columns would be accessed using the "col" variable assigned in the for loop
+                     
+                   }
+                   */
+                   str[m++] = '</tr>'  
+                }
+                
+                
+                
+            }
+            $.fn.checkStepDistance = function(a,b){
+                var c = a-b
+                if (c == 1){
+                    return 1
+                }else{
+                    return 0
+                }
+            }
+        
+        
+        
+            $.fn.checkStep = function(){
+                if ($.gen.curPage == 1){
+                    return 1
+                    $.checked.AdName = 0
+                    
+                    if ($.fn.checkField($('#adName'),$('#errName'),0) == 1){
+                        $.checked.adName = 1
+                    }
+                    
+                    $.checked.adBudget = 0
+                    if ($.fn.checkField($('#adBudget'),$('#errBudget'),1) == 1){
+                        $.checked.adBudget = 1
+                    }
+                    if ($.checked.adName == 1 && $.checked.adBudget == 1){
+                    
+                    return 1
+                    
+                    }else{
+                        alert($.checked.adName)
+                        alert($.checked.adBudget)
+                        alert('returned0')
+                        return 0
+                    }
+                         
+                              
+                    
+                }
+                if ($.gen.curPage == 2){
+                    return 1
+                    $.checked.adTitle = 0
+                    $.checked.adDescription1 = 0
+                    $.checked.adDescription2 = 0
+                    $.checked.adUrl1 = 0
+                    $.checked.adUrl2 = 0
+                    var checkFields = [$.checked.adTitle,$.checked.adDescription1,$.checked.adDescription2,$.checked.adUrl1,$.checked.adUrl2]
+                    
+                    
+                    var inputFields = [$('#adTitle'),$('#adDescription1'),$('#adDescription2'),$('#adUrl1'),$('#adUrl2')]
+                    var errFields = [$('#errTitle'),$('#errDescription1'),$('#errDescription2'),$('#errUrl1'),$('#errUrl2')]
+                    
+                    var k = 0
+                    for (var i = 0,len = checkFields.length;i<len;i++){
+                        
+                        if ($.fn.checkField(inputFields[i],errFields[i],0) == 1){
+                            checkFields[i] = 1;
+                            k = k + 1
+                            
+                        }
+                        
+                        
+                    }
+                    if (k == checkFields.length){
+                        return 1
+                    }else{
+                        return 0
+                    }
+                
+                
+                
+                }
+                
+                if ($.gen.curPage == 3){
+                    return 1
+                    var value = $('#chosenWords tr').length;
+                    
+                    if (value > 1){
+                        $('#errKeyword').text('')
+                        return 1
+                    }else{
+                        $('#errKeyword').text('Je potrebné pridať aspoň 1 kľúčové slovo')
+                        return 0
+                    } 
+                    
+                }
+                if ($.gen.curPage == 4){
+                    return 1;
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            }
+            
+  
+            
+        
+        
+            $.fn.changeOpacityOnSelected = function(selector){
+                selector.css('color','#444')
+                selector.css('cursor','default')
+                
+                $("div[class='steps']").not(selector).css('cursor','pointer')
+                $("div[class='steps']").css('opacity','1.0')
+
+                var value1 = $.gen.curPage + 2
+                $('#stepButton'+value1+'').css('opacity','0.6').css('cursor','default')
+                
+                var value2 = $.gen.curPage + 3
+                $('#stepButton'+value2+'').css('opacity','0.6').css('cursor','default')
+                $("div[class='steps']").not(selector).css('color','')
+            
+            }
+        
+        
+            $.fn.checkStepButtons = function(){
+               
+                var value = $.gen.curPage
+                
+                var selector = $('#stepButton'+value+'').show()
+                
+                $.fn.changeOpacityOnSelected(selector)
+                
+
+            
+            } 
+        
+        
+        
+            $.fn.giveMeStatus = function(value){
+                if (value == 1 ){
+                    var status = $.gen.statusInactive
+                    
+                }
+                if (value == 2 ){
+                    var status = $.gen.statusActive
+                }
+                if (value == 3 ){
+                    var status = $.gen.statusPaused
+                    
+                }
+                return status
+            }
+            
+            $.fn.addActionButtonHadler = function(flag){
+                if (flag == 1){
+                    var add = 'Overview'
+                }else{
+                    var add = ''
+                }
+                
+                $('div[class="actionButton"]').click(function(){
+                    var value = $(this).attr('value')
+                    
+                    $('#campaignActionInput'+value+'').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#campaignActionForm'+value+'')
+                    
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                            
+                            
+                            
+                        
+                        },
+                                 
+                        success: function (msg) {
+                            
+                            var data = $.parseJSON(msg);
+                            if (data.status == 2){
+                                var campaignStatus = $.gen.statusActive                                  
+                            }else{
+                            
+                                var campaignStatus = $.gen.statusPaused
+                            
+                            }
+                            
+                            $('#statusCampaign'+data.varSymbol+'').attr('value',data.status)
+                            
+                            $('#statusCampaign'+add+data.varSymbol+'').text(campaignStatus)
+                            $.fn.setColor(data.status,data.varSymbol,add)
+                            
+                            
+
+                        },
+                        error:function(msg){
+                        },
+                    })
+                    
+                    
+                
+                })
+            }
+            
+            
+            
+            
+            
+            
+            
+            $.fn.giveMeColor = function(variable){
+                if (variable == 2){
+                    
+                    var color = '#A9F5A9'
+                    var img = 'pause'
+                    
+                }
+                if (variable == 1){
+                    
+                    var img = 'play'
+                    var color = '#D8D8D8'
+                }
+                if (variable == 3){
+                    
+                    var img = 'play'
+                    var color = '#F7BE81'
+                }
+                return [img,color]
+            
+            
+            }
+            $.fn.setColor = function(variable,varSymbol,add){
+                var L = $.fn.giveMeColor(variable)
+                var img = L[0]
+                var color = L[1]
+                
+     
+                $('#tdStatusCampaign'+add+varSymbol+'').css('background-color',color)
+                $('#imgActionButton'+add+varSymbol+'').attr('src','{{ STATIC_URL }}'+img+'.jpg')
+                
+            }
+            
+            
+        
+            $.fn.checkNavButtons = function(){
+                if ($.gen.curPage < $.gen.pages){
+                    $('#nextStep').css('display','inline-block')
+                    $('#finishCampaignCreationButton').hide()
+                }
+                if ($.gen.curPage == $.gen.pages){
+                    $('#nextStep').hide()
+                    $('#finishCampaignCreationButton').show()
+                }
+                if ($.gen.curPage == 1){
+                    $('#returnToMenuButton').show()
+                    $('#prevStep').hide()
+                }
+                if ($.gen.curPage > 1){
+                    $('#returnToMenuButton').hide()
+                    $('#prevStep').css('display','inline-block')
+                }
+                
+            
+            }
+            $.fn.buildAd = function(){
+                var i = 0
+                var addon = []
+                addon[i++] = "<div id='' style='border:1px solid red;display:block;width:100%;height:100%;'>"
+                    addon[i++] = "<div id='topLDiv' style='border:1px solid black;margin:25px;height:25px;line-height:25px'>"
+                        addon[i++] = "<div id='headerGuide' style='display:none;font-size:18px;border:1px solid red' class='header'>"
+                            addon[i++] = "Sprievodca vytvorením reklamy"
+                        addon[i++] = "</div>"
+                        addon[i++] = "<div id='topHeaderAd' style='display:block;font-size:18px;border:1px solid red' class='header'>"
+                            addon[i++] = "Reklama"
+                        addon[i++] = "</div>"
+                        addon[i++] = "<div id='myCampaignHeader' style='display:none;font-size:18px;border:1px solid red' class='header'>"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                    addon[i++] = "<div class='contento' style=';border:1px solid black;background-color:white;display:block;margin-bottom:25px;height:650px;position:relative'>"
+                        addon[i++] = "<div id='menu' style='display:block;'>"
+                            addon[i++] = '<div style="border-bottom:1px solid #e5e5e5;border-top:1px solid #e5e5e5;" >'
+                                addon[i++] = '<table id="outerDiv" cellpadding="0" cellspacing="0" border="0" style=";position:relative;height:35px">'
+                                    
+                                    addon[i++] = '<tr id="mainMenu" class="adMenu">'
+                                        addon[i++] = '<td style="width:150px">'
+                                            addon[i++] = '<div id = "myCampaigns" class="menu" style="opacity:0.4" value=1>'
+                                                addon[i++] = 'Moje kampane'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                        addon[i++] = '<td style="width:130px;">'
+                                            addon[i++] = '<div id = "billingInfoData" class="menu" value=2 style="">'
+                                                addon[i++] = 'Fakturačné údaje'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                    addon[i++] = '</tr>'
+                                    addon[i++] = '<tr id="campaignMenu" class="adMenu" style="display:none">'
+                                        addon[i++] = '<td style="width:100px;" style="border:1px solid black">'
+                                            addon[i++] = '<div class="menu" value=3 style="border:0px solid black;opacity:0.4">'
+                                                addon[i++] = 'Prehľad'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                        addon[i++] = '<td style="width:255px;" style="border:1px solid black">'
+                                            addon[i++] = '<div class="menu" value=4 style=";border:0px solid black">'
+                                                addon[i++] = 'Štatistika zobrazení podľa slov'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                        addon[i++] = '<td style="width:145px;" style="border:1px solid black">'
+                                            addon[i++] = '<div class="menu" value=5 style="border:0px solid black">'
+                                                addon[i++] = 'Kľúčové slová'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                        addon[i++] = '<td style="width:170px;" style="border:1px solid black">'
+                                            addon[i++] = '<div class="menu" value=6 style="border:0px solid black">'
+                                                addon[i++] = 'Reklamný popisok'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</td>'
+                                    addon[i++] = '</tr>'
+                                    
+                                addon[i++] = '</table>'
+                            addon[i++] = '</div>'
+                            
+
+                            
+                            addon[i++] = '<div style="margin-top:25px">'
+                                addon[i++] = '<div id="menuCampaignOverview" style=";display:none" class="subcontent">'
+                                    
+                                    
+                                    
+                                    
+                                    addon[i++] = '<table id="overviewStatistics" cellpadding="0" cellspacing="0" border="0" style=";position:relative;border: 0px double #ddd;margin-top:25px">'
+                                        addon[i++] = '<tr>'
+                                            addon[i++] = '<th class="addWord" style="width:240px;text-align:left">'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = 'Slovo'
+                                                addon[i++] = '</div>'
+                                            addon[i++] = '</th>'
+                                            addon[i++] = '<th class="addWord" style="width:120px;text-align:left">'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = 'Suma kliknutí'
+                                                addon[i++] = '</div>'
+                                            addon[i++] = '</th>'
+                                            addon[i++] = '<th class="addWord" style="width:120px">'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = 'Suma zobrazení'
+                                                addon[i++] = '</div>'
+                                            addon[i++] = '</th>'
+                                            addon[i++] = '<th class="addWord" style="width:150px;text-align:left">'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = 'Suma dní trvania kampane'
+                                                addon[i++] = '</div>'
+
+                                            addon[i++] = '</th>'
+                                            addon[i++] = '<th class="addWord" style="width:77px;text-align:left">'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = 'Úspešnosť'
+                                                addon[i++] = '</div>'
+                                            addon[i++] = '</th>'
+                                                
+                                            
+                                        addon[i++] = '</tr>'
+                                    addon[i++] = '</table>'
+                                
+                                
+                                
+                                addon[i++] = '</div>'
+                                addon[i++] = '<div id="menuCampaigns" style=";display:block" class="subcontent">'
+                                    addon[i++] = '<div id="billingInfoMissingDiv" style="display:block">'
+                                        addon[i++] = '<div>'
+                                            addon[i++] = 'Ak chcete vytvoriť kampaň, musíte najskôr vyplniť <span id="showMenuBilling" class="tyrkys" style="cursor:pointer">fakturačné údaje</span>'
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</div>'
+                                    addon[i++] = '<div id="billingInfoCompleteDiv" style="display:none">'
+                                        addon[i++] = '<div id="noCampaigns" style="display:block">'
+                                            addon[i++] = "Nie sú vytvorené žiadne kampane"
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div id="campaignsList" style="display:none;position:relative">'
+                                            addon[i++] = '<div id="helper" style="display:none;text-align:justify;border:1px solid #444;position:absolute;width:220px;height:35px;top:-55px;left:500px;z-index:2;background-color:white;padding:10px">'
+                                            //addon[i++] = '<span class= "ui-icon ui-icon-play" style="opacity:0.6"></span>'
+                                                addon[i++] = '<div>'
+                                                    addon[i++] = '<img class="" width=8px height=8px id=""  src="{{ STATIC_URL }}play.jpg" style="opacity:0.6;display:inline-block;margin-bottom:1px;padding-top:3px">'
+                                                    addon[i++] = '<span style="display:inline;font-size:11px;vertical-align:top;margin-left:5px">'
+                                                        addon[i++] = 'Spustenie resp. pokračovanie v kampani' 
+                                                    addon[i++] = '</span>'
+                                                addon[i++] = '</div>'
+                                                addon[i++] = '<div style="margin-top:5px">'
+                                                    addon[i++] = '<img class="" width=8px height=8px id=""  src="{{ STATIC_URL }}pause.jpg" style="opacity:0.6;display:inline-block;margin-bottom:1px;padding-top:3px">'
+                                                    addon[i++] = '<span style="display:inline;font-size:11px;vertical-align:top;margin-left:5px">'
+                                                        addon[i++] = 'Pozastavenie kampane' 
+                                                    addon[i++] = '</span>'
+                                                addon[i++] = '</div>'
+                                            addon[i++] = '</div>'
+                                            
+                                            
+                                            
+                                            addon[i++] = '<table id="campaigns" cellpadding="0" cellspacing="0" border="0" style=";position:relative;border: 0px double #ddd;">'
+                                                
+                                                addon[i++] = '<tr>'
+                                                    addon[i++] = '<th class="addWord" style="width:240px;text-align:left">'
+                                                        addon[i++] = '<div>'
+                                                            addon[i++] = 'Názov kampane'
+                                                        addon[i++] = '</div>'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:80px;text-align:left">'
+                                                        addon[i++] = '<div>'
+                                                            addon[i++] = 'Stav'
+                                                        addon[i++] = '</div>'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:120px">'
+                                                        addon[i++] = '<div>'
+                                                            addon[i++] = 'Úspešnosť'
+                                                        addon[i++] = '</div>'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:100px;text-align:center">'
+                                                    addon[i++] = '<div style="display:inline-block">'
+                                                        addon[i++] = 'Akcia'
+                                                    addon[i++] = '</div>'
+                                                    addon[i++] = '<div style="" class="topBarInfo" id= "topBarInfo">'
+                                                        addon[i++] = 'i'
+                                                    addon[i++] = '</div>'
+                                                    
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:45px;text-align:left">'
+                                                    addon[i++] = '</th>'
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                addon[i++] = '</tr>'
+                                                {% for z in campaign %}
+                                                    
+                                                    var k = 0
+                                                    var str = []
+                                                    str[k++] = '<tr id="campaign{{ z.varSymbol }}" >'
+                                                        str[k++] = '<td class="addWord style="width:70px;text-align:center">'
+                                                        
+                                                            str[k++] = '<div id="editCampaign{{ z.varSymbol }}" style="cursor:pointer;opacity:0.6" class="">'
+                                                                str[k++] = '{{ z.name }}'
+                                                            str[k++] = '</div>'
+                                                        str[k++] = '</td>'
+                                                        str[k++] = '<td class="addWord" style="width:80px;" id="tdStatusCampaign{{ z.varSymbol }}">'
+                                                            
+
+                                                            var value = {{ z.status }}
+                                                            var statusText = $.fn.giveMeStatus(value)
+
+                                                            
+                                                            
+                                                            
+
+
+
+                                                            str[k++] = '<div id="statusCampaign{{ z.varSymbol }}" style="cursor:default" value="{{ z.status }}">'
+                                                                str[k++] = statusText
+                                                            
+                                                            str[k++] = '</div>'
+                                                        str[k++] = '</td>'
+                                                        str[k++] = '<td class="addWord" style="width:120px">'
+                                                        str[k++] = '</td>'
+                                                        str[k++] = '<td class="addWord" style="width:100px;text-align:center">'
+                                                            str[k++] = '<div id="actionButton{{ z.varSymbol }}" style="cursor:pointer" class="actionButton" value="{{ z.varSymbol }}">'
+                                                                str[k++] = '<img class="imgActionButton" width=16px height=16px id="imgActionButton{{ z.varSymbol }}"  src="" style="opacity:0.5;display:inline-block;margin-bottom:1px">'
+                                                            str[k++] = '</div>'
+                                                        
+                                                        
+                                                        str[k++] = '</td>'
+                                                        str[k++] = '<td class="addWord" style="width:45px;text-align:center">'
+                                                            str[k++] = '<div class="close-btn6" style="display:block;float:none;opacity:0.6" id="closeBtnCampaign{{ z.varSymbol }}">'
+                                                            str[k++] = '</div>'
+                                                        str[k++] = '</td>'
+                                                        
+                                                        str[k++] = '<form action="'+$.general.prefix+'/deleteCampaign/" method = "post" id="deleteCampaignForm{{ z.varSymbol }}">'
+                                                            str[k++] = '<input style="display:none" name="csrfmiddlewaretoken" value="" id = "deleteCampaignInput{{ z.varSymbol }}">'
+                                                            str[k++] = '<input style="display:none" name="varSymbol" value="{{ z.varSymbol }}" id = "" >'
+                                                        str[k++] = '</form>'
+                                                        str[k++] = '<form action="'+$.general.prefix+'/campaignAction/" method = "post" id="campaignActionForm{{ z.varSymbol }}">'
+                                                            str[k++] = '<input style="display:none" name="csrfmiddlewaretoken" value="" id = "campaignActionInput{{ z.varSymbol }}">'
+                                                            str[k++] = '<input style="display:none" name="varSymbol" value="{{ z.varSymbol }}" id = "" >'
+                                                        str[k++] = '</form>'
+                                                    str[k++] = '</tr>'
+                                                    addon[i++] = str.join('')
+                                                    
+
+                                                    
+                                                   
+                                                {% endfor %}    
+                                            addon[i++] = '</table>'
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div style="height:30px;border:1px solid black;margin-top:25px">'
+                                            addon[i++] = '<input id="createCampaignButton" type="button" class="s" value="Vytvoriť kampaň" style="float:left;width:120px">'
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</div>'
+                                addon[i++] = '<div id="menuBilling" style="display:none" class="subcontent">'
+                                    addon[i++] = '<form id="saveBillingInfoForm" action= "'+$.general.prefix+'/saveBillingInfo/" method="post">'
+                                        addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='saveBillingInfoInput'>"
+                                        var textField = ['Meno a priezvisko (názov firmy)','Ulica','Mesto','PSČ','Telefón','Kontaktný email','IČ','DIČ']
+                                        var idsCompany = ['companyName','companyStreet','companyTown','companyZIP','companyPhone','companyEmail','companyIC','companyDIC']
+                                        var companyForm  =[' {{ billingForm.companyName }}','{{ billingForm.companyStreet }}','{{ billingForm.companyTown }}','{{ billingForm.companyZIP }}','{{ billingForm.companyPhone }}','{{ billingForm.companyEmail }}','{{ billingForm.companyIC }}','{{ billingForm.companyDIC }}']
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        var numero = textField.length
+                                        for(var z = 0,len=numero;z<len;z++){
+                                            var k = 0
+                                            var str = []
+                                            var capitalizedIDs = capitaliseFirstLetter(idsCompany[z])
+                                    
+                                    
+                                            
+                                            str[k++] = '<div style="position:relative;border:0px solid black" class="inpFSpace">'
+                                                str[k++] = '<div>'
+                                                    str[k++] = companyForm[z]
+                                                str[k++] = '</div>'
+                                                str[k++] = '<span id="'+idsCompany[z]+'Span" class="plac" style="position:absolute;top:4px;left:8px">'
+                                                    str[k++] = textField[z] + ' :'
+                                                str[k++] = '</span>'
+                                                str[k++] = "<div id ='err"+capitalizedIDs+"' class ='block err' style=''>"
+                                                str[k++] = "</div>"
+                                            str[k++] = '</div>'
+                                            addon[i++] = str.join('')
+                                        }
+                                    addon[i++] = '</form>'
+                                    addon[i++] = '<div style="height:30px" class="inpFSpace">'
+                                        addon[i++] = '<input id="saveBillingInfoButton" type="button" class="s" value="Uložiť" style="float:right;width:70px">'
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</div>'
+                            addon[i++] = '</div>'
+                        addon[i++] = "</div>"
+                        addon[i++] = "<div id='guide' style='display:none'>"
+                            addon[i++] = '<table id="outerDiv" cellpadding="5" cellspacing="" border="0" style=";position:relative;">'
+                                addon[i++] = '<tr>'
+                                    var numero = $.gen.pages + 1
+                                    for(var z = 1,len=numero;z<len;z++){
+                                        if (z == 1){
+                                            var color = '#444'
+                                            var cursor = 'default'
+                                        }else{
+                                            var color = ''
+                                        }
+                                        if (z == 2){
+                                            var cursor = 'pointer'
+                                        }
+                                        if (z > 2){
+                                            var opacity = '0.6'
+                                            var cursor = 'default'
+                                        }else{
+                                            var opacity = '1.0'
+                                            
+                                        }
+                                        var k = 0
+                                        var str = []
+                                    
+                                    
+                                        str[k++] = '<td style="" >'
+                                            str[k++] = '<div id="stepButton'+z+'" class="steps" value="'+z+'" style="opacity:'+opacity+';color:'+color+';cursor:'+cursor+'">'
+                                                str[k++]  = ''+z+'.krok'
+                                            str[k++]  = '</div>'
+                                        str[k++] = '</td>'
+                                        if (z != $.gen.pages ){
+                                            str[k++] = '<td style="horizontal-align:left ">'
+                                                str[k++] = '<img  src="{{ STATIC_URL }}ChevronOverlay.png" style="border:0px solid black">'  
+                                            str[k++] = '</td>'
+                                        }
+                                        addon[i++] = str.join('')
+                                    
+                                    }                                
+                                    
+                      
+                                addon[i++] = '</tr>'
+                            addon[i++] = '</table>'
+                            addon[i++] = '<div style="min-height:100px;border: 0px solid red;margin-top:15px;">'
+                                
+                                addon[i++] = '<form id="createCampaignForm" action= "'+$.general.prefix+'/createCampaign/" method="post">'
+                                    addon[i++] = "<input style='display:none' name='keywordIDs' value='' id ='keywordIDsInput'>"
+                                    addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='createCampaignInput'>"
+                                    addon[i++] = '<div id="step1" style="border:0px solid black;min-height:100px" class="stepContent">'
+                                        addon[i++] = '<div style="position:relative;border:0px solid black" class="">'
+                                            addon[i++] = '<div>'
+                                                addon[i++] = '{{ campaignForm.name }}'
+                                            addon[i++] = '</div>'
+                                            addon[i++] = '<span id="adNameSpan" class="plac" style="position:absolute;top:4px;left:8px">'
+                                                addon[i++] = 'Názov reklamy'
+                                            addon[i++] = '</span>'
+                                            addon[i++] = "<div id ='errName' class ='block err' style=''>"
+                                            addon[i++] = "</div>"
+                                            addon[i++] = '<span id="countAdNameSpan" class="plac" style="position:absolute;top:4px;left:400px">'
+                                                addon[i++] = 35
+                                            addon[i++] = '</span>'
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div style="margin-top:25px;border:0px solid red">'
+                                            
+                                            $.gen.headers = ['Reklama ako súčasť výsledkov','Reklama v postrannom panely']
+                                            var content = ['Reklamný text je umiestnený v panely napravo od výsledkov vyhľadávania','Reklamný text je umiestnený v panely s výsledkami, a to buď v hornej alebo dolnej často podľa nastavenia v x.tom kroku.']
+                                            var ids = ['adResults','adSidePanel']
+                                            var numero = 2
+                                            for(var z = 0,len=numero;z<len;z++){
+                                                var k = 0
+                                                var str = []
+                                        
+                                        
+                                            
+                                                str[k++] = '<div id="'+ids[z]+'" style="margin-top:0px">'
+                                                    str[k++] =  '<div style="font-size:16px">'
+                                                        str[k++] = $.gen.headers[z]
+                                                    str[k++] = '</div>'
+                                                    str[k++] = '<table id="" cellpadding="0" cellspacing="0" border="0" style=";font-size:12px;margin-top:15px;">'
+                                                        str[k++] = '<tr style="width:200px">'
+                                                            str[k++] = '<td style="vertical-align:top">'
+                                                                str[k++] = '<div style="word-wrap: break-word;width:400px;text-align:justify;line-height:18px">'
+                                                                    str[k++] = content[z]
+                                                                    str[k++] = '<br>'
+                                                                    str[k++] = 'Viac informácií.'
+                                                                str[k++] = '</div>'
+                                                                str[k++] = '<table id="" cellpadding="0" cellspacing="0" border="0" style=";font-size:12px;vertical-align:top;margin-left:15px;margin-top:5px">'
+                                                                    if (z == 0){
+                                                                        str[k++] = '<tr>'
+                                                                            str[k++] = '<td style="">'
+                                                                                str[k++] = '<input type="radio" name="adType" value="1" style="" checked>'
+                                                                            str[k++] = '</td>'
+                                                                            str[k++] = '<td style="padding-top:4px">'
+                                                                                str[k++] = 'Reklama v hornej časti'
+                                                                            str[k++] = '</td>'
+                                                                        str[k++] = '</tr>'
+                                                                        
+                                                                        str[k++] = '<tr>'
+                                                                            str[k++] = '<td >'
+                                                                                str[k++] = '<input type="radio" name="adType" value="2" style="">'
+                                                                            str[k++] = '</td>'
+                                                                            str[k++] = '<td style="padding-top:4px">'
+                                                                                str[k++] = 'Reklama v spodnej časti'
+                                                                            str[k++] = '</td>'
+                                                                        str[k++] = '</tr>'
+                                                                    }
+                                                                    if (z == 1){
+                                                                        str[k++] = '<tr>'
+                                                                            str[k++] = '<td style="">'
+                                                                                str[k++] = '<input type="radio" name="adType" value="3" style="">'
+                                                                            str[k++] = '</td>'
+                                                                            str[k++] = '<td style="padding-top:4px">'
+                                                                                str[k++] = 'Reklama v panely'
+                                                                            str[k++] = '</td>'
+                                                                        str[k++] = '</tr>'
+                                                                    }
+                                                                    
+                                                                    
+                                                                str[k++] = '</table>'
+                                                            str[k++] = '</td>'
+                                                            str[k++] = '<td>'
+                                                                str[k++] = '<div style="border:1px solid #cccccc;height:80px;width:80px;margin-left:35px;">'
+                                                                str[k++] = '</div>'
+                                                            str[k++] = '</td>'
+                                                        str[k++] = '</tr>'
+                                                    str[k++] = '</table>'
+                                                str[k++] = '</div>'
+                                                addon[i++] = str.join('')
+                                                
+                                            }
+                                            
+
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div style="position:relative;margin-top:30px">'
+                                            addon[i++] = '<div>'
+                                                addon[i++] = '{{ campaignForm.budget }}'
+                                            addon[i++] = '</div>'
+                                            addon[i++] = '<span id="adBudgetSpan" class="plac" style="position:absolute;top:4px;left:9px">'
+                                                addon[i++] = 'Denný rozpočet'
+                                            addon[i++] = '</span>'
+                                            addon[i++] = "<div id ='errBudget' class ='block err' style=''>"
+                                            addon[i++] = "</div>"
+                                            addon[i++] = '<span id="characterAdBudgetSpan" class="plac" style="position:absolute;top:4px;left:130px">'
+                                                addon[i++] = '&#128'
+                                            addon[i++] = '</span>'
+                                                                                
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</div>'
+                                    addon[i++] = '<div id="step2" style="display:none;border:0px solid #cccccc;min-height:100px;" class="stepContent">'
+                                        var itemIDs = ['Title','Description1','Description2','Url1','Url2']
+                                        var itemNames = ['Titulok','Popisok 1.riadku','Popisok 2.riadku','Zobrazovaná adresa URL','Cieľová adresa URL'] 
+                                        var campaignInfo = ['{{ campaignForm.title }}','{{ campaignForm.description1 }}','{{ campaignForm.description2 }}','{{ campaignForm.url1 }}','{{ campaignForm.url2 }}']
+                                        var nums = [35,35,35,35,1024]
+                                        var numero = itemIDs.length
+                                        for(var z = 0,len=numero;z<len;z++){
+                                            var k = 0
+                                            var str = []
+                                            
+                                            str[k++] = '<div id= "ad'+itemIDs[z]+'Div" style="position:relative;border:0px solid black" class="inpFSpace">'
+                                                
+                                                str[k++] = '<div >'
+                                                    str[k++] = campaignInfo[z]
+                                                str[k++] = '</div>'
+                                                str[k++] = '<span id="ad'+itemIDs[z]+'Span" class="plac" style="position:absolute;top:4px;left:9px">'
+                                                    str[k++] = itemNames[z]
+                                                str[k++] = '</span>'
+                                                str[k++] = "<div id ='err"+itemIDs[z]+"' class ='block err' style=''>"
+                                                str[k++] = "</div>"
+                                                str[k++] = '<span id="countAd'+itemIDs[z]+'Span" class="plac" style="position:absolute;top:4px;left:400px">'
+                                                    str[k++] = nums[z]
+                                                str[k++] = '</span>'
+                                                
+                                            str[k++] = '</div>'
+                                            addon[i++] = str.join('')   
+                                            
+                                            
+                                        }
+                                        addon[i++] = '<table id="previewTable" cellpadding="0" cellspacing="0" border="0" style="position:relative;font-size:12px;margin-top:15px">'
+                                            addon[i++] = '<tr id = "previewSidePanel" style="display:none">'
+                                                addon[i++] = '<td>'
+                                                    addon[i++] = '<div class="previewHeader">'
+                                                        addon[i++] = 'Reklama v postrannom panely'
+                                                    addon[i++] = '</div>'
+                                                    addon[i++] = '<div class="previewContent" style="float:left">'
+                                                        addon[i++] = '<div style="border-right: none !important;min-width: 160px;border:0px solid black;display:block">'
+                                                            addon[i++]= '<ul class="preview">'
+                                                                addon[i++] = '<li class="preview">'
+                                                                    addon[i++] = '<a class="preview">'
+                                                                        addon[i++] = $.default_.title
+                                                                    addon[i++] = '</a>'
+                                                                addon[i++] = '</li>'
+                                                                addon[i++] = '<li class="preview url">'
+                                                                    addon[i++] = $.default_.url
+                                                                addon[i++] = '</li>'
+                                                                addon[i++] = '<li class="preview">'
+                                                                    addon[i++] = '<span class="description1">'+$.default_.description1+'</span>'
+                                                                addon[i++] = '</li>'
+                                                                addon[i++] = '<li class="preview">'
+                                                                    addon[i++] = '<span class="description2">'+$.default_.description2+'</span>'
+                                                                addon[i++] = '</li>'
+                                                            addon[i++]= '</ul>'
+                                                        addon[i++] = '</div>'
+                                                    addon[i++] = '</div>'
+                                                addon[i++] = '</td>'
+                                            addon[i++] = '</tr>'
+                                            //addon[i++] = '<tr style="height:15px">'
+                                            //addon[i++] = '</tr>'
+                                            addon[i++] = '<tr id="previewResults">'
+                                                addon[i++] = '<td>'
+                                                    addon[i++] = '<div class="previewHeader">'
+                                                        addon[i++] = 'Reklama vo výsledkoch'
+                                                    addon[i++] = '</div>'
+                                                    addon[i++] = '<div class="previewContent" style="float:left">'
+                                                        addon[i++] = '<div style="border-right: none !important;min-width: 200px;">'
+                                                            addon[i++]= '<ul class="preview">'
+                                                                addon[i++] = '<li class="preview">'
+                                                                    addon[i++] = '<a class="preview">'
+                                                                        addon[i++] = ''+$.default_.title+' - '+$.default_.description1+''
+                                                                    addon[i++] = '</a>'
+                                                                addon[i++] = '</li>'
+                                                                addon[i++] = '<li class="preview url">'
+                                                                    addon[i++] = $.default_.url
+                                                                addon[i++] = '</li>'
+                                                                addon[i++] = '<li class="preview">'
+                                                                    addon[i++] = '<span class="description1">'+$.default_.description1+'</span><span class="description2" style="padding-left:10px">'+$.default_.description2+'</span>'
+                                                                addon[i++] = '</li>'
+
+                                                            addon[i++]= '</ul>'
+                                                        addon[i++] = '</div>'
+                                                    addon[i++] = '</div>'
+                                                addon[i++] = '</td>'
+                                            addon[i++] = '</tr>'
+                                        addon[i++] = '</table>'
+                                    
+                                    
+                                    addon[i++] = '</div>'
+                                    addon[i++] = '<div id="step3" style="display:none;border:0px solid #cccccc;min-height:100px;" class="stepContent">'
+                                        addon[i++] = '<div style="position:relative;border:0px solid black">'
+                                            addon[i++] = '<div>'
+                                                addon[i++] = '<input type="text" id="adKeyword" maxlength="35" style="padding-right:255px" >'
+                                            addon[i++] = '</div>'
+                                            addon[i++] = '<span id="adKeywordSpan" class="plac" style="position:absolute;top:4px;left:9px">'
+                                                addon[i++] = 'Kľúčové slovo alebo fráza'
+                                            addon[i++] = '</span>'
+                                            addon[i++] = '<span id="countAdKeywordSpan" class="plac" style="position:absolute;top:4px;left:400px">'
+                                                addon[i++] = 35
+                                            addon[i++] = '</span>'
+                                            addon[i++] = '<div style="position:absolute;background-color:white;max-height:90px;width:400px;border:1px double #ddd;z-index:2">'
+                                            
+                                                addon[i++] = '<table id="whisperWords" cellpadding="0" cellspacing="0" border="0" style="position:relative;font-size:12px;padding-left:8px">'
+                                                addon[i++] = '</table>'
+                                            addon[i++] = '</div>'
+                                        addon[i++] = '</div>'
+                                        
+                                        addon[i++] = '<div id="butPanel" style="width:766px;border:1px solid black;height:30px;margin-top:20px;position:relative">'
+                                            addon[i++] = '<input id="addWordBut" type="button" class = "s" value="Pridať slovo" style="width:80px;position:absolute;right:230px">'
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div id="errKeyword" class="block err">'
+                                            //addon[i++] = 'Je potrebné vybrať aspoň 1 kľúčové slovo'
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<div id="keywordContent" style="width:766px;height:355px;border:1px solid red;padding-top:0px;padding-bottom:0px;margin-top:50px;font-size:13px">'
+                                            addon[i++] = '<table id="chosenWords" cellpadding="0" cellspacing="0" border="0" style="position:relative;font-size:12px;border: 1px double #ddd;">'
+                                                
+                                                addon[i++] = '<tr >'
+                                                
+                                                    addon[i++] = '<th class="addWord" style="width:60px;text-align:left;">'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="keyw addWord" style="width:350px;text-align:left;padding-bottom:10px;">'
+                                                        addon[i++] = 'Kľúčové slovo'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="keyw addWord" style="width:90px;text-align:left;padding-bottom:10px;">'
+                                                        addon[i++] = 'Cena za klik'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="keyw addWord" style="width:140px;text-align:left;padding-bottom:10px;">'
+                                                        addon[i++] = 'Cena za 1000 zobrazení'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:45px;text-align:left">'
+                                                    addon[i++] = '</th>'
+                                                    addon[i++] = '<th class="addWord" style="width:45px;text-align:left">'
+                                                    addon[i++] = '</th>'
+                                                addon[i++] = '</tr>'
+                                            addon[i++] = '</table>'
+                                        addon[i++] = '</div>'
+                                        
+                                    addon[i++] = '</div>'
+                                    addon[i++] = '<div id="step4" style="display:none;border:0px solid #cccccc;min-height:100px;" class="stepContent">'
+                                        addon[i++] = '<div style="margin-top:15px;font-size:16px">'
+                                            addon[i++] = 'Zhrnutie'
+                                        addon[i++] = '</div>'
+                                        addon[i++] = '<table id="finish" cellpadding="0" cellspacing="0" border="0" style=";position:relative;margin-top:15px">'
+                                            addon[i++] = '<tr id="headerFinish">'
+                                                addon[i++] = '<th style="width:150px" class="addWord">'
+                                                    addon[i++] = 'Položka'
+                                                addon[i++] = '</th>'
+                                                addon[i++] = '<th style="width:550px" class="addWord">'
+                                                    addon[i++] = 'Vyplnený údaj'
+                                                addon[i++] = '</th>'
+                                            addon[i++] = '</tr>'
+                                        addon[i++] = '</table>'
+                                        
+                                        addon[i++] = '<table id="chosenWordsFinish" cellpadding="0" cellspacing="0" border="0" style=";position:relative;margin-top:25px">'
+                                            addon[i++] = '<tr id="headerWordsFinish">'
+                                                addon[i++] = '<th class="addWord" style="width:350px;text-align:left" class="addWord">'
+                                                    addon[i++] = 'Kľúčové slovo'
+                                                addon[i++] = '</th>'
+                                                addon[i++] = '<th class="addWord" style="width:90px;text-align:left" class="addWord">'
+                                                    addon[i++] = 'Cena za klik'
+                                                addon[i++] = '</th>'
+                                                addon[i++] = '<th class="addWord" style="width:140px;text-align:left" class="addWord">'
+                                                    addon[i++] = 'Cena za 1000 zobrazení'
+                                                addon[i++] = '</th>'
+                                            addon[i++] = '</tr>'
+                                        addon[i++] = '</table>' 
+                                        
+                                        addon[i++] = "<div id='succesfulCampaignCreation' class='err' style='font-size:16px;display:none;margin-top:25px'>"
+                                            addon[i++] = 'Kampaň bola úspešne vytvorená !' 
+                                        addon[i++] = "</div>"
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</div>'
+                            addon[i++] = '</form>'
+                            
+                            addon[i++] = '<form id="wordWhispererForm" method="post" action="'+$.general.prefix+'/whispMeWords/">'
+                                addon[i++] = '<input style="display:none" name="csrfmiddlewaretoken" value="" id = "wordWhispererInput">'
+                                addon[i++] = '<input style="display:none" name="string" value="" id = "adKeywordString">'
+                            addon[i++] = '</form>'
+                            addon[i++] = '<form id="pricingForm" method="post" action="'+$.general.prefix+'/giveMePrice/">'
+                                addon[i++] = '<input style="display:none" name="csrfmiddlewaretoken" value="" id = "pricingInput">'
+                                addon[i++] = '<input style="display:none" name="string" value="" id = "wordForPricing">'
+                            addon[i++] = '</form>'
+                            
+                            addon[i++] = '<div id="butPanelo" style="width:766px;border:1px solid black;height:30px;position:absolute;bottom:0">'
+                                addon[i++] = '<input id="returnToMenuButton" type="button" class="s" value="Návrat do menu" style="float:left;width:120px">'
+                                addon[i++] = '<input id="prevStep" type="button" class="s" value="Predchádzajúci krok" style="display:none;float:left;width:140px">'
+                                addon[i++] = '<input id="nextStep" type="button" class="s" value="Ďalší krok" style="position:absolute;right:0;width:90px">'
+                                addon[i++] = '<input id="finishCampaignCreationButton" type="button" class="s" value="Dokončiť vytváranie" style="display:none;position:absolute;right:0;;width:135px">'
+                            addon[i++] = '</div>'
+                    
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                addon[i++] = "</div>"
+                
+                
+                
+                $('#maina').append(addon.join(''))
+                
+                $('#topBarInfo').hover(function(){
+                    $('#helper').show()
+                    },function(){
+                        $('#helper').hide()
+                    }
+                )
+                
+                $('input[name="adType"]').click(function(){
+                    var value = $(this).val()
+                    if (value < 3){
+                        alert('showingRes')
+                        $('#previewSidePanel').hide()
+                        $('#previewResults').show()
+                    
+                        
+                    }else{
+                        alert('showingSidePanel')
+                        $('#previewSidePanel').show()
+                        $('#previewResults').hide()
+                    }
+                })
+                
+                var numo = {{ campaign|length }} + 1
+                var str = 'Kampaň č.'+numo+''
+                $('#adName').attr('value',str)
+                $('#adNameSpan').hide()
+                
+                                
+                $('#adKeyword').on('keyup paste',function(){
+                    
+                    $("#whisperWords tr").remove();
+                    var value = $.trim($('#adKeyword').val())
+                    
+                    if (value.length != 0){
+                        $('#adKeywordString').attr('value',value)
+                        $('#wordWhispererInput').attr('value',$.cookie('csrftoken'))
+                        var frm = $('#wordWhispererForm');
+                        $.ajax({
+                            type: frm.attr('method'),
+                            url: frm.attr('action'),
+                            data: frm.serialize(),
+                            cache: false,
+                            beforeSend: function(){
+                                
+                                
+                                
+                                
+                            
+                            },
+                                     
+                            success: function (msg) {
+                                if (msg != 0){
+                                    
+                                    var data = $.parseJSON(msg);
+                                    
+                                    
+                                    
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            var str = []
+                                            var m = 0
+                                            str[m++] = '<tr>'
+                                                str[m++] = '<td>'
+                                                    str[m++] = '<div id="whisp_'+key+'" style="cursor:pointer;" class="whisp">'
+                                                        str[m++] = data[key]
+                                                    str[m++] = '</div>'
+                                                str[m++] = '</td>'
+                                            str[m++] = '</tr>'
+                                            
+                                            
+                                            $('#whisperWords').append(str.join(''))
+                                            $.fn.addWhispToInputFieldHandler(key,data[key])
+                                            
+                                        }
+                                    }
+                                    
+                                    
+                                }
+                            },
+                            error:function(msg){
+                                alert('error')
+                            },
+                        })
+                    }
+                
+                
+                
+                    
+                    
+                })
+                
+                
+                {% for z in campaign %}
+                
+                    $('#closeBtnCampaign{{ z.varSymbol }}').click(function(){
+                        $('#deleteCampaignInput{{ z.varSymbol }}').attr('value',$.cookie('csrftoken'))
+                        
+                        
+                        var r=confirm("Chcete naozaj odstrániť túto kampaň");
+                        if (r==true){
+                            var formRemove = $('#deleteCampaignForm{{ z.varSymbol }}');
+                            $.ajax({
+                                type: formRemove.attr('method'),
+                                url: formRemove.attr('action'),
+                                data: formRemove.serialize(),
+                                cache: false,
+                                beforeSend: function(){
+                                    
+                                    
+                                    
+                                
+                                },
+                                         
+                                success: function (msg) {
+                                    alert(msg)
+                                    if (msg == 1){
+                                        $('#campaign{{ z.varSymbol }}').remove()
+                                    }
+                                },
+                                error:function(){
+                                },
+                            })
+                        }
+                        
+                        
+                        
+                        
+                    })
+                    
+
+                   
+                    
+                    
+                    $('#editCampaign{{ z.varSymbol }}').click(function(){
+                        alert('clickk')
+                        $('#myCampaignHeader').show().append('{{ z.name }}')
+                        $('div[class = "header"]').not($('#myCampaignHeader')).hide()
+                        
+                        $('#campaignMenu').show()
+                        $('tr[class="adMenu"]').not($('#campaignMenu')).hide()
+                        
+                        $('#menuCampaignOverview').show()
+                        $('#menuCampaigns').hide()
+                        
+                        var value = parseInt($('#statusCampaign{{ z.varSymbol }}').attr('value'))
+                        
+                        var statusText = $.fn.giveMeStatus(value)
+ 
+                        var i = 0
+                        var addon = []
+                        addon[i++] = '<table id="statusOverview" cellpadding="0" cellspacing="0" border="0" style=";position:relative">'
+                            addon[i++] = '<tr>'
+                                addon[i++] = '<th class="addWord" style="width:80px">'
+                                    addon[i++] = '<div>'
+                                        addon[i++] = 'Stav'
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</th>'
+                                addon[i++] = '<th class="addWord" style="width:100px">'
+                                    addon[i++] = '<div>'
+                                        addon[i++] = 'Akcia'
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</th>'
+                            addon[i++] = '</tr>'
+                            addon[i++] = '<tr>'
+                                addon[i++] = '<td class="addWord" id="tdStatusCampaignOverview{{ z.varSymbol }}" style="height:34px">'
+                                    addon[i++] = '<div id="statusCampaignOverview{{ z.varSymbol }}" style="cursor:default">'
+                                        addon[i++] = statusText   
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</td>'
+                                addon[i++] = '<td class="addWord" style="text-align:center;height:34px">'
+                                    addon[i++] = '<div id="actionButtonOverview{{ z.varSymbol }}" class="actionButton" value="{{ z.varSymbol }}" style="cursor:pointer">'
+                                        addon[i++] = '<img id="imgActionButtonOverview{{ z.varSymbol }}" height="16px" width="16px"  src="" style="display:inline-block;margin-bottom:1px;opacity:0.5">'
+                                    addon[i++] = '</div>'
+                                addon[i++] = '</td>'
+                            addon[i++] = '</tr>'
+                        addon[i++] = '</table>'
+                        
+                        $('#menuCampaignOverview').prepend(addon.join(''))
+                        
+                        $.fn.addActionButtonHadler(1);
+                        $.fn.addHoveringEffect($('#imgActionButtonOverview{{ z.varSymbol }}'),'0.5')
+                        
+                        
+
+                        
+                        
+                        
+                        var L = $.fn.giveMeColor(value)
+                        
+                        var img = L[0]
+                        var color = L[1]
+                        
+                        $('#tdStatusCampaignOverview{{ z.varSymbol }}').css('background-color',color)
+                        $('#imgActionButtonOverview{{ z.varSymbol }}').attr('src','{{ STATIC_URL }}'+img+'.jpg')
+                        
+                                                       
+                        
+                    })
+                    
+                    
+                    
+
+                    $.fn.setColor({{ z.status }},{{ z.varSymbol }},'')
+                    
+                    var buttons = ['imgActionButton','editCampaign','closeBtnCampaign']
+                    var nums = ['0.5','0.6','0.6']
+                    for (var i =0,len = buttons.length;i<len;i++){
+                        $.fn.addHoveringEffect($('#'+buttons[i]+'{{ z.varSymbol }}'),nums[i])
+                    
+                    }
+                    
+                {% endfor %}
+                
+                $.fn.addActionButtonHadler();
+                
+           
+                
+                $('#finishCampaignCreationButton').click(function(){
+                    alert('a')
+                
+                    $('#keywordIDsInput').attr('value',$.gen.keywordIDs)
+                
+                    $('#createCampaignInput').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#createCampaignForm')
+                   
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                            alert('b')
+                        },   
+                        success: function (msg) {
+                            alert('b2')
+                            var data = $.parseJSON(msg);
+                            if (data.status == 1){
+                                var k = 0
+                                var str = []
+                                
+                                str[k++] = '<tr>'
+                                    str[k++] = '<td class="addWord">'
+                                        str[k++] = '<div>'
+                                            str[k++] = data.name
+                                        str[k++] = '</div>'
+                                    str[k++] = '</td>'
+                                    str[k++] = '<td class="addWord">'
+                                        str[k++] = '<div>'
+                                            
+                                            str[k++] = 'neaktívna'
+                                            
+                                            
+                                        str[k++] = '</div>'
+                                    str[k++] = '</td>'
+                                    str[k++] = '<td class="addWord">'
+                                    str[k++] = '</td>'
+                                str[k++] = '</tr>'
+                                $('#campaigns > tbody:last').append(str.join(''))
+                                $('#succesfulCampaignCreation').show()
+                                
+                            
+                            
+                            }
+                           
+                        },
+                        error: function(msg){
+                            alert('error')
+                        },
+                    })
+                
+                })
+                
+                
+                $('#createCampaignButton').click(function(){
+                    $('#topHeaderAd').hide()
+                    $('#headerGuide').show()
+                    $('#menu').hide()
+                    $('#guide').show()
+                })
+                $('#returnToMenuButton').click(function(){
+                    $('#topHeaderAd').show()
+                    $('#headerGuide').hide()
+                    $('#menu').show()
+                    $('#guide').hide()
+                })
+                
+                {% if isBillingInfo == 1 %}
+                    $('#billingInfoCompleteDiv').show()
+                    $('#billingInfoMissingDiv').hide()
+                {% endif %}
+                
+                
+                {% if isCampaign == 1 %}
+                    $('#noCampaigns').hide()
+                    
+                    $('#campaignsList').show()
+                {% endif %}
+                
+                
+                
+                $('#saveBillingInfoButton').click(function(){
+                    $('#saveBillingInfoInput').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#saveBillingInfoForm')
+                   
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+
+                        },   
+                        success: function (msg) {
+                            alert(msg)
+                            alert('ok')
+                            $.gen.isBillingInfo = 1
+                        },
+                        error: function(msg){
+                            alert('error')
+                        },
+                    })
+                })
+                
+                $('div[class="menu"]').click(function(){
+                    $('div[class="menu"]').not(this).css('opacity','1.0').css('cursor','pointer')
+                    $(this).css('opacity','0.4').css('cursor','default')
+                    
+                    
+                    if ($(this).attr('value') == 1){
+                        var selector = $('#menuCampaigns')
+                        
+                        if ($.gen.isBillingInfo == 1){
+                            $('#billingInfoCompleteDiv').show()
+                            $('#billingInfoMissingDiv').hide()
+                        }else{
+                            $('#billingInfoCompleteDiv').hide()
+                            $('#billingInfoMissingDiv').show()
+                        }
+                        
+                    }
+                    if ($(this).attr('value') == 2){
+                        var selector = $('#menuBilling')
+                    }
+                    selector.show()
+                    $('div[class="subcontent"]').not(selector).hide()
+                    
+                })
+                
+                $('#showMenuBilling').click(function(){
+                    $('#myCampaigns').css('opacity','1.0').css('cursor','pointer')
+                    $('#billingInfoData').css('opacity','0.4').css('cursor','default')
+                    $('#menuCampaigns').hide()
+                    $('#menuBilling').show()
+                })
+                
+                $.fn.addFadeOutSpanHandler($('#adBudget'),$('#adBudgetSpan'))
+                $('#adSidePanel').css('margin-top','25px')
+
+                
+                $.gen.basicFields = [$('#adName'),$('#adTitle'),$('#adDescription1'),$('#adDescription2'),$('#adUrl1'),$('#adUrl2'),$('#adBudget')]
+                var errFields = [$('#errName'),$('#errTitle'),$('#errDescription1'),$('#errDescription2'),$('#errUrl1'),$('#errUrl2'),$('#errBudget'),]
+                var params = [0,0,0,0,0,0,1]
+                for(var i = 0,len = $.gen.basicFields.length;i<len;i++){
+
+                    $.fn.addFocusFieldsHandler($.gen.basicFields[i],params[i],errFields[i])
+
+                }
+                
+                
+                
+                $('#topping > tbody:last').append('<tr><td><div style="position:relative"><input type="checkbox"></div></td><td><div>auto</div></td><td>Áno</td><td>0.01 E</td></tr>')
+                
+                
+                
+
+                $('#addWordBut').click(function(){
+                    
+                    var value = $.trim($('#adKeyword').val())
+                    $('#wordForPricing').attr('value',value)
+                    $('#pricingInput').attr('value',$.cookie('csrftoken'))
+                    var frm = $('#pricingForm');
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+  
+                        },
+                        
+                        
+                        
+                                 
+                        success: function (msg) {
+                            if (msg != 0){
+                                var data = $.parseJSON(msg);    
+                                var i = 0
+                                var addon = []
+                                addon[i++] = '<tr id="keyw_'+data.idWord+'" style="margin-top:0px">'
+                                    addon[i++] = '<td class="addWord" style="width:60px;text-align:center">'
+                                        addon[i++] = "<div style=';position:relative'>"
+                                            addon[i++] = '<input type="checkbox">'
+                                        addon[i++] = "</div>"
+                                    addon[i++] = '</td>'
+                                    addon[i++] = '<td class="addWord" style="width:350px;text-align:left">'
+                                        addon[i++] = '<div id="keyword_'+data.idWord+'">'
+                                            addon[i++] = value
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</td>'
+                                    addon[i++] = '<td class="addWord" style="padding-left:0px;width:90px;text-align:right">'
+                                        addon[i++] = '<div>'
+                                            addon[i++] = data.cpm
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</td>'
+                                    addon[i++] = '<td class="addWord" style="padding-left:0px;width:140px;text-align:right">'
+                                        addon[i++] = '<div>'
+                                            addon[i++] = data.ppc
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</td>'
+                                    addon[i++] = '<td class="addWord" style="padding-left:0px;width:45px;text-align:center">'
+                                        addon[i++] = '<div id="editKeyword_'+data.idWord+'" style="cursor:pointer">'
+                                            addon[i++] = 'Edit'
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</td>'
+                                    addon[i++] = '<td class="addWord" style="padding-left:0px;width:45px;text-align:center">'
+                                        addon[i++] = '<div class="close-btn6" style="font-size:16px;float:none" id="closeBtnKeyword_'+data.idWord+'">'
+                                        addon[i++] = '</div>'
+                                    addon[i++] = '</td>'
+                                addon[i++] = '</tr>'
+                                
+                                $('#chosenWords > tbody:last').append(addon.join(''))
+                                
+                                
+                                $('#editKeyword_'+data.idWord+'').click(function(){
+                        
+                                    $('#adKeyword_').val($('#keyword_'+data.idWord+'').text())
+                                    if ($("#saveKeyword_"+data.idWord+"").length > 0){
+                                        $("#saveKeyword_"+data.idWord+"").remove()
+                                    }
+                                    $('#butPanel').prepend('<input id="saveKeyword_'+data.idWord+'" name="'+data.idWord+'" type="button" class="s" value="Uložiť zmeny" style="position:absolute;width:90px;right:320px">')
+                                    $("#saveKeyword_"+data.idWord+"").click(function(){
+                                        var value = $.trim($('#adKeyword').val())
+                                        $('#keyword_'+data.idWord+'').text(value)
+                                        $("#saveKeyword_"+data.idWord+"").remove()
+                                        $('#adKeyword').val('')
+                                        $('#countAdKeywordSpan').text(35)
+                                    })
+                                
+                                })
+                                $('#closeBtnKeyword_'+data.idWord+'').click(function(){
+                                    $('#keyw_'+data.idWord+'').remove()
+                                    $.gen.keywordIDs.splice($.gen.keywordIDs.indexOf(data.idWord),1);
+                                    alert($.gen.keywordIDs)
+                                })
+                                
+                                $.gen.keywordIDs.push(data.idWord)
+                                alert($.gen.keywordIDs)
+                                    
+                                
+                                               
+                            }
+
+                        },
+                        error: function (msg) {
+                        },
+                    }).done(function(){
+                        $('#adKeyword').val('')
+                        $('#countAdKeywordSpan').text(35)
+                    })
+                    
+                    
+                    
+
+                    
+                })
+                
+ 
+                
+                
+                $("div[class='steps']").click(function(){
+                    var value = $(this).attr('value')
+                    if ((value < $.gen.curPage) || (value > $.gen.curPage && $.fn.checkStepDistance(value,$.gen.curPage) == 1 && $.fn.checkStep() == 1)){
+                        alert('proslo')
+                        
+                        $("div[class='stepContent']").hide()
+                        $.gen.curPage = parseInt(value)
+                        $('#step'+value+'').show()
+                        
+                        $.fn.changeOpacityOnSelected($(this))
+                                            
+                        $.fn.checkNavButtons()
+                    }
+                })
+                
+                $.fn.addFadeOutSpanHandler($('#adName'),$('#adNameSpan'),1,$('#countAdNameSpan'));
+                $.fn.addFadeOutSpanHandler($('#adTitle'),$('#adTitleSpan'),1,$('#countAdTitleSpan'),1);
+                $.fn.addFadeOutSpanHandler($('#adDescription1'),$('#adDescription1Span'),1,$('#countAdDescription1Span'),2);
+                $.fn.addFadeOutSpanHandler($('#adDescription2'),$('#adDescription2Span'),1,$('#countAdDescription2Span'),3);
+                $.fn.addFadeOutSpanHandler($('#adUrl1'),$('#adUrl1Span'),1,$('#countAdUrl1Span'),4);
+                $.fn.addFadeOutSpanHandler($('#adUrl2'),$('#adUrl2Span'),3,$('#countAdUrl2Span'));
+                $.fn.addFadeOutSpanHandler($('#adKeyword'),$('#adKeywordSpan'),1,$('#countAdKeywordSpan'));
+                
+                var billingInfo = ['{{ billingInfo.0.companyName }}','{{ billingInfo.0.companyStreet }}','{{ billingInfo.0.companyTown }}','{{ billingInfo.0.companyZIP }}','{{ billingInfo.0.companyPhone }}','{{ billingInfo.0.companyEmail }}','{{ billingInfo.0.companyIC }}','{{ billingInfo.0.companyDIC }}']
+                for(var z = 0,len=idsCompany.length;z<len;z++){
+                    var selector = $('#id_'+idsCompany[z]+'')
+                    var span = $('#'+idsCompany[z]+'Span')
+                
+                    $.fn.addFadeOutSpanHandler(selector,span)
+                    
+                    {% if isBillingInfo == 1 %}
+                    
+                        selector.val(billingInfo[z])
+                        span.hide()
+                    {% endif %}
+                    
+                    
+                }
+                
+                
+
+            
+                $('#nextStep').click(function(){
+                    if ($.fn.checkStep() == 1){
+                
+                        if ($.gen.curPage < $.gen.pages){
+                            $.gen.curPage = $.gen.curPage + 1
+                            $('div[class="stepContent"').hide()
+                            $('#step'+$.gen.curPage+'').show()
+                            
+                            $.fn.checkNavButtons()
+                            $.fn.checkStepButtons()
+                            
+                            if ($.gen.curPage == 4){
+                                $.fn.insertInputFieldValues()
+                            }
+                        }
+                        
+                    }
+                    
+                })
+                $('#prevStep').click(function(){
+                    if ($.gen.curPage > 1){
+                        $.gen.curPage = $.gen.curPage - 1
+                        $('div[class="stepContent"').hide()
+                        $('#step'+$.gen.curPage+'').show()
+                        $.fn.checkNavButtons()
+                        $.fn.checkStepButtons()
+                        
+                    }
+                    
+                    
+                })
+                
+
+                
+            }
+        
+            $( document ).ready(function() {
+                $.gen = new Object();
+                $.gen.isBillingInfo = {{ isBillingInfo }}
+                
+                
+
+                $.gen.statusInactive = 'Neaktívna'
+                $.gen.statusActive = 'Aktívna'
+                $.gen.statusPaused = 'Pozastavená'
+                $.gen.keywordIDs = []
+                $.gen.pages = 4
+                $.gen.curPage = 1
+                $.gen.keyword = 0
+                $.checked = new Object();
+                $.checked.adName = 0
+                $.checked.adBudget = 0
+                $.checked.adTitle = 0
+                $.checked.adDescription1 = 0
+                $.checked.adDescription2 = 0
+                $.checked.adUrl1 = 0
+                $.checked.adUrl2 = 0
+                
+                var basicFields = [$('#adName'),$('#adTitle'),$('#adDescription1'),$('#adDescription2'),$('#adUrl1'),$('#adUrl2'),$('#adBudget')]
+                
+                
+                $.fn.centerDiv()
+                $.fn.buildAd()
+                
+            })
+        
+        </script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'> 
+         
+    </head>
+    <body OnLoad="" style="">
+        <div id="authent" class="" style="border:1px solid black;width:820px;height:750px;background-color:white;position:absolute;left:50%;top:10px;z-index:100">
+            <div id='maina' style='width:820px;height:750px'>
+            </div>
+        </div>
+        
+    
+    </body>
+</html>

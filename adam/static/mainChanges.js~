@@ -1,0 +1,43 @@
+$.fn.buildMainChangesSet = function(data){
+    console.log('launched')
+    $('#mainChanges > tbody:last tr').remove()
+    $.gen.mainChangesList = []
+    console.log('dataaa',data)
+    var k = 0
+    var addon = []
+    for (var i =0,len=data.length;i<len;i++){
+         
+        if (i < 15){
+            console.log('build',data[i].timestamp)        
+            addon[k++] = $.fn.buildChangesRecord( data[i].timestamp,data[i].numOfOperation,data[i].original,2)
+        }
+        var dic = {'timestamp':data[i].timestamp,'numOfOperation':data[i].numOfOperation,'original':data[i].original}
+        $.gen.mainChangesList.push(dic)
+
+
+
+    }
+    $('#mainChanges > tbody:last').append(addon.join(''))
+        
+}
+
+$.fn.resetMainChanges = function(len){
+    
+    
+    $.gen.fromMainChanges = 1
+    $.gen.sumMainChanges = len
+
+        
+    $.gen.extentMainChanges = Math.ceil(($.gen.sumMainChanges/15))
+    $.gen.curMainChanges = 1
+    if ($.gen.extentMainChanges > 1){
+        $.gen.toMainChanges = 15
+    }else{
+        $.gen.toMainChanges = $.gen.sumMainChanges
+    }
+     
+    $('#totalSumMainChanges').text($.gen.sumMainChanges)
+    $('#fromMainChanges').text($.gen.fromMainChanges)
+    $('#toMainChanges').text($.gen.toMainChanges)
+
+}

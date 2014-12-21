@@ -1,0 +1,43 @@
+(function ($) {
+$.fn.addSaveDescriptionHandler = function(idCampaign){
+    $("#saveDescription").click(function(){
+ 
+        $('#saveDescriptionChangesInput'+idCampaign+'').attr('value',$.cookie('csrftoken'))
+        var frm = $("#saveDescriptionChangesForm"+idCampaign+"")
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            cache: false,
+            beforeSend: function(){
+                
+                $.gen.curPage = 2
+                
+                if ($.fn.checkStep() == 0){
+                    $('#saveDescription').prop('disabled',true)
+                    $('#saveDescription').css('cursor','default')
+                    return false;
+                }
+                
+                
+            
+            },
+                     
+            success: function (msg) {
+                
+            },
+            error:function(msg){
+            },
+    
+    
+        }).done(function(){
+            $('#saveDescription').prop('disabled',true)
+            $('#saveDescription').css('cursor','default')
+        })
+    
+    
+       
+    
+    })
+}
+})(jQuery);

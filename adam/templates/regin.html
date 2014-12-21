@@ -1,0 +1,432 @@
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery-1.10.2.js'></script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/mailcheck.js'></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/showPassword.js'></script>
+        <script type="text/javascript" src="/wordBlog/adam/static/jquery.cookie.js"></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/common.js'></script>
+        <script type="text/javascript" src="/wordBlog/adam/static/jquery.loadmask.js"></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/focusUnfocusField.js'></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/addMailCheck.js'></script>
+        <script language='JavaScript' type='text/javascript' >
+        $.fn.buildRegin = function(){
+            var i = 0
+            var addon = []
+            
+            addon[i++] = "<div id='overlay'>"
+            addon[i++] = "</div>"
+            
+            addon[i++] = "<div id = 'regin' class= '' style= 'border: 0px solid #7A858D;'>"
+                addon[i++] = "<div style='border-top-right-radius: 6px;border-top-left-radius: 6px'>"
+                    addon[i++] = "<div id='topLDiv' style='margin:25px'>"
+                        addon[i++] = "<div style='display:inline-block;font-size:18px'>"
+                            addon[i++] = "Nová registrácia"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                addon[i++] = "</div>"
+            
+            
+            
+                addon[i++] = "<div style='padding-bottom:25px;border-top: 1px solid #e5e5e5;background: #fff;border-bottom-right-radius: 6px;border-bottom-left-radius: 6px;' class=''>"
+                    addon[i++]= "<div id='contento' style='' class='contento'>"
+                        addon[i++]= "<form id = 'regForm' method='post' action='"+$.general.prefixReg+"/register/' class=''>"
+                            addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='rinInput'>"
+                            
+                            addon[i++]= '<div style="margin-top:25px" class="">'
+                                
+                                
+                                addon[i++]= '{{ form.username }}'
+                                addon[i++]= '<span id="usrSpan" class="plac" style="top:104px;left:33px">Užívateľské meno</span>'
+                                
+                                addon[i++]= "<div id ='errUsername' class='block err' style='display:block'>"
+                                addon[i++]= "</div>"
+                            addon[i++]= '</div>'
+                            
+                            
+                            
+                            addon[i++]= '<div class="inpFSpace">'
+                                
+                                
+                                addon[i++]= '{{ form.email }}'
+                                addon[i++]= '<span id="emailSpan" class="plac" style="top:6px">Email</span>'
+                                
+                                addon[i++]= "<div id ='errEmail' class='block err'>"
+                                addon[i++]= "</div>"
+                            addon[i++]= '</div>'
+                            
+                            
+                            addon[i++]= '<div class="inpFSpace">'
+                                addon[i++]= '{{ form.password1 }}'
+                                addon[i++]= '<span id="password1Span" class="plac" style="top:6px">Heslo</span>'
+                                addon[i++] = "<div id='showP1' style='' class='showP'>"
+                                addon[i++] = "</div>"
+                                addon[i++]= "<div id ='errPassword1' class='block err'>"
+                                addon[i++]= "</div>"
+                                
+                            addon[i++]= '</div>'
+                            
+                            addon[i++]= '<div class="inpFSpace">'
+                                addon[i++]= '{{ form.password2 }}'
+                                addon[i++]= '<span id="password2Span" class="plac" style="top:6px">Heslo (ešte raz)</span>'
+                                addon[i++] = "<div id='showP2' style='' class='showP'>"
+                                addon[i++] = "</div>"
+                                addon[i++]= "<div id ='errPassword2' class='block err'>"
+                                addon[i++]= "</div>"
+                                
+                            addon[i++]= '</div>'
+                            
+                            
+
+                            
+                            
+                            
+                            addon[i++] = "<div id ='showCaptcha' class='inpFSpace'>"
+                            addon[i++] = "</div>"
+                            addon[i++] = '<table id="outerDiv" cellpadding="0" cellspacing="0" border="0" style="margin-top:15px;width:100%;position:relative">'
+                                addon[i++] = '<tr>'
+                                   addon[i++] = '<td valign="top" id="" style="padding-bottom:5px">'
+                                        
+                                        addon[i++]= "<input name='tos' type='checkbox' style='' id='tos' class='extra'>"
+                                        
+                                   addon[i++] = '</td>'
+                                   
+                                   addon[i++] = '<td valign="middle" id="" style="">'
+                                       addon[i++]= "<div style='font-size:13px'>"
+                                            addon[i++]= "Súhlasím s "
+                                            addon[i++]= "<span id='terms' class='tyrkys' style='display:inline-block;cursor:pointer;'>"
+                                                addon[i++]= "podmienkami užívania"
+                                            addon[i++]= "</span>"
+                                        addon[i++]= "</div>"
+                                    addon[i++] = '</td>'
+                                           
+
+                                addon[i++] = '</tr>'
+
+                               
+                            addon[i++] = '</table>'
+                            addon[i++]= "<div id ='errTos' class='block err' style=''>"
+                            addon[i++]= "</div>"
+                            addon[i++]= "<div style='display:block;position:relative;height:30px;border:0px solid black' class='inpFSpace'>"
+                                addon[i++]= "<input id ='reg' type='button' class = 's' value='Registrovať' style='cursor:pointer;width:auto;padding-left:10px;padding-right:10px;float:right;margin-right:0px;'>"
+                                addon[i++]= "<input id ='return' type='button' class = 's' value='Späť' style='cursor:pointer;padding-left:10px;padding-right:10px;margin-right:0px;text-align:center;width:60px'>"
+                            addon[i++]= "</div>"
+                            
+                            
+                            
+                        addon[i++] = "</form>"
+                   
+                        addon[i++] = "<div id='captchaForm'>"
+                        addon[i++] = "</div>"
+                    
+                    
+                    
+                        addon[i++]= "<form id = 'tosForm' method='post' action='"+$.general.prefix+"/tos/' class=''>"
+                            addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='tosInput'>"
+                        addon[i++]= "</form>"
+                    addon[i++] = "</div>"
+                addon[i++] = "</div>"
+            addon[i++]= "</div>"
+            
+            $('#mainR').append(addon.join(''));
+            $.fn.addReturnHandler()
+
+            
+            $('input#tos').on('click',function() {
+                if ($(this).prop('checked') == true){
+                    
+                    $('#errTos').text('')
+                }else{
+                    
+                    $('#errTos').append('Musíte súhlasiť s podmienkami užívania')
+                }
+            })
+            
+            $.fn.addCloseButtonHandler();
+            //$('#id_username').focus()
+            $('#id_password1').showPassword({
+                appTo: 'showP1',
+                linkClass: 'tyrkys',
+                linkText: 'Ukázať heslo',
+                showPasswordLinkText: 'Skryť heslo',
+                showPasswordInputClass: 'pwd1',
+                idInput: 'idP1'
+                
+            });
+            $('#id_password2').showPassword({
+                appTo: 'showP2',
+                linkClass: 'tyrkys',
+                linkText: 'Ukázať heslo',
+                showPasswordLinkText: 'Skryť heslo',
+                showPasswordInputClass: 'pwd2',
+                idInput: 'idP2'
+            });
+            $.fn.addFadeOutSpanHandler($('#id_username'),$('#usrSpan'))
+            $.fn.addFadeOutSpanHandler($('#id_email'),$('#emailSpan'))
+            $.fn.addFadeOutSpanHandler($('#id_password1'),$('#password1Span'))
+            $.fn.addFadeOutSpanHandler($('#id_password2'),$('#password2Span'))
+            $.fn.addFadeOutSpanHandler($('#idP1'),$('#password1Span'))
+            $.fn.addFadeOutSpanHandler($('#idP2'),$('#password2Span'))
+      
+            
+            $('#id_username').focus(function(){
+                $.fn.changeOpacity(0,$("#usrSpan"))
+                $('#errUsername').text('')
+            })
+            $('#id_username').focusout(function(){
+                $.fn.changeOpacity(1,$("#usrSpan"))
+                $.fn.checkUsername(0)
+            })
+            $('#id_email').focus(function(){
+                $.fn.changeOpacity(0,$("#emailSpan"))
+                $('#errEmail').text('')
+            })
+            $('#id_email').focusout(function(){
+                $.fn.changeOpacity(1,$("#emailSpan"))
+                $.fn.addMailCheck($('#id_email'),$('#errEmail'))
+            })
+            
+            
+            $('#id_password1').focus(function(){
+                $.fn.changeOpacity(0,$("#password1Span"))
+                $.general.ok1 = 0
+                $.general.item1 = ''
+                $('#errPassword1').text('')
+            })
+            $('#id_password1').focusout(function(){
+                $.fn.changeOpacity(1,$("#password1Span"))
+                var L = $.fn.checkPass(0,$('#id_password1'),$('#idP1'),$('#errPassword1'))
+                $.general.ok1 = L[1]
+                $.general.item1 = L[2]
+                $.fn.checkEquality($.general.ok1,$.general.item1,$.general.ok2,$.general.item2,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+                
+            })
+            
+            $('#id_password2').focus(function(){
+                $.fn.changeOpacity(0,$("#password2Span"))
+                $.general.ok2 = 0
+                $.general.item2 = ''
+                $('#errPassword2').text('')
+            })
+            $('#id_password2').focusout(function(){
+                $.fn.changeOpacity(1,$("#password2Span"))
+                var L = $.fn.checkPass(0,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+                $.general.ok2 = L[1]
+                $.general.item2 = L[2]
+                console.log(L[1],L[2])
+                $.fn.checkEquality($.general.ok1,$.general.item1,$.general.ok2,$.general.item2,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+                
+            })
+            
+            
+            
+            
+            $('#idP1').focus(function(){
+                $.fn.changeOpacity(0,$("#password1Span"))
+                $.general.ok1 = 0
+                $.general.item1 = ''
+                $('#errPassword1').text('')
+            })
+            $('#idP1').focusout(function(){
+                $.fn.changeOpacity(1,$("#password1Span"))
+                var L = $.fn.checkPass(0,$('#id_password1'),$('#idP1'),$('#errPassword1'))
+                $.general.ok1 = L[1]
+                $.general.item1 = L[2]
+                $.fn.checkEquality($.general.ok1,$.general.item1,$.general.ok2,$.general.item2,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+                
+            })
+            
+            
+            
+            $('#idP2').focus(function(){
+                $.fn.changeOpacity(0,$("#password2Span"))
+                $.general.ok2 = 0
+                $.general.item2 = ''
+                $('#errPassword2').text('')
+            })
+            $('#idP2').focusout(function(){
+                $.fn.changeOpacity(1,$("#password2Span"))
+                var L = $.fn.checkPass(0,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+                $.general.ok2 = L[1]
+                $.general.item2 = L[2]
+                $.fn.checkEquality($.general.ok1,$.general.item1,$.general.ok2,$.general.item2,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+            })
+            
+            
+            
+            $('#idP1').css('display','none')
+            $('#idP2').css('display','none')
+           
+            $('#reg').click(function(){
+                $.fn.copyInputFieldValues('id_password1','idP1')
+                $.fn.copyInputFieldValues('id_password2','idP2')        
+        
+                $('#rinInput').attr('value',$.cookie('csrftoken'))
+                var frm = $('#regForm')
+                xhr = $.ajax({
+                    type: frm.attr('method'),
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    beforeSend: function(){
+
+                        
+                        if ($.fn.reginCheck() == 0){
+                            return false;
+                        }
+                        var online = navigator.onLine;    // Detecting the internet connection
+                        if(!online) {
+                           alert('Nie ste pripojený k internetu...');
+                           return false
+                        }
+
+                        $('#regin').mask('Prosím čakajte...')
+                        $('#overlay').css('display','block')
+                    },
+                    cache: false,
+                              
+                    success: function (msg) {
+                        var data = $.parseJSON(msg)
+                        if (data.status == 'NOTOK'){
+                            
+                            $.fn.getErrsUsername(data)
+
+                            $('#errEmail').text('')
+                            $('#id_email').removeClass('errBorder') 
+                            if (data.errors.email){           
+                                $('#errEmail').append("Zadaný email už existuje.")                                
+                                $('#id_email').addClass('errBorder') 
+                               
+                            }
+                            $.fn.getErrsCaptcha(data)
+                            
+                            
+                            
+                            
+                            
+                        }else{
+                            $('#contento').children().remove()
+                            var i = 0
+                            var addon = []
+                            addon[i++]= "<div style='border:0px solid black;text-align:justify'>Registrácia prebehla úspešne. Bol vám zaslaný aktivačný mail na adresu "+data.email+".</div>"
+                            addon[i++]= "<div style='display:block;position:relative;height:30px;border:0px solid black' class='inpFSpace'>"
+                                addon[i++]= "<input id ='return' type='button' class = 's' value='Späť' style='float:right;cursor:pointer;padding-left:10px;padding-right:10px;margin-right:0px;text-align:center;width:60px'>"
+                            addon[i++]= "</div>"
+                            $('#contento').append(addon.join('')).css('margin-top','25px')
+                            $.fn.addReturnHandler()
+
+                            
+                        }
+                        
+
+                  
+                                     
+                    },
+                    error: function(msg) {
+                    alert('error')
+                    },
+                    complete:function(msg){
+                        $('#regin').unmask()
+                        $('#overlay').css('display','none')
+                        
+                        
+                    },
+                }).done(function(){
+                    
+              
+                })
+
+            })
+            $.fn.buildCaptcha('{{ formCap }}');
+            $('#captchaSpan').addClass('reginCaptcha')
+            $('#terms').click(function(){
+                var online = navigator.onLine;    // Detecting the internet connection
+                if(!online) {
+                   alert('You\'re Offline now...');
+                   return false
+                }
+                $('#tosInput').attr('value',$.general.token)
+                $('#tosForm').submit()
+            })
+        }
+        
+
+        
+        $.fn.reginCheck = function(){
+            
+            var flag = $.fn.addMailCheck($('#id_email'),$('#errEmail'))   
+            
+            var flag = $.fn.checkUsername(flag)
+            
+         
+            var L = $.fn.checkPass(flag,$('#id_password1'),$('#idP1'),$('#errPassword1'))
+            var flag = L[0]
+            var ok1 = L[1]
+            var item1 = L[2]
+            
+            var K = (flag,$('#id_password2'),$('#idP2'),$('#errPassword2'))
+            var flag = K[0]
+            var ok2 = K[1]
+            var item2 = K[2]
+            
+            
+            $.fn.checkEquality(ok1,item1,ok2,item2)           
+            
+
+            var flag = $.fn.checkCaptcha(flag)
+            
+            $('#errTos').text('')
+            $('input#tos').removeClass('errOutline')
+            if (!$('input#tos').is(":checked")){
+                $('input#tos').addClass('errOutline')
+                $('#errTos').append('Musíte súhlasiť s podmienkami užívania')
+                flag = 1
+            }
+            
+            
+            
+
+            if (flag == 1){
+                
+                
+                return 0
+            }else{
+                
+                return 1
+            }
+        }
+
+        $( document ).ready(function() {
+            $.general.ok1 = 0
+            $.general.ok2 = 0
+            $.general.item1 = ''
+            $.general.item2 = ''
+        
+        
+            $.fn.buildRegin()
+            $(document).keyup(function(e){
+                if(e.which == 13) {
+                    $('#reg').click()
+                }
+            })
+            
+            
+
+            
+            
+
+
+
+
+
+        })
+        </script>
+    </head>
+    <body>
+        <div id="authent" style="border:0px solid black;display:block;top:10px" class="z">
+            <div id="mainR" class="regin" style="border:0px solid red">
+            </div>
+        </div>
+    </body>
+</html>
+
+

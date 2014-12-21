@@ -1,0 +1,212 @@
+var test = $("div[id^='post']").attr('id').match(/[0-9 ]+/);
+
+
+
+var possibleIncomingFormDiv = jQuery(document.createElement('div'))
+                possibleIncomingFormDiv.css('display','none');
+                possibleIncomingFormDiv.attr('id','possibleIncomingFormDiv'+data.pk+'')
+                var possibleIncomingPostForm = jQuery(document.createElement('form'))
+                possibleIncomingPostForm.attr('id','incomPostForm'+data.pk+'');
+                possibleIncomingPostForm.attr('method','post');
+                possibleIncomingPostForm.attr('action','/adam/checkForIncomPosts/');
+                var lastPostIdHidData = jQuery(document.createElement('input'));
+                lastPostIdHidData.attr('type', 'hidden');
+                lastPostIdHidData.attr('name', 'lastPostId');
+                lastPostIdHidData.attr('value', lastPostId);
+                possibleIncomingPostForm.append(lastPostIdHidData);
+                var currentPostIdHidData = jQuery(document.createElement('input'));
+                currentPostIdHidData.attr('type', 'hidden');
+                currentPostIdHidData.attr('name', 'currentPostId');
+                currentPostIdHidData.attr('value', data.pk);
+                possibleIncomingPostForm.append(currentPostIdHidData);
+                possibleIncomingFormDiv.append(possibleIncomingPostForm);
+                $('#possibleIncomingPostDiv'+data.pk+'').append(possibleIncomingFormDiv);
+                var receivedPostsDiv = jQuery(document.createElement('div'))
+                receivedPostsDiv.attr('id','receivedPostsDiv'+data.pk+'')
+                receivedPostsDiv.css('display','none');
+                $('#possibleIncomingPostDiv'+data.pk+'').append(receivedPostsDiv)
+
+
+"<input type ='hidden' name='lastPostId' value="lastPostId">"+
+                                    "<input type ='hidden' name='currentPostId' value="data.pk">"+
+                                    "<input type ='hidden' name='currentTopic' value= {{ currentTopic }}>"+
+
+addon = addon + "<input id = 'moreButton"+add+id+"' type='button' class='button gray'  value='More' style = 'padding-left:32px'>";
+
+var fromValue = $('#postsFrom').val()
+        var newFromValue = parseInt(fromValue) + 6
+        $('#postsFrom').attr('value',newFromValue)
+        var toValue = $('#postsTo').val()
+        var newToValue = parseInt(toValue) + 6
+        $('#postsTo').attr('value',newToValue)
+        $('#postsToDisp').attr('value',newToValue)
+        $.fn.reloadAllPosts();
+        $.fn.displayMorePostsBut(); 
+        
+        if ($('#post'+val.pk+'').length == 0){
+        
+        
+        var interval = setInterval(function(){
+                    
+                    $.ajax({
+                        type: incomPostsForm.attr('method'),
+                        url: incomPostsForm.attr('action'),
+                        data: incomPostsForm.serialize(),                
+                        success: function (msg) {
+                            if (msg != 'OK'){
+                                alert('neni OK, mame data')
+                                alert('dataPK')
+                                alert(data.pk)
+                                $('#receivedPostsDiv'+data.pk+'').css('display','block');                                                                
+                                var datos = $.parseJSON(msg);
+                                $.each(datos, function(key, val) {
+                                    $("#receivedPostsDiv"+data.pk+"").append("<div id='post"+val.pk+"' class='wrapper' style='overflow: hidden'><br>"+
+                                        
+                                        "<div class='inner' style='float:bottom;overflow: hidden'>"+
+                                            "<span class='username red'>" +val.fields.personName + "</span>"+
+                                            "<span class='date'>"+val.fields.timestamp+"</span><br>"+
+                                            "<span class='p'>"+ val.fields.body +"</span><br>"+
+                                        "</div>"+                                
+                                        "<div class='submenu'>"+
+                                            "<div id='subButDivPost"+val.pk+"' class='submenu-buttons'>"+                      
+                                            "</div>"+              
+                                        "</div>"+
+                                        "<div id = 'placeUnderPostDiv"+val.pk+"'>"+
+                                        "</div>"+
+                                        "</div>");
+                                    $.fn.buildPosts(val.pk,val.fields.canLike,val.fields.lenLikedsIDs,val.fields.dic,val.fields.canRemove,val.fields.comments);
+                                
+                                
+                                
+                                })
+                            clearInterval(interval);    
+                                
+                            }
+                        },
+                        error: function(msg) {
+                        },
+                    })
+                
+                
+                
+                     
+                },10000);
+                
+                var incomPostsForm = $('#incomPostForm'+data.pk+'')
+                var ahoj = 'ahoj';
+            
+            var lastPostId = $("div[id^='post']").attr('id').match(/[0-9 ]+/);
+            
+            $.when($.fn.reloadAllPosts()).done(function() {$.fn.makeSumOfPosts(),$.fn.displayMorePostsBut(),alert(sumOfPosts)})
+            
+            
+            def remove_post(request):
+    print('aaaaaaaaaaaaaa')
+    if request.method == "POST" and request.is_ajax():
+        idcko = request.POST.get('ids')
+        #currentTopic = request.POST.get('currentTopic')
+        post = BlogPost.objects.filter(pk=idcko)
+        post.valid = 0
+        post.save()
+        likes = Like.objects.filter(idPost=idcko)
+        for like in likes:
+            like.valid = 0
+            like.save()
+        
+        comments=BlogComment.objects.filter(idPost=idcko)
+        for comment in comments:
+            comment.valid = 0
+            comment.save()
+        comments = BlogComment.objects.filter(idParentComment=idcko)
+        for comment in comments:
+            comment.valid = 0
+            comment.save()
+            likes = LikeComment.objects.filter(idComment=comment.id)
+            for i in likes:
+                i.valid = 0
+                i.save()
+        #a.delete()
+        return HttpResponse(status=200)
+        
+        "<div id = 'possibleIncomingPostDiv"+data.pk+"'>"+
+                            "<div id = 'possibleIncomingFormDiv"+data.pk+"' style='display:none' >"+
+                                "<form id= 'incomPostForm"+data.pk+"' method='post' action ='/adam/checkForIncomPosts/'>{% csrf_token %};"+
+                                    "<input type ='hidden' name='lastPostId' value="+data.pk+">"+
+                                    "<input type ='hidden' name='currentPostId' value="+data.pk+">"+
+                                    "<input type ='hidden' name='currentTopic' value= {{ currentTopic }}>"+
+                                    
+                                "</form>"+ 
+                            "</div>"+
+                            "<div id = 'receivedPostsDiv"+data.pk+"' style='display:none'>"+
+                            "</div>"+
+                            
+                        "</div>"+
+var a = $('#firstTwoCDiv'+add+id+'').length()
+    var b = $('#restOfCDiv'+add+id+'').length()
+    sumOfComments = a + b
+    alert(sumOfComments);
+    
+    
+    sumOfPosts = 0
+        $("div[id^=post]").each(function(){    
+            sumOfPosts = sumOfPosts + 1
+        })
+        
+        
+        $('#SCFromInput'+add+id+'')
+        $('#moreCButton'+add+id+'').click(function(){
+        
+        $("div[id^=post]").each(function(){
+            oldestCommentId = ($(this).attr('id').match(/[0-9 ]+/));
+            
+        })
+        $('#SCFromInput'+add+id+'').attr('value',oldestPostId)
+        alert(sumOfPosts);
+        $.when($.fn.reloadAllPosts()).done($.fn.makeSumOfPosts())
+        alert(sumOfPosts);
+        
+        $("div[id^=post]").each(function(){
+            oldestCommentId = ($(this).attr('id').match(/[0-9 ]+/));
+            
+             a = $('CFromDisp'+add+id+'').attr('value');
+        
+        alert(a)
+        
+        $('#firstTwoCDiv'+add+id+'').text('');
+        $('#restOfCDiv'+add+id+'').text('');
+        
+        
+        
+        if (message != 0){
+                        
+                        var numOfComments = message
+                        
+                        
+                        
+                        if ((numOfComments > 0 && flag == 2) || (numOfComments >= 3 && flag == 1 )){
+                       
+                            $('#SCButton'+add+id+'').css('display','inline');
+                        }
+                        if (flag == 2){
+                            
+                            $('#firstTwoCDiv'+add+id+'').css('display','block');
+                            
+                            if (numOfComments > 1 && $('#restOfCDiv'+add+id+'').css('display')=='none' ){
+                                $('#SCButton'+add+id+'').attr('value','Comments ('+numOfComments+')');                                                            
+                            }
+                            else{
+                                $('#SCButton'+add+id+'').attr('value','Comments');
+                            }
+                            
+                        }
+                        else{
+                            
+                            $('#SCButton'+add+id+'').attr('value','Comments ('+numOfComments+')');
+                        }    
+                            
+                    
+                    }
+                    
+                    $.when($.fn.reloadAllComments(flag,id)).done($.fn.makeSumOfComments(flag,id));
+                    $('#moreCButton'+add+id+'').remove()
+                    

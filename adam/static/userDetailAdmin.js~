@@ -1,0 +1,128 @@
+(function ($) {
+$.fn.insertNicknameIntoAdminNav = function(nickname){
+    var i = 0
+    var addon = []
+
+    addon[i++] = '<td style="padding-left:5px;padding-right:5px">'
+        addon[i++] = '\/' 
+    addon[i++] = '</td>'
+    addon[i++] = '<td>'
+        addon[i++] = '<div style="cursor:default;opacity:0.4" id="nicknameAdminNavigation">'
+            addon[i++] = nickname
+        addon[i++] = '</div>' 
+    addon[i++] = '</td>'
+    
+    $('#adminNavigation > tbody:last > tr:last > td').not('#mainPageTd').remove()
+    
+    $('#adminNavigation > tbody >tr:last').append(addon.join(''))
+    $('#adminNavigation').show()
+}
+
+$.fn.addUserClickHandler = function(id,nickname){
+    $('#user'+id+'').click(function(){
+        $('tr[class="adMenu"]').hide()
+        $('#userMenu').show()
+        
+        $('div[class="header"]').hide()
+        $('#userHeader').show().text(nickname)
+        
+        
+        $('#menuUsersList').hide()
+        $('#menuCampaigns').show()
+        
+        $('div[class="userMenu"]').not('#campaignsList').css('opacity','1.0').css('cursor','pointer')
+        $('#campaignsList').css('opacity','0.4').css('cursor','default')
+        
+        
+        //$.fn.buildCampaignsAdmin(id)
+        $.fn.addUserDetailAjaxHandler(id)
+        $('#backArrow').unbind('click')
+        $('#backArrow').click(function(){
+            
+            
+            $.fn.returnToMainPageAdmin()
+        })
+        $.fn.insertNicknameIntoAdminNav(nickname)
+  
+    })
+}
+
+$.fn.addUserDetailAjaxHandler = function(id){
+    var frm = $('#userDetailForm'+id+'')
+    $('#userDetailInput'+id+'').attr('value',$.cookie('csrftoken'))
+    $.ajax({
+        type: frm.attr('method'),
+        url: frm.attr('action'),
+        data: frm.serialize(),
+        cache: false,
+        beforeSend: function(){
+            
+            
+            
+        
+        },
+                 
+        success: function (msg) {
+            alert(msg)
+            console.log(msg)
+            console.log('1')
+            var data=$.parseJSON(msg)
+            console.log('2')
+            
+            $.fn.buildCampaignsAdmin(data.campaigns)
+            console.log('3')
+            /*
+            var i = 0
+            var addon = []
+            
+            for (var key in data.campaigns){
+                if (data.campaigns.hasOwnProperty(key)){
+                    alert(key) 
+                    addon[i++] = $.fn.buildCampaignRecordAdmin(key,data.campaigns[key].name,data.campaigns[key].status,data.campaigns[key].timePeriod)
+                }
+            }
+            $('#userDetailTable tbody:last').append(addon.join(''))
+            
+            for (var key in data.campaigns){
+                if (data.campaigns.hasOwnProperty(key)){
+            
+                    $.fn.addEditCampaignHandler(key,data.campaigns[key].name)
+                }
+            }
+            */
+            
+            console.log('bb',data.bills)
+            console.log('4')
+            $.fn.buildBills(data.bills,1)
+            
+            $('#remarkPlaceholder').append($.fn.buildRemark(2))
+            $('#remarkPlaceholder').css('margin-bottom','20px')
+            $.fn.buildBillingAdmin(data.billingInfo)
+            $.fn.buildChangesAdmin(2,id)
+            
+            if (data.mainChanges != 0){
+                console.log('Acko')
+                $('#isMainChanges').show()
+                $('#noMainChanges').hide()
+                $.fn.checkNavigationPanelVisibility(data.mainChanges.length,'1','MainChanges')
+                $.fn.resetMainChanges(data.mainChanges.length)
+                $.fn.buildMainChangesSet(data.mainChanges)
+
+                $.fn.insertPeriods(4,data.mainChangesPeriodsExtent)
+                
+                                                
+                
+            }else{
+                console.log('Bcko')
+                $('#isMainChanges').hide()
+                $('#noMainChanges').show()
+            }
+            
+            
+            
+        },
+        error: function (msg) {
+        },
+    })
+}
+})(jQuery);

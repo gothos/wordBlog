@@ -1,0 +1,31 @@
+$.fn.addBillingInfoFieldsHandler = function(billingInfoDic){
+    console.log('1',billingInfoDic)
+    var maxLength = [128,128,128,6,17,255,8,10]
+    if (billingInfoDic != 0){
+    
+        var billingInfoDic = $.parseJSON(billingInfoDic)
+        var billingInfoList = [billingInfoDic.name,billingInfoDic.street,billingInfoDic.town,billingInfoDic.zip,billingInfoDic.phone,billingInfoDic.email,billingInfoDic.ic,billingInfoDic.dic]
+    }
+    for(var z = 0,len=$.gen.idsCompany.length;z<len;z++){
+        var selector = $('#id_'+$.gen.idsCompany[z]+'')
+        var span = $('#'+$.gen.idsCompany[z]+'Span')
+        var params = [0,0,0,4,5,6,7,8]
+        $.fn.addFadeOutSpanHandler(selector,span)
+        
+        var capitalizedIDs = capitaliseFirstLetter($.gen.idsCompany[z])
+        
+        
+        $.fn.addFocusFieldsHandler(selector,params[z],$('#err'+capitalizedIDs+''))
+        
+        
+        if (billingInfoDic != 0){
+            console.log('val',billingInfoList[z])
+            selector.val(billingInfoList[z])
+            span.hide()
+        }
+        selector.attr('maxlength',maxLength[z])
+        $.fn.enableBut('id_' + $.gen.idsCompany[z],$('#saveBillingInfoButton'))
+        
+        
+    }
+}

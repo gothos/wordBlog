@@ -1,0 +1,38 @@
+<input class="button gray" type="button" style= "margin-left : 40px;" id="buttons{{post.id}}" value='Like' onclick="submitForm(5,{{comment.id}})">
+            #if comment.idParentComment != 'null':
+            #    a = BlogComment.objects.get(pk=comment.idParentComment)
+            #    comment.inReplyToName = User.objects.get(pk = a.idPerson.id).username
+            comment.inReplyToName = User.objects.get(pk = a.idPerson.id).username
+            comment.inReplyToName = User.objects.get(pk = a ).username
+            
+            if comment.idParentComment != 'NULL':
+                a = BlogComment(pk = comment.idParentComment).id
+                L.append(a)
+                com = BlogComment.objects.get(pk = comment.idParentComment)
+                a = com.idPerson
+                comment.text = com.comment
+                comment.inReplyToName = User.objects.get(pk = a.id).username
+                
+
+if comments:
+        for comment in comments:
+            if comment.idParentComment != None:
+                com = BlogComment.objects.get(pk = comment.idParentComment)
+                a = com.idPerson
+                comment.text = com.comment
+                comment.inReplyToName = User.objects.get(pk = a.id).username
+            if comment.idParentComment == None:
+                com = BlogPost.objects.get(pk = comment.idPost.id)
+                a = com.idPerson
+                comment.text = com.body
+                comment.inReplyToName = User.objects.get(pk = a.id).username
+
+<div class="inner1" width = "50px" style="float:left;overflow: hidden">
+<span class="p">{{ comment.likeds }}</span><br>
+                   <span class="date">{{ post.likeds }}</span><br>
+                           <p>Stay visible: {{ sv }}</p>
+        <p>User ID: {{ user.id }}</p>
+        <p>{{ currentTopicLikeds }}</p>
+                <p>Number of current topic: {{ currentTopic }}</p>
+        <p> {{ dic }}</p>
+        comment.likeds LikeComment.objects.get(idComment = comment.id).idPerson

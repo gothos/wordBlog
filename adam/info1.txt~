@@ -1,0 +1,31 @@
+$( document ).ready(function() {
+
+
+            $("#submit").click( function() {
+                alert('a') 
+                var frm = $('#my_form');
+                alert('a2')
+                $.ajax({
+                    type: frm.attr('method'),
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    success: function (msg) {
+                        alert('success')
+                        alert(msg)
+                    },
+                    error: function(msg) {
+                        alert('error')
+                        alert(msg)
+                        
+                    },
+                    });
+                    return false;
+                
+                
+                
+                
+                
+                
+                });
+                });
+                

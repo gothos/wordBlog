@@ -1,0 +1,1751 @@
+<!-- archive.html -->
+
+<meta http-equiv="content-script-type" content="text/javascript">
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery.ajaxq.js">
+        </script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js"></script>
+        
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}common.js"></script>
+
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.timeago.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jScrollPane.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.mousewheel.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jescape.js"></script>
+        <script language="JavaScript" type="text/javascript">
+            $.fn.countPosts = function(){
+                
+                    
+                var m = 0
+                var posts = $('#content').children()
+                
+                for (var i = 0, len = posts.length; i < len; i += 1) {
+                    if (posts[i].id[0] == 'p'){
+                        m = m + 1
+                    }
+                        
+                    
+                }
+                    
+                return m
+                    
+                    
+                    
+                
+            }
+        
+        
+        
+            $.fn.buildReply = function(flag,id){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<div id = 'replyButtonDiv"+add+id+"' class='replyButton' style='display:inline;' >";
+                 
+                    addon[i++] = "<input id ='replyButton"+add+id+"' type='button' class='button gray'  value='Reply'>";
+                addon[i++] = "</div>";
+                
+                var $area = $('#subButDiv'+add+id+'');
+                $area.append(addon.join(''));
+                
+                $('#replyButton'+add+id+'').css('cursor','pointer');
+                $('#replyButton'+add+id+'').click(function(){
+                    
+
+                    
+                    if ($('#createCDiv'+add+id+'').css('display')=='none'){
+                        $('div[id^="createCDiv"]').not(this).css('display','none');
+                    
+                        $('#createCDiv'+add+id+'').show()
+                    }
+                    else{
+                        
+                        $('#createCDiv'+add+id+'').hide()
+                    }
+                })
+                $('#createCButton'+add+id+'').click(function(){
+                    
+                    
+                    var frmCreateC = $('#createCForm'+add+id+'');
+                            
+                    $.ajaxq('c',{
+                        type: frmCreateC.attr('method'),
+                        url: frmCreateC.attr('action'),
+                        data: frmCreateC.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                        
+                            if ($('#isHumanComment'+id+'').val().length != 0 || $('#isHuman').val() != 'adam'){
+                               
+                                return false
+                            }
+
+                        },
+                                   
+                        success: function (message) {
+                                      
+                            $('#createCDiv'+add+id+'').hide();
+                            $("#textareaSpan"+add+id+" textarea").val('');
+                            
+                            var data = $.parseJSON(message);
+                        
+
+                            $.fn.buildBaseForComment(flag,id,data.pk,1,data.canRemove,0,data.idPost,data.idParentComment,0,data.personName,data.Re,data.timestampCom,data.comment,0);
+                            $.fn.buildComment(data.pk,1,data.canRemove,0,data.idPost,data.idParentComment,0,data.personUsername,data.isPicture)
+
+                            
+                                  
+                   
+                        },
+                        complete: function(message){
+                            
+                            
+                        },
+                        error: function(message) {
+                            alert('[e][archive.html]');
+                            
+                        },
+                    }).done(function(){
+                        jQuery("div.date").timeago();
+                        
+                        $.fn.updateNumOfComments(flag,id,1)
+                        
+                    })
+                
+                
+                });                   
+            
+            }
+                
+                
+            $.fn.updateNumOfComments = function(flag,id,sign){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                
+                var frmUpdateNumOfC = $('#SCUpdateNumForm'+add+id+'');
+                            
+                
+                    $.ajaxq('c',{
+                        type: frmUpdateNumOfC.attr('method'),
+                        url: frmUpdateNumOfC.attr('action'),
+                        data: frmUpdateNumOfC.serialize(),
+                        cache: false,
+                        beforeSend:function(){
+                            $('#SCButton'+add+id+'').css('display','inline');
+                            if ( $('#SCNumDiv'+add+id+'').length == 0 && sign != 2){
+                                
+                                
+                                return false;
+                            }
+                        },
+                                   
+                        success: function (numOfComments) {
+                            if (numOfComments != 0 ) {
+                               
+                                
+                                if ($('#SCNumDiv'+add+id+'').length == 0){
+                                    $('#SCButton'+add+id+'').append('<div id = "SCNumDiv'+add+id+'" style="display: inline;" > ( <span id = "SCAllCSpan'+add+id+'"> '+numOfComments+' </span> )');
+                                }else{
+                                    $('#SCAllCSpan'+add+id+'').text(numOfComments)
+                                }
+
+                            }else{
+                                
+                                $('#SCButton'+add+id+'').css('display','none');
+                            
+                            }
+
+                            
+                        },
+                        error: function(message) {
+                            alert('[e][archive.html2]');
+                            
+                        },
+                    }).done(function(){
+
+                    });
+                    
+                    
+                   
+
+            
+            }
+                
+                
+            $.fn.buildLikeDislike = function(flag,id,canLike,numOfLikes){
+                if (flag == 1){
+                    var add = 'Post';   
+                }
+                else{
+                    var add = 'Comment';
+                }
+                
+                    
+                    
+                         
+                    
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<div id = 'LDButtonDiv"+add+id+"' class='' style='display:inline' >";
+                    addon[i++] = "<a href='javascript:;' id='buttonLD"+add+id+"' >";
+                
+                   
+                        addon[i++] = "<form id= 'DForm"+add+id+"' action= '/app/adam/dislike"+add+"/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+id+"'>"
+                        addon[i++] = "</form>";
+                        addon[i++] = "<form id= 'LForm"+add+id+"' action= '/app/adam/like"+add+"/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+id+"'>";
+                        addon[i++] = "</form>";
+                        addon[i++] = "<span class='remove gray'  id='buttonLDSpan"+add+id+"'>";
+                            if (canLike == 0){
+                                addon[i++] = "Dislike";
+                            }
+                            else{
+                                addon[i++] = "Like";
+                            }
+                        addon[i++] = "</span>";
+                    addon[i++] = "</a>";
+                addon[i++] = "</div>";
+                addon[i++] = "<div id='numOfLikesDiv"+add+id+"' style='display:inline'>";
+                    addon[i++] = "<span class='remove gray' id='numOfLikesSpan"+add+id+"'>";
+                        if (numOfLikes != 0){
+                            addon[i++] = ""+numOfLikes+""
+                        }
+                    addon[i++] = "</span>";
+                addon[i++] = "</div>";
+                var $area = $('#subButDiv'+add+id+'');                        
+                $area.append(addon.join(''));
+                
+                $('#buttonLD'+add+id+'').click(function(){
+                                     
+                    if (canLike == 0){
+                        
+                        var formLD = $('#DForm'+add+id+'');
+                        
+                        if (numOfLikes != 0){
+                            numOfLikes = numOfLikes - 1;
+                            if (numOfLikes != 0){
+                                $('#numOfLikesSpan'+add+id+'').text(numOfLikes);
+                            }
+                            else{
+                                $('#numOfLikesSpan'+add+id+'').text('');
+                            }
+                        }
+                        canLike = 1;
+                    }
+                    else{
+                           
+                        var formLD = $('#LForm'+add+id+'');
+                        numOfLikes = numOfLikes + 1;
+                        $('#numOfLikesSpan'+add+id+'').text(numOfLikes);
+                        canLike = 0;
+                        
+                    
+                    }
+                    
+                    $.ajaxq('c',{
+                        
+                        type: formLD.attr('method'),
+                        url: formLD.attr('action'),
+                        data: formLD.serialize(),
+                        cache: false,
+                                   
+                        success: function (message) {
+                        
+                        if (canLike == 0){
+                        
+                            $('#buttonLDSpan'+add+id+'').text('Dislike')
+                        }
+                        else{
+                            $('#buttonLDSpan'+add+id+'').text('Like')
+                        }
+                          
+                        },
+                        error: function(message) {
+                            alert('[e][archive.html3]');
+                        },
+                    })
+                        
+                    
+                    
+                })
+            }
+                
+            $.fn.buildRemove = function(flag,id,signal,idParent){
+            
+                
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    
+                }
+                else{
+                    var add = 'Comment';
+                    
+                    
+                }
+            
+            
+                       
+                var i = 0
+                var addon = []   
+                addon[i++] = "<div id='RDiv"+add+id+"' style='margin-right:10px;display:inline'>";
+                    addon[i++] = "<form id= 'RForm"+add+id+"' action= '/app/adam/remove"+add+"/' method='post' >{% csrf_token %}";
+                        addon[i++] = "<input style='display: none;' name='ids' value='"+id+"'>";
+                    addon[i++] = "</form>";
+                    addon[i++] = "<a id= 'RButton"+add+id+"' href='javascript:;' >";
+                        addon[i++] = "<span class='remove gray'>";
+                            addon[i++] = "Remove";
+                        addon[i++] = "</span>";
+                    addon[i++] = "</a>";
+                addon[i++] = "</div>";
+                var $area = $('#subButDiv'+add+id+'');
+                $area.append(addon.join(''));
+                
+                
+                
+                
+                $('#RButton'+add+id+'').click(function() {
+                             
+                    var x = add.toLowerCase()
+                    var r=confirm("Do you want to remove this "+x+"");
+                    if (r==true){
+                        var formRemove = $('#RForm'+add+id+'');
+                        $.ajaxq("c",{
+                            type: formRemove.attr('method'),
+                            url: formRemove.attr('action'),
+                            data: formRemove.serialize(),
+                            cache: false,
+                            beforeSend: function(){
+                                
+                                
+                            
+                            },
+                                     
+                            success: function (numOfComments) {
+                            
+                            
+                                if (flag == 1){
+              
+                                    var part = $('#post'+id+'')
+                                    
+                                    
+                                }else{
+                                    var part = $('#comment'+id+'')
+                                    
+                                    
+                                    
+                                }
+                            
+                            
+                                
+                                var i = 0
+                                var addon = [] 
+                                
+
+                                addon[i++] = "<div id='RNotif"+add+id+"'>";
+                                    addon[i++] = "<br>";
+                                    addon[i++] = "<div>";
+                                        addon[i++] = ""+add+" was succesfully deleted";
+                                    addon[i++] = "</div>";
+                                    addon[i++] = "<input type='button' class='button gray' style='display: block;padding-left:32px;' id='RNotifButton"+add+id+"' value='OK' >";
+                                addon[i++] = "</div>";
+                                part.before(addon.join(''))
+                                $('#RNotifButton'+add+id+'').css('cursor','pointer');
+                                $('#RNotifButton'+add+id+'').click(function(){
+                                    $('#RNotif'+add+id+'').remove()
+                                })    
+                                part.remove();
+                                
+                                
+                                
+                                if(flag == 2){
+                                    
+                                    if (numOfComments == 0){
+                                        if (signal == 2){
+                                            $('#SCButtonComment'+idParent+'').css('display','none');
+                                        }else{
+                                            $('#SCButtonPost'+idParent+'').css('display','none');
+                                        }
+                                        
+                                    }
+                     
+                                                    
+                                    if ($('#SCNumDivPost'+idParent+'').length > 0 ){
+                                        $('#SCAllCSpanPost'+idParent+'').text(numOfComments);
+                                    }
+                                }
+                                    
+                                                             
+                                    
+                  
+                                
+                            },
+                            complete:function(message) {
+                                
+                                
+                                           
+                            },
+                            error: function(message) {
+                                alert('error');
+                            },
+                        }).done(function(){
+                            
+                            
+                        });
+
+
+
+
+
+
+
+
+
+                    }
+
+                });                                            
+                
+            }
+                
+
+
+
+                
+            $.fn.countNumOfComments = function(flag,id){
+            
+                if (flag == 1){
+                    var add = 'Post';
+                }else{
+                    var add = 'Comment';
+                }    
+                
+            
+                m = 0
+                var comments = $('#firstCDiv'+add+id+'').children()
+                
+                for (var i = 0, len = comments.length; i < len; i += 1) {
+                    if (comments[i].id[0] == 'c'){
+                        m = m + 1
+                    }
+                        
+                    
+                }
+                    
+                return m
+                
+                  
+            
+            }
+                
+                
+                
+                
+            $.fn.buildShowComments = function(flag,id,numOfComments){
+                
+                                    
+                if (flag == 1){
+                    var add = 'Post';
+                    var idComment = 0
+                    var idPost = id 
+                    }
+                else{
+                    var add = 'Comment';
+                    var idComment = id
+                    var idPost = 0 
+                }
+                
+                
+                var i = 0
+                var addon = []
+                var hiddenData = "<input style= 'display: none;' name='ids' value='"+idPost+"'><input style= 'display: none;' name='idComment' value='"+idComment+"' >";
+                addon[i++] = "<div id='SCDiv"+add+id+"' style='width:80px;display:inline'>";
+                
+                    addon[i++] = "<form id= 'SCForm"+add+id+"' action= '/app/adam/showComments/' method='post' >{% csrf_token %}";
+                        //addon[i++]= "<input id = 'lifter"+add+id+"' style='display: none;' name='lift' value = 0 >"
+                
+                        addon[i++] = hiddenData;
+                        addon[i++] = "<input id = 'SCFromInput"+add+id+"' style='display: none;' name='from' value= 0 >";
+                    addon[i++] = "</form>";
+                    addon[i++] = "<form id= 'SCUpdateNumForm"+add+id+"' action= '/app/adam/updateNumOfComments/' method='post' >{% csrf_token %}";
+                        addon[i++] = hiddenData;
+                    addon[i++] = "</form>";
+                    /*
+                    addon[i++] = "<form id= 'displayMoreCForm"+add+id+"' action= '/app/adam/displayMoreC/' method='post' >{% csrf_token %}";
+                        addon[i++] = "<input style= 'display: none;' name='ids' value='"+idPost+"'>";
+                        addon[i++] = "<input id = 'CId"+add+id+"' style='display: none' name='idComment' value= "+idComment+" >";
+                        addon[i++] = "<input id = 'CFromDisp"+add+id+"' style='display: none' name='from' value= 0 >";
+                    addon[i++] = "</form>";
+                    */
+                    addon[i++] = "<div class='button gray' style='display: inline;' id='SCButton"+add+id+"'>";
+                       
+                        addon[i++] = "Comments";
+                
+                
+                        if (((flag == 1 && numOfComments > 2 ) || (flag == 2 && numOfComments > 0 ))){
+                            addon[i++] = "<div id = 'SCNumDiv"+add+id+"' style='display: inline;' >";
+                                addon[i++] = " (<span id = 'SCAllCSpan"+add+id+"'>";
+                                addon[i++] = numOfComments
+                                addon[i++] = "</span>)";
+                            addon[i++] = "</div>";
+                        }
+                
+                    addon[i++] = "</div>";
+                
+                
+                addon[i++] = "</div>";
+                var $area = $('#subButDiv'+add+id+'');
+                $area.append(addon.join(''));
+                
+                
+                
+                if (numOfComments == 0 ){
+                    $('#SCButton'+add+id+'').css('display','none');
+                }
+
+                $('#SCButton'+add+id+'').css('cursor','pointer');
+                $('#SCButton'+add+id+'').click(function(){
+                    
+
+                                
+                   
+                    var SCDivFirst = $('#firstCDiv'+add+id+'')
+                    
+                    
+                    var a
+               
+                    if ($('#SCAllCSpan'+add+id+'').length > 0){
+                        a  = parseInt($('#SCAllCSpan'+add+id+'').text())
+                        
+                    }else{
+                        a = 0
+
+                    }
+
+                    var b = $.fn.countNumOfComments(flag,id);
+                    
+
+                    if (a > 0 && b < a){
+                        
+                        $.fn.giveMeLastCID(flag,id,1)
+                        
+                        
+                        
+                        
+
+                        
+                        
+                        SCDivFirst.css('display','block');
+                        
+                        $.fn.reloadAllComments(flag,id);
+                        $('#SCNumDiv'+add+id+'').remove();
+                        
+                        
+                        }            
+                       
+                          
+                    else{
+                        
+                        
+                        $('#firstCDiv'+add+id+'').children().remove();
+                        $('#moreCommentsButton'+add+id+'').css('display','none');
+                        
+                        $.fn.updateNumOfComments(flag,id,2);
+                        
+                        
+                        
+                        
+                                
+                    }
+                                     
+                });                      
+                
+            }
+                
+                
+            $.fn.generateComments = function(data,flag,id,isInitial){
+                                                                                    
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+           
+                }
+                var last
+                var M=[]
+                var L = []
+                var goi = 0
+                
+                
+                
+                for (var i = 0, len = data.length; i < len; i++){
+                    
+                
+                
+                
+                
+                
+                
+                
+                
+                    if (isInitial == 1){
+                         
+                        values = {'personName': data[i].personName,'timestamp': data[i].timestampCom, 'comment': data[i].comment, 'canRemove': data[i].canRemove, 'dic': data[i].dic, 'canLike': data[i].canLike, 'numOfLikes': data[i].lenLikedsIDs,'idPost': data[i].idPost,'personUsername': data[i].personUsername,'isPicture': data[i].isPicture,'idParentComment':data[i].idParentComment,'Re':data[i].Re};
+                        
+                        
+                        
+                    }
+                    else{
+                        
+                        values = {'personName': data[i].fields.personName,'timestamp': data[i].fields.timestampCom, 'comment': data[i].fields.comment, 'canRemove': data[i].fields.canRemove, 'dic': data[i].fields.dic, 'canLike': data[i].fields.canLike, 'numOfLikes': data[i].fields.lenLikedsIDs, 'Re': data[i].fields.Re , 'idParentComment': data[i].fields.idParentComment, 'idPost': data[i].fields.idPost,'personUsername': data[i].fields.personUsername,'isPicture': data[i].fields.isPicture };
+                        
+                    }
+                    
+                    
+                    if ($('#comment'+data[i].pk+'').length == 0){
+                        
+                        $.fn.buildBaseForComment(flag,id,data[i].pk,values['canLike'],values['canRemove'],values['numOfLikes'],values['idPost'],values['idParentComment'],values['dic'],values['personName'],values['Re'],values['timestamp'],values['comment'],goi);
+
+                        $.fn.buildComment(data[i].pk,values['canLike'],values['canRemove'],values['numOfLikes'],values['idPost'],values['idParentComment'],values['dic'],values['personUsername'],values['isPicture']);
+                        
+                    }
+                    
+                }
+                
+                
+                
+                
+                 
+                    
+            }
+                
+                
+                
+            $.fn.buildBaseForComment = function(flag,id,idcko,canLike,canRemove,numOfLikes,idPost,idParentComment,numOfComments,personName,Re,timestampCom,comment,goi){
+                
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+                    
+                }
+                
+                var addon = []
+                var i = 0    
+                addon[i++] = "<div id='comment"+idcko+"' class='comment' style='width:600px'>";
+                    
+                    addon[i++] = "<div id='photoComment"+idcko+"' style='display:inline-block'></div>"
+                    addon[i++] = "<div class='' style='display:inline-block;vertical-align:top'>"
+                
+                        addon[i++] = "<div id='comInfoDiv"+idcko+"' class='header' style=''>";
+                            //addon[i++] = "id:"+idcko+"parent:"+idParentComment+"";
+                            addon[i++] = "<div class='username gray' style='display:inline;'>";
+                                addon[i++] = personName
+                            addon[i++] = "</div>";    
+                            addon[i++] =  "<div class='date' style='display:inline;' title="+timestampCom+">";
+                                addon[i++] = timestampCom
+                            addon[i++] = "</div>";
+                            
+                            if (Re){
+                                
+                                addon[i++] = "<div class='reinfo' style='display:inline;' >";
+                                    addon[i++] = "<i>";
+                                        addon[i++] = "Re:";
+                                        addon[i++] = "<b>";
+                                            addon[i++] = Re.inReplyToName
+                                        addon[i++] = "</b>";
+                                        addon[i++] = Re.text
+                                        addon[i++] = "...";
+                                    addon[i++] = "</i>";
+                                addon[i++] = "</div>";
+                                    
+                            }
+                        addon[i++] = "</div>";
+                    
+                        addon[i++] = "<div class='p' style= 'text-align: justify;width:450px;word-wrap: break-word' >";
+                            addon[i++] = comment  
+                        addon[i++] = "</div>";
+                        addon[i++] = "<div id = 'subButDivComment"+idcko+"' class='submenu' style='' >";
+
+                                                                       
+                        addon[i++] = "</div>";
+                    addon[i++] = "</div>";
+                    addon[i++] = "<div id = 'placeUnderCommentDiv"+idcko+"' style='' >";
+                    addon[i++] = "</div>";
+                    addon[i++] = "<input id = 'moreCommentsButtonComment"+idcko+"' type='button' class='button gray'  value='' style = 'display:none;cursor:pointer'>"; 
+                    //addon[i++] = "</div>";
+                addon[i++] =  "</div>";
+                
+                       
+                
+                var list = ['c','d','R','D']  
+                var sign = 0
+                
+                       
+                var comments = $('#firstCDiv'+add+id+'').children()
+                for (var i = 0, len = comments.length; i < len; i++){
+                    
+                    if (sign == 0 && parseInt(comments[i].id.match(/[0-9 ]+/)) < idcko && $.inArray(comments[i].id[0],list) != - 1){
+                        var newComment = document.createElement('div');
+                        newComment.setAttribute('id','comment'+idcko+'');
+                        newComment.setAttribute('class','comment');
+                        newComment.innerHTML = addon.slice(1,addon.length-2).join('');
+                        document.getElementById('firstCDiv'+add+id+'').insertBefore(newComment,comments[i]);
+                        sign = 1
+                        return false;
+                            
+                    }
+                
+                
+                    
+                    
+                    
+                    
+
+                }
+                if (sign != 1){
+                    $('#firstCDiv'+add+id+'').append(addon.join(''));
+                        
+                    
+                }
+                
+                
+                
+
+                   
+                
+                
+            }
+                
+            $.fn.buildComment = function(idcko,canLike,canRemove,numOfLikes,idPost,idParentComment,numOfComments,personUsername,isPicture){
+            
+                
+                if (idParentComment == null){
+                    
+                    var ids = idPost;
+                    var signal = 1
+                }
+                else{
+                    var ids = idParentComment
+                    var signal = 2
+                }
+                {% if user.is_authenticated %}
+                    $.fn.buildCreateComment(2,idcko);
+                    $.fn.buildReply(2,idcko);
+                    $.fn.buildLikeDislike(2,idcko,canLike,numOfLikes);
+                    if (canRemove == 1){
+                        $.fn.buildRemove(2,idcko,signal,ids);
+                    }
+                {% endif %}
+                
+                $.fn.buildPlaceForComments(2,idcko);
+                $.fn.buildPhoto(2,idcko,0,personUsername,isPicture);
+                
+                
+                $.fn.buildShowComments(2,idcko,numOfComments);
+                
+            
+            }
+                
+
+                
+                
+            $.fn.buildPosts = function(idcko,canLike,numOfLikes,numOfComments,canRemove,comments,personUsername,isPicture){                            
+                {% if user.is_authenticated %}
+                    $.fn.buildCreateComment(1,idcko);
+                    
+                    $.fn.buildReply(1,idcko);
+                    $.fn.buildLikeDislike(1,idcko, canLike,numOfLikes);
+                    if (canRemove == 1){
+                        $.fn.buildRemove(1,idcko,0,0);
+                    }
+                    
+                    
+                {% endif %}
+                $.fn.buildPlaceForComments(1,idcko);
+                $.fn.buildPhoto(1,idcko,personUsername,isPicture);
+                $.fn.buildShowComments(1,idcko,numOfComments);
+                if (comments.length > 0){
+                    $.fn.generateComments(comments,1,idcko,1);
+                }
+                
+                
+                
+                
+            }
+                
+
+             
+
+                
+                
+            $.fn.reloadTheOne = function(){
+                var frm = $("#discussForm");
+                $('#discussInput').attr('value', $.general.token )
+                var jqxhr = $.ajax({
+                    type: frm.attr('method'),
+                    cache: false,
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    
+                    success: function (msg) {
+                        alert('reloadOne')
+                        alert(msg)
+                        var data = $.parseJSON(msg)
+                        //var num = 6
+                        
+                        
+
+                            
+                        //$('#content').append('<div class="newItemsBox" id="newer'+data.pk+'" style="cursor:pointer">Zobrazit <span>'+m+'</span>novsich postov</div>')
+                        if (data.afterPost > 0){
+                            $('#content').append("<input id = 'moreNewPostsButton' type='button' class='button gray'  value='' style='display:none;cursor:pointer'>")
+                            
+                            $("#moreNewPostsButton").click(function(){
+                                
+                                $.fn.giveMeLastID(1,1)
+                    
+                                $.fn.reloadAllPosts(1);
+                                
+                            })
+                        }
+                        $.fn.displayMorePostsBut(data.beforePost,data.afterPost,1,1)
+                        $.fn.buildBaseForPost(0,data.pk,data.personName,data.timestamp,data.coreText,data.character);
+                        $.fn.buildPosts(data.pk,data.canLike,data.lenLikedsIDs,data.dic,data.canRemove,data.comments,data.personUsername,data.isPicture,1);
+                        jQuery("div.date").timeago();
+
+                        
+                    },
+                    error: function(msg){
+                    },
+                    
+                }).done(function(){
+
+                })
+            }
+             
+                
+            $.fn.reloadAllPosts = function(flag){
+                var frmPosts = $("#give_me_posts");
+                $('#gInput').attr('value', $.general.token )
+                var rest = false; 
+                var jqxhr = $.ajaxq('c',{
+                    type: frmPosts.attr('method'),
+                    cache: false,
+                    url: frmPosts.attr('action'),
+                    dataType:'html', 
+                    data: frmPosts.serialize(),
+                    
+                    beforeSend:function(){
+                        
+                    },
+                    
+                    
+                    
+                    
+                    success: function (msg) {
+                        alert('reloadP')
+                        if (msg != 'OK'){
+                                          
+                            
+                            var data = $.parseJSON(msg)
+                            
+                            for (var i = 0, len = data.data.length; i < len; i++){
+                                
+                                 
+                                 
+                                $.fn.buildBaseForPost(0,data.data[i].pk,data.data[i].fields.personName,data.data[i].fields.timestamp,data.data[i].fields.body,data.data[i].fields.character);
+                                  
+                                $.fn.buildPosts(data.data[i].pk,data.data[i].fields.canLike,data.data[i].fields.lenLikedsIDs,data.data[i].fields.dic,data.data[i].fields.canRemove,data.data[i].fields.comments,data.data[i].fields.personUsername,data.data[i].fields.isPicture,0);
+                                
+                            }
+                            
+                            jQuery("div.date").timeago();
+                            if (flag == 0){
+                                $.fn.displayMorePostsBut(data.beforePost,data.afterPost,1,0);
+                            }else{
+                                $.fn.displayMorePostsBut(data.beforePost,data.afterPost,0,1)                         }
+                                
+                                
+                        }      
+                                
+                                
+                                
+                            
+                                     
+                        
+                    },
+
+                    error: function(msg) {
+                        
+                        alert('error')
+                    },
+                    complete:function(msg){
+            
+                    },
+                        
+                        
+                })
+                
+                jqxhr.done(function(){
+                   
+                   
+               
+                    //$.fn.giveMeLastID(2,0);
+                    
+                    
+                    
+                })
+                
+                
+            };
+        
+            
+            
+            
+            
+            
+            
+        
+        
+        
+        
+        
+        
+        
+            
+                
+                 
+                
+            $.fn.buildBaseForPost = function(creating,pk,personName,timestamp,body,character){
+                
+                
+                var base = []
+                var i = 0
+                
+                base[i++] = "<div id='post"+pk+"'><br>"
+                    base[i++] = "<div id='photoPost"+pk+"' style='display:inline-block;'></div>"
+                    base[i++] = "<div class='' style='display:inline-block;vertical-align:top'>"
+                        base[i++] = "<div class='' style=''>";
+                            base[i++] = "<div id='usr"+pk+"' class='username' style='display:inline' >" +personName + "</div>";
+                            base[i++] = "<div class='date' title="+timestamp+" style='display:inline'>"+timestamp+"</div><br>";  
+                        base[i++] = "</div>";
+                        base[i++] = "<div class='p' style='width:450px;word-wrap: break-word;' >"+ body +"</div>";                                
+                        base[i++] = "<div class='submenu'>";
+                            base[i++] = "<div id='subButDivPost"+pk+"' class='submenu-buttons'>";                      
+                            base[i++] = "</div>";              
+                        base[i++] = "</div>";
+                    base[i++] = "</div>";
+                    base[i++] = "<div id='placeUnderPostDiv"+pk+"' class='placeUnderPostDiv' style='padding-left:64px' >";
+                    base[i++] = "</div>";
+                    base[i++] = "<input id = 'moreCommentsButtonPost"+pk+"' type='button' class='button gray'  value='' style = 'display:none;padding-left:76px;cursor:pointer'>"; 
+                base[i++] = "</div>";
+                
+
+                
+
+                var list = ['p','d','R','D']  
+                sign = 0
+                posts = $('#content').children()
+                
+                
+                if ($('#switcher').attr('value') == 0){
+                    
+                    for (var i = 0, len = posts.length; i < len; i++){
+                        if (sign == 0 && parseInt(posts[i].id.match(/[0-9 ]+/)) < pk && $.inArray(posts[i].id[0],list) != -1 ){
+                            var newPost = document.createElement('div');
+                            newPost.setAttribute('id','post'+pk+'');
+                            newPost.innerHTML = base.slice(1,base.length-2).join('');
+                            document.getElementById('content').insertBefore(newPost,posts[i]);
+                            sign = 1
+                            return false;
+                                
+                        }
+                        
+                        
+                        
+                        
+
+                    }
+                    
+                    if (sign != 1){
+                        
+                        $('#content').append(base.join(''));
+                                          
+                    }
+                }else{
+                    if (creating == 1){
+                        
+                        $('#content').prepend(base.join(''));
+                    }else{
+                        
+                        $('#content').append(base.join(''));
+                    }
+                }
+                if (character == 1){
+                    $('#usr'+pk+'').addClass('green')
+                }
+                if (character == 2){
+                    $('#usr'+pk+'').addClass('red')
+                
+                }
+                if (character == 3){
+                    $('#usr'+pk+'').addClass('blue')
+                
+                }
+                
+           
+                
+            }
+                
+
+                
+                        
+
+                
+                
+                
+            $.fn.reloadAllComments = function(flag,id){
+                if (flag == 1){
+                    var add = 'Post';                
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                
+                
+                
+                var frmReloadC = $('#SCForm'+add+id+'');    
+                var jqxhr = $.ajax({
+                    type: frmReloadC.attr('method'),
+                    url: frmReloadC.attr('action'),
+                    data: frmReloadC.serialize(),
+                    cache: false,          
+                    success: function (message){
+                        
+                        
+                        if (message != 'OK'){
+                            var data = $.parseJSON(message)                                          
+                            
+                            $.fn.generateComments(data.data,flag,id,0,0);
+                            $.fn.displayMoreCommentsBut(flag,id,data.beforeComment)
+                            
+                            jQuery("div.date").timeago();                                                           
+                        }
+                        
+                        
+
+                    },
+                    error: function(message) {
+                        alert('error');
+                    },    
+                });
+                jqxhr.done(function(){
+
+                    //$.fn.giveMeLastCID(flag,id,2);
+                    //$.fn.displayMoreCommentsBut(flag,id);
+                })
+            };
+
+
+            $.fn.buildPlaceForComments = function(flag,id){
+                                
+                if (flag == 1){
+                    var add = 'Post';
+                    var $area = $('#placeUnderPostDiv'+id+'');
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    var $area = $('#placeUnderCommentDiv'+id+'');
+                    
+                }
+                
+                
+                var i = 0
+                var addon = []
+                addon[i++] = "<div id = 'allOfCDiv"+add+id+"' class='allOfCDiv' style='' >";
+                    addon[i++] = "<div id='firstCDiv"+add+id+"' style='display:block'>";
+                    addon[i++] = "</div>";
+
+             
+                    //addon[i++] = "<input id = 'moreCButton"+add+id+"' type='button' class='button gray'  value='More' style = 'display:none'>";
+                
+                
+                addon[i++] = "</div>";
+                
+                
+                
+                $area.append(addon.join(''));
+                
+                //$('#moreCommentsButton'+add+id+'').css('cursor','pointer');
+                $('#moreCommentsButton'+add+id+'').click(function(){
+                    
+                    $.fn.giveMeLastCID(flag,id,1)
+                    
+                    
+                    
+                    $.fn.reloadAllComments(flag,id);
+                
+                })
+
+          
+            }
+                
+                
+                
+            $.fn.buildCreateComment = function(flag,id){
+            
+                if (flag == 1){
+                    var add = 'Post';
+                    var $area = $('#placeUnderPostDiv'+id+'');
+                    var idPost = id
+                    var idComment = 0
+                    }
+                else{
+                    add = 'Comment';
+                    var $area = $('#placeUnderCommentDiv'+id+'');
+                    var idComment = id
+                    var idPost = 0
+                    
+                }
+                    
+                                               
+                var addon = []
+                var i = 0                               
+                addon[i++] = "<div id = 'createCDiv"+add+id+"' style='display: none;margin-left:5px'>";
+                    addon[i++] = "<div id ='createCFormDiv"+add+id+"'>";
+                        addon[i++] = "<form action= '/app/adam/comment/' id='createCForm"+add+id+"' method='post' >{% csrf_token %}";
+                            addon[i++] = "<input style='display: none;' name='idPost' value='"+idPost+"'>";
+                            addon[i++] = "<input style='display: none;' name='idComment' value='"+idComment+"'>";
+                            addon[i++] = "<input style='display: none;' type='text' id='isHumanComment"+id+"'>";  
+                            addon[i++] = "<div id = 'djangoCFormDiv"+add+id+"' class='indata1'>";
+                                addon[i++] = '<span id="textareaSpan'+add+id+'" style="display:inline">{{ commentsForm.comment }}</span>';
+                            addon[i++] = "</div>";
+                        addon[i++] = "</form>";
+                    addon[i++] = "</div>";
+                    addon[i++] = "<br>";                
+                    addon[i++] = "<div id='createCButtonDiv"+add+id+"'>";
+                        addon[i++] = "<input id ='createCButton"+add+id+"' type='button' class='disabled'  value='Post'>";
+                    addon[i++] = "</div><br>";
+                addon[i++] = "</div>";
+                
+                $area.append(addon.join(''));
+                $("#createCButton"+add+id+"").prop("disabled",true);
+                $("#textareaSpan"+add+id+" textarea").on('change keyup paste',function(){
+                    $.fn.checkEnability(2,flag,id)
+              
+                })
+                
+            
+            
+            
+            
+            }
+            $.fn.buildPhoto = function(flag,id,personUsername,isPicture){
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    }
+                else{
+                    add = 'Comment';
+                }
+                
+                var picName = 'default'
+                var i = 0
+                var addon = []
+                addon[i++] = "<div style='width:48px;height:48px;padding-left:0px;padding-right:10px'>"
+                    if (isPicture == true){
+                        picName = personUsername
+                    }          
+                    addon[i++] = "<img class='photo' width='48px' height='48px' src='{{ MEDIA_URL }}"+picName+".jpg?"+Math.random()+"'>"
+                addon[i++] = "</div>"
+                var $area = $('#photo'+add+id+'');
+                $area.append(addon.join(''));
+
+                                    
+            }
+                
+            $.fn.displayMorePostsBut = function(beforePost,afterPost,before,after){
+               
+                if (before == 1 ){
+                    var selector = $('#morePostsButton')
+                    $.fn.more(beforePost,selector,0,0)
+                }           
+                                    
+
+                    
+                    
+                if (after == 1 ){
+                    var selector = $('#moreNewPostsButton')
+                    $.fn.more(afterPost,selector,0,1)
+                }
+
+            };
+            //$.fn.displayMoreCommentsBut(flag,id,data[i].pk,beforeC,afterC,sigil)    
+            $.fn.displayMoreCommentsBut = function(flag,id,beforeC){
+               if (flag == 1){
+                var add = 'Post'
+                
+               }else{
+                var add = 'Comment'
+               }
+                
+                var selector = $('#moreCommentsButton'+add+id+'')
+                
+                $.fn.more(beforeC,selector,1,0)
+                         
+                                    
+
+    
+            };
+                
+                
+                
+                
+
+            $.fn.giveMeLastCID = function(flag,id,sign){
+            
+             
+            
+                if (flag == 1){
+                    var add = 'Post';
+                    
+                    
+                    }
+                else{
+                    var add = 'Comment';
+                    
+                }
+                
+                
+                
+                
+                if ($.fn.countNumOfComments(flag,id) > 0){
+                    var L = []
+                    var comments = $('#firstCDiv'+add+id+'').children()
+                    for (var i = 0, len = comments.length; i < len; i++){
+                        if (comments[i].id[0] == 'c'){
+                            L.push(comments[i].id.match(/[0-9 ]+/))
+                            
+                        }
+                    }
+                    
+                    
+                        
+                    lastCID = L[L.length-1]
+                    
+         
+                }
+                 
+                else{
+                    var lastCID = 0
+                }
+                
+                        
+                
+                
+                if (sign == 1){
+                    $('#SCFromInput'+add+id+'').attr('value',lastCID)
+                }else{
+                    $('#CFromDisp'+add+id+'').attr('value',lastCID )
+                }
+
+          
+            
+            
+             
+            }
+
+
+            $.fn.giveMeLastID = function(sign,old){
+                var ids
+                if ($.fn.countPosts() > 0){
+                    var posts = $('#content').children()
+                    var L = []
+                    for (var i = 0, len = posts.length; i < len; i++){
+                        if (posts[i].id[0] == 'p'){
+                            L.push(posts[i].id.match(/[0-9 ]+/))
+                            if (old == 1 && L.length == 1){
+                                break
+                            }
+                            
+                        }
+                    }
+                    if (old == 0){
+                        $('#lifter').attr('value',0)
+                        ids = L[L.length-1]
+                    }else{
+                        $('#lifter').attr('value',1)
+                        ids = L[0]
+                    }
+                     
+                    
+                }else{
+                    ids = 0
+                }
+                
+                if (sign == 1){
+                    $('#postsFrom').attr('value',ids)
+                    
+                }else{
+                    $('#oldestPostId').attr('value',ids)
+                }
+
+                
+            }
+                
+                
+                
+            $.fn.checkWordLength = function(obj,c){
+            
+                var i = 0
+                
+                for (var j = 0, len1 = c.length; j < len1; j += 1) {
+                    if (c[j].length > 2){
+                            i = i + 1
+                        }
+                    }
+                if (i > 1){
+                    obj.wl.css('display','none')
+                    return 1
+                
+                
+                
+                    
+                }else{
+                    obj.wl.css('display','inline-block')
+                    if (i == 0){
+                        
+                        obj.mv.css('display','none')
+                    }else{
+                        obj.mv.css('display','inline-block')
+                    }
+                    //obj.num.text(2-i)
+                    
+                    
+                    obj.num.text('')
+                    var a = 2 - i
+                    obj.num.text(' '+a+'')
+                    if (a == 1){ 
+                        obj.sing.text(' slovo')
+                    }else{
+                        obj.sing.text(' slová')
+                    }
+                    //obj.num.text(2-i)
+                    
+                                
+                    
+                }
+            }
+            
+            $.fn.checkText = function(sign,flag,id){
+                
+                var txt
+
+                if (sign == 1){
+                    txt = $.trim($("textarea#id_body").val())
+
+                    
+                    
+                }else{
+                    if (flag == 1){
+                        var add = 'Post';
+                  
+                    }
+                    else{
+                        var add = 'Comment';
+                    
+                    }
+                    txt = $.trim($("#textareaSpan"+add+id+" textarea").val())
+
+                }
+                
+                if (txt.length>0){                    
+                    return 1
+                }else{  
+                    return 0
+                }
+                
+            }
+            
+            
+            
+            
+            $.fn.isChecked = function(){
+                if ($('input[class="ch"]').is(':checked')){
+                    return 1
+                }else{
+
+                    $('#checkboxStatus').text('')
+                    $('#checkboxStatus').append("<div style='display:inline-block'><img width='10px' height='10px' src='{{ STATIC_URL }}triangle.jpg'></div>")
+                    
+                    return 0
+                }
+            }
+            
+            $.fn.checkEnability = function(sign,flag,id){
+                
+                
+                var can = 0
+                var but
+                if (sign == 1){
+                    but = $('#createPostButton')
+                    if ($.fn.checkText(1,0,0) === 1 & $.fn.isChecked() === 1 ){
+                        can = 1
+                    } 
+          
+                }else{
+                    if (flag == 1){
+                        var add = 'Post';
+                  
+                    }
+                    else{
+                        var add = 'Comment';
+                    
+                    }
+                    but = $("#createCButton"+add+id+"") 
+                    if ($.fn.checkText(2,flag,id) === 1 ){
+                        can = 1
+                    }
+                }
+                
+                
+                if (can === 1){
+                    but.prop("disabled",false);
+                    but.removeClass('disabled')
+                    but.addClass('s')
+                    
+                    
+                }else{
+                    but.prop("disabled",true);
+                    but.removeClass('s')
+                    but.addClass('disabled')
+                    
+                }
+            }
+            
+            
+            
+            
+            
+            $.fn.checkCheckbox = function(){
+                $('#checkboxStatus').append("<div style='display:inline-block'><img width='10px' height='10px' src='{{ STATIC_URL }}triangle.jpg'></div>")
+                $('#createPostButton').prop("disabled",true);
+                $('input[class="ch"]').on('click',function() {
+                    $('input[class="ch"]').not(this).prop("checked", false);
+                    $('#checkboxStatus').text('')
+                    $('#checkboxStatus').append("<div style='display:inline-block;vertical-align:top'><img height='10px' width='10px' src='{{ STATIC_URL }}is.jpg'></div>")
+
+                    $.fn.checkEnability(1,0,0)
+                    
+                });
+
+                $("textarea#id_body").on('change keyup paste',function(){
+                    $.fn.checkEnability(1,0,0)
+                    
+                    
+                })
+            }
+        
+        
+        
+        
+        
+        
+            $.fn.checkWordCount = function(obj,c){        
+                if (c.length > 3){
+                    obj._length.css('display','none')
+                    return 1
+                    
+                }else{
+                    obj._length.css('display','inline-block')
+                    if (c.length == 0){
+                        obj._more.css('display','none')
+                        
+                    }else{
+                        obj._more.css('display','inline-block')
+                        
+                    }
+                    obj._num.text('')
+                    var a = 4-c.length
+                    obj._num.text(' '+a+'')
+                    if (a == 1){ 
+                        obj._sing.text(' slovo')
+                    }else{
+                        obj._sing.text(' slová')
+                    }
+                    
+                   
+                    
+                
+                }
+            }
+            $.fn.loadInitial = function(){
+                var addon = []
+                var i = 0
+                {% if user.is_authenticated %}
+                    addon[i++] = "<div id = 'createPost'>"
+                        addon[i++] = "<div id='createPostFormDiv' style='display:block;'>"
+                            addon[i++] = "<form id = 'createPostForm' action= '/app/adam/create/' name = 'inputField' method=post>{% csrf_token %}"
+                                addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                                addon[i++]= "<input style='display: none;' name='' value='' type='text' id='isHumanPost'>"
+                                addon[i++]= "<br>"
+                                addon[i++]= "<div>"
+                                    addon[i++]= "<div id='p' class='indata1' style=''>"
+                                        addon[i++]= '{{ form.body }}'
+                                        
+                                    addon[i++]= "</div>"
+                                    addon[i++]= "<br>"
+                                    addon[i++]= "<div style=';vertical-align:top'>"
+                                        addon[i++]= "<div id='checkboxStatus' style='display:inline-block' >"
+                                            
+                                       
+                                        addon[i++]= "</div>"
+                                        addon[i++]= "<div style='display:inline-block;margin-left:5px;vertical-align:top'>"
+                                            addon[i++]= "<span class='fs12 caaa' style=''>"
+                                                addon[i++]= "Charakter príspevku:"
+                                            addon[i++]= "</span>"
+                                            addon[i++]= "<div id='check' style='display:inline-block;' class='fs12 caaa'>"
+                                                addon[i++]= "<input name='positive' type='checkbox' class='ch' >pozitívny"
+                                                addon[i++]= "<input name='negative' type='checkbox' class='ch' >negatívny"
+                                                addon[i++]= "<input name='informative' type='checkbox' class='ch' >informatívny"
+                                            addon[i++]= "</div>"
+                                        addon[i++]= "</div>"
+                                    addon[i++]= "</div>" 
+                                addon[i++]= "</div>"
+                                
+                            addon[i++]= "</form>"
+                            
+                            {% if param == 1 %}
+                                addon[i++] = "<form id ='discussForm' action='/app/adam/discuss/' method='post'>"
+                                    addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='discussInput'>";
+                                    addon[i++] = "<input style='display:none' name='idcko' value='{{ idPost }}'>";
+                                addon[i++] = "</form>"
+                            {% endif %}
+                            
+                            
+                        addon[i++]= "</div>"
+                        
+                        addon[i++]= "<div id='createPostButtonDiv'>"
+                        addon[i++]= "<br>"
+                        addon[i++]= "<input id ='createPostButton' type='button' class='disabled'  value='Post'>"
+                        addon[i++]= "</div>"
+                    addon[i++]= "</div>"
+                    
+                    
+                    $('#mains').append(addon.join(''));
+                    
+                    
+                    
+                    
+                    $('#createPostButton').click(function(){
+                        var createForm = $('#createPostForm');
+                        
+                        
+                        
+                        
+                        $.ajaxq('c',{
+                            type: createForm.attr('method'),
+                            url: createForm.attr('action'),
+                            data: createForm.serialize(),
+                            beforeSend: function(){
+                                
+                                if ($('#isHumanPost').val().length != 0 || $('#isHuman').val() != 'adam'){
+                                    alert('spambot')
+                                    return false
+                                }
+
+                            },
+                            cache: false,
+                                      
+                            success: function (msg) {
+                                
+                                
+                                $("textarea#id_body").val('');
+                                var data = $.parseJSON(msg);
+                                
+                                
+                                
+
+                                $.fn.buildBaseForPost(1,data.pk,data.personName,data.timestamp,data.body,data.character);   
+                                $.fn.buildPosts(data.pk,1,0,0,data.canRemove,'',data.personUsername,data.isPicture,0);
+                                
+                                
+                                jQuery("div.date").timeago();
+
+                                $('input[class="ch"]').prop('checked', false);
+                                $('#createPostButton').prop("disabled",true);
+                                $('#createPostButton').removeClass('s')
+                                $('#createPostButton').addClass('disabled')
+                                $('#checkboxStatus').text('')
+                                $('#checkboxStatus').append("<div style='display:inline-block'><img width='10px' height='10px' src='{{ STATIC_URL }}triangle.jpg'></div>")
+                                
+                         
+                            },
+                            error: function(msg) {
+                            alert('error')
+                            },
+                            complete:function(msg){
+                                
+                                
+                            },
+                        }).done(function(){
+
+                       
+                        })      
+                    });
+                    
+                
+                
+                
+                
+
+                {% endif %}
+
+                var addon = []
+                var i = 0
+                addon[i++]= "<form action= '/app/adam/giveMePosts/' id = 'give_me_posts' name = 'give_me_posts' method=post>"
+                    addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='gInput'>"
+                    addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                    addon[i++]= "<input id = 'postsFrom' style='display: none;' name='from' value = 0 >"
+                    addon[i++]= "<input id = 'switcher' style='display: none;' name='switch' value = 0 >"
+                    addon[i++]= "<input id = 'lifter' style='display: none;' name='lift' value = 0 >"
+                addon[i++]= "</form>"
+                
+                addon[i++]= "<form action='/app/adam/displayMorePostsButton/' id = 'displayMorePostsButtonForm' name = 'more_posts' method=post>"
+                    addon[i++]= "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='dInput'>"
+                    addon[i++]= "<input style='display: none;' name='currentTopic' value='{{ currentTopic }}'>"
+                    addon[i++]= "<input id = 'oldestPostId' style='display: none;' name='from' value= 0 >"
+                    addon[i++]= "<input id = 'switcherP' style='display: none;' name='switch' value = 0 >"
+                addon[i++]= "</form>"
+                
+                addon[i++]= "<div id='buttonPanel' class='caaa fs12'>"
+                    addon[i++]= "<div id='categoryNewest' value='0' style='display:inline-block;cursor:default;opacity:0.4;padding-right:10px;' class=''>najnovsie"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryMostFavourite' value='1' style='display:inline-block;cursor:pointer;padding-right:10px;'>najpopularnejsie"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryOnlyPositive' value='2' style='display:inline-block;cursor:pointer;padding-right:10px;'>pozitivne"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div id='categoryOnlyNegative' value='3' style='display:inline-block;cursor:pointer'>negativne"
+                addon[i++]= "</div>"
+                    
+                addon[i++]= "<div>"
+                    addon[i++]= "<div id = 'content'>"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<div>"
+                        addon[i++]= "<input id = 'morePostsButton' type='button' class='button gray'  value='More' style='display:none;cursor:pointer'>"
+                    addon[i++]= "</div>"
+                    addon[i++]= "<input style='display: none;' name='' value='adam' type='text' id='isHuman'>"
+                addon[i++]= "</div>"    
+
+                
+                $('#mains').append(addon.join(''));
+                
+                $.fn.addCategoryHandlers();
+                
+                
+                $('#morePostsButton').click(function(){
+                    
+                    
+                    $.fn.giveMeLastID(1,0)
+                   
+                    $.fn.reloadAllPosts(0);
+                                 
+                });
+            }
+            $.fn.takeCareOfContent = function(num){
+                $('#switcher').attr('value',num)
+                $('#switcherP').attr('value',num)
+                $('#content').text('')
+                $('#oldestPostId').attr('value',0)
+                $('#postsFrom').attr('value',0)
+                
+                $.fn.reloadAllPosts(0)
+            }
+            $.fn.addCategoryHandlers = function(){
+                $('div[id^="category"]').click(function(){
+                    var categoryNum = $(this).attr('value')
+                    var switcherNum = $('#switcher').attr('value')
+                    if (categoryNum != switcherNum){
+                        $.fn.takeCareOfContent(categoryNum)
+                        $(this).css('cursor','default');
+                        $('div[id^="category"]').not(this).css('cursor','pointer');
+                        $('div[id^="category"]').not(this).css('opacity','1.0');
+                        $(this).css('opacity','0.4')
+                        
+                        
+                         
+                    }
+                })
+                //$(this).click(function()
+                               
+
+            }
+                           
+            $( document ).ready(function() {
+                
+
+                
+                $.general = new Object();
+                $.general.prefix = '/app/adam'
+                $.general.prefixReg = '/app/accounts'
+                $.general.token = $.cookie('csrftoken')
+                //alert('OK3')
+                
+                
+                
+                $.fn.loadInitial()
+       
+                
+                {% if user.is_authenticated %}
+                    $.fn.checkCheckbox();
+                    
+                {% endif %}
+  
+               
+                {% if param == 0 %}
+                    $.fn.reloadAllPosts(0);
+                {% else %}
+                    $.fn.reloadTheOne();
+                {% endif %}
+                              
+                    
+            });
+            
+        </script>
+        <link rel='stylesheet' type='text/css' href='/wordBlog/adam/static/style.css'>   
+    </head>
+    <body OnLoad="">
+        <div id='mains'>
+        </div>
+        {% load php %}
+    
+    </body>
+</html>
+
+
+

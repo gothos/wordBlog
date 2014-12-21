@@ -1,0 +1,177 @@
+<script language='JavaScript' type='text/javascript' src='jquery-1.10.2.js'></script>
+<script language='JavaScript' type='text/javascript' src='jquery.ajax-loading-overlay.js'></script>
+<script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/jquery.ajax-loading-overlay.js'></script>
+<script language='JavaScript' type='text/javascript' >
+$( document ).ready(function() {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+
+
+    {% if user.is_authenticated %}
+        $('#authU').css('display','block')
+    {% else %}
+        $('#authL').css('display','block')
+    {% endif %}
+
+
+
+    $('#lout').click(function(){
+        $('#loutInput').attr('value',getCookie('csrftoken'))
+        
+        
+        
+        var frm = $('#logOut')
+        alert('clicked')
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            cache: false,
+                      
+            success: function (msg) {
+            
+            
+            
+                if (msg=='OK'){
+                    
+                    $('#authU').css('display','none')
+                    $('#authL').css('display','block')
+                    var num = parseInt($('#content').attr('value'))
+                    if (num != 0){
+                        $('#content').load('/app/adam/openTopic/domain/'+num+'');
+                    }
+                }
+
+          
+                             
+            },
+            error: function(msg) {
+            alert('error')
+            },
+            complete:function(msg){
+                
+                
+            },
+        }).done(function(){
+            
+            
+            
+            
+            
+        })
+        
+        
+    })
+        
+        
+    $('#sub').click(function(){
+        $('#linInput').attr('value',getCookie('csrftoken'))
+        var frm = $('#sa')
+        alert('clicked')
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            cache: false,
+                      
+            success: function (msg) {
+                alert(msg)
+                var data = $.parseJSON(msg)
+                    
+                if (data.status == 'OK'){
+                    
+                    $('#login').css('display','none')
+                    $('#user').text('')
+                    $('#user').append("User: "+data.user+"")
+                    $('#authU').css('display','block')
+                    $('#authL').css('display','none')
+                    var num = parseInt($('#content').attr('value'))
+                    if (num != 0){
+                        $('#content').load('/app/adam/openTopic/domain/'+num+'');
+                    }
+                }else{
+                    
+                    if (data.errors.password){
+                        
+                        $('#errPassword').text('')
+                        
+                        $('#errPassword').append("*"+data.errors.password)
+                    }else{
+                        $('#errPassword').text('')
+                    }
+                    
+                    if (data.errors.username){
+                        
+                        $('#errUsername').text('')
+                        
+                        $('#errUsername').append("*"+data.errors.username)
+                    }else{
+                        $('#errUsername').text('')
+                    }
+                    if (data.errors.__all__){
+                        
+                        $('#errAll').text('')
+                        
+                        $('#errAll').append("*"+data.errors.__all__)  
+                    }else{
+                        $('#errAll').text('')
+                    }
+                    
+                }
+                        
+                            
+
+          
+                             
+            },
+            error: function(msg) {
+            alert('error')
+            },
+            complete:function(msg){
+                
+                
+            },
+        }).done(function(){
+             
+            
+            
+            
+            
+        })
+        
+        
+    })
+
+    
+})
+</script>
+
+
+
+
+
+    
+
+<form action="/app/adam/logout/" id = 'logOut' method=post>
+<input style='display:none' name='csrfmiddlewaretoken' value='' id ='loutInput'>
+</form>
+<div style='position:absolute'>VASEK</div>
+<div id = 'regin' class= '' style= "display:none;">
+
+    
+</div>
+

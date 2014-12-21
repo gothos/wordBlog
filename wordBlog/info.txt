@@ -1,0 +1,1 @@
+<dt><input id="user_remember_me" style="float: left; margin-right: 10px;" type="checkbox" name="user[remember_me]" value="1" />Remember</dt>

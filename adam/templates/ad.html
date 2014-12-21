@@ -1,0 +1,100 @@
+{% load jsonFilter %}
+<html>
+    <head>
+
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}jquery-1.10.2.js'></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.9.2.min.js"></script>
+        <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}jquery-ui-1.9.2.css'/>
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery.cookie.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}sortElements.js"></script>
+        <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}jquery-ui-1.9.2.css'>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.9.2.min.js"></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}mailcheck.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}common.js'></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campaignHeaders.js"></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/remark.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/succRate.js'></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/preview.js"></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/buildAd.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/bills.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/campaigns.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/navigation.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/billing.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/guide.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/stat.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/datepick.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/keyword.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/description.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/budget.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/editCampaign.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/over.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/fillCampaignDetail.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}adAdminSections/CPCs.js'></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/commonAdAdmin.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/checkField.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/addKeywords.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/saveKeywordsChanges.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/saveBudgetChanges.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/performAction.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/saveBillingChanges.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/createCampaign.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/deleteCampaign.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/getResults.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/saveBudgetChanges.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/saveDescriptionChanges.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/selectSuccRate.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/selectKeyword.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/campContentForm.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/dateFilter.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/returnFromBilling.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{ STATIC_URL }}adAdminSections/fillCampaignContent.js"></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}focusUnfocusField.js'></script>
+        <script language='JavaScript' type='text/javascript' src='{{ STATIC_URL }}addMailCheck.js'></script>
+
+        <script>
+           
+
+            
+            $( document ).ready(function() {
+                $.gen = new Object();           
+                $.gen.statusPaused = 'Pozastavená'
+                $.gen.statusActive = 'Aktívna'
+                $.gen.statusInactive = 'Neaktívna'
+                $.gen.campaignsList = []
+                $.gen.campaignIdCampaign = 0
+                $.gen.pages = 4
+                $.gen.curPage = 1
+                $.gen.keyword = 0
+                $.gen.cpm = '<span style="font-weight:bold"> Cost Per Mille </span> je cena za 1 000 zobrazení reklamného formátu'     
+                $.gen.cpc = 'Princíp <span style="font-weight:bold">Pay Per Click</span> ( doslovne platba za klik) spočíva v tom, že inzerent za reklamu platí až vo chvíli, keď sa dá predpokladať, že zaúčinkovala, teda vo chvíli, keď na ňu potenciálny klient klikol'
+                $.checked = new Object();
+                $.checked.adName = 0
+                $.checked.adBudget = 0
+                $.checked.adTitle = 0
+                $.checked.adDescription1 = 0
+                $.checked.adDescription2 = 0
+                $.checked.adUrl1 = 0
+                $.default_ = new Object();
+                $.default_.title = 'Najlacnejšie notebooky'
+                $.default_.description1 = 'Rýchle doručenie'
+                $.default_.description2 = 'Študentské zľavy' 
+                $.default_.url = 'www.priklad.sk'
+                $.fn.centerDiv()
+                $.fn.buildAd('{{ bills | jsonify }}','{{ campaign | jsonify }}','{{ billingInfoDic | jsonify }}',{{ billingInfoId }})
+
+            })
+        
+        </script>
+        
+        <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}style.css'>
+        
+    </head>
+    <body OnLoad="" style="">
+        <div id="authent" class="" style="border:1px solid black;width:900px;min-height:500px;background-color:white;position:absolute;left:50%;top:10px;z-index:100">
+            <div id='maina' style='width:900px;min-height:500px'>
+            </div>
+        </div>
+        
+    
+    </body>
+</html>

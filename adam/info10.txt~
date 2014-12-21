@@ -1,0 +1,452 @@
+var a = []
+                $.each($('#firstCDiv'+add+id+'').children(),function(i){
+                    a.push( $(this).attr('id').match(/[0-9 ]+/))
+                })
+                alert(a)
+
+                $('#displayedIDs'+add+id+'').attr('value',a)
+                
+                
+                if (sign != 1){
+            alert('apending')    
+            $('#firstCDiv'+add+id+'').append(addonC);
+        
+        }
+        
+        
+        $('#'+add+id+'').before('<div id="RNotif'+add+id+'"><br><div>'+add+' was succesfully deleted</div><input type="button" class="button gray" style="display: block;" id="RNotifButton'+add+id+'" value="OK"></div>')
+                    $('#RNotifButton'+add+id+'').css('cursor','pointer');
+                    $('#RNotifButton'+add+id+'').click(function(){
+                        $('#RNotif'+add+id+'').remove()
+                    })
+                                        
+                    $('#'+add+id+'').remove();
+
+
+                    if(flag == 2){
+                    
+                    
+                    
+                    
+        
+        
+        $.fn.saveDisplayedIDs(flag,id);
+        
+        $.when($.fn.reloadAllComments(flag,id)).done($.fn.makeSumOfComments(flag,id))
+        
+        
+        if len(posts) < 6:
+                for res in results:
+                    if res.id > int(fromPost) and len(posts) < 6 and res.id not in aha:
+                        posts.append(res)
+        
+                if por != '0':
+            
+            displayedIDs = request.POST.get('listOfIDs').split(',')
+            print('DISPPP', displayedIDs)
+            aha = []
+            for i in displayedIDs:
+                aha.append(int(i))
+            print('disp',aha)
+            
+            
+            aha = []
+            
+            <input id = 'dispIDs' style='display:none' name='listOfIDs' value = 0 >
+            
+            var m = []
+        $.each($('#content').children(),function(i){
+            m.push( $(this).attr('id').match(/[0-9 ]+/))
+        })
+        if (m.length != 0){
+            $('#dispIDs').attr('value',m)
+        }
+        
+        
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            sign = 0
+            $.each($('#content').children(),function(i){
+                if ( $(this).attr('id').match(/[0-9 ]+/) < pk){
+                    alert('prepending')
+                    $(this).before(base)
+                    sign = 1
+                    return false;
+                    
+                }
+            })
+            if (sign != 1){
+                alert('apending')    
+                $('#content').append(base);
+            
+            }
+            
+            
+            
+            def check_for_incom_posts(request):
+    if request.method == "POST" and request.is_ajax():
+        idUser = request.user.id
+        currentTopic = request.POST.get('currentTopic')
+        currentPostId = request.POST.get('currentPostId')
+        lastPostId = request.POST.get('lastPostId')
+        print('last',lastPostId,'current',currentPostId);
+        posts = BlogPost.objects.filter(idTopic=currentTopic,pk__range=(lastPostId,currentPostId),valid=1).exclude(pk = lastPostId).exclude(pk= currentPostId);
+        comments = []
+        dic = {}
+        if posts:
+            data = serializers.serialize("python", posts)
+            for i in range(len(data)):
+                del data[i]['model'] 
+                for k in data[i].keys():
+                    
+                    if k == 'fields':
+                        
+                        personName= User.objects.get(pk= data[i][k]['idPerson']).username
+                        data[i][k].update({'personName':personName})
+                        dic[data[i]['pk']] = 0
+                        likeds = Like.objects.filter(idPost = data[i]['pk'],valid=1)
+                        likedsIDs = []
+                        for z in likeds:
+                            likedsIDs.append(z.idPerson.id)
+                        #print('likedsIDs',likedsIDs)
+                        if idUser == data[i][k]['idPerson']:
+                            data[i][k].update({'canRemove':1})
+                        else:
+                            data[i][k].update({'canRemove':0})
+                        if idUser in likedsIDs:
+                            data[i][k].update({'canLike':0})
+                        else:
+                            data[i][k].update({'canLike':1})            
+                        data[i][k].update({'lenLikedsIDs':len(likedsIDs)})
+                        comments = BlogComment.objects.filter(idPost= data[i]['pk'],idParentComment=None,valid=1)
+                        data[i][k].update({'dic':len(comments)})
+                        comments = comments[:2]
+                        com = []
+                        if comments:
+                            for p in range(len(comments)):
+                                #print('aaaaaaaa',comments[p].comment)
+                                
+                                dicken = {}
+                                dicken.update({'pk':comments[p].id})
+                                dicken.update({'comment':comments[p].comment})
+                                dicken.update({'timestampCom':comments[p].timestampCom})
+                                personName= User.objects.get(pk= comments[p].idPerson.id).username
+                                dicken.update({'personName':personName})
+                                
+                                
+                                likeds = LikeComment.objects.filter(idComment = comments[p].id,valid=1)
+                                likedsIDs = []
+                                for z in likeds:
+                                    likedsIDs.append(z.idPerson.id)
+                                
+                                
+                                if idUser == comments[p].idPerson.id:
+                                    dicken.update({'canRemove':1})
+                                else:
+                                    dicken.update({'canRemove':0})
+                                if idUser in likedsIDs:
+                                    dicken.update({'canLike':0})
+                                else:
+                                    dicken.update({'canLike':1})
+                                dicken.update({'idParentComment': comments[p].idParentComment })
+                                #if comments[p].idParentComment != None:
+                                dicken.update({'idPost': comments[p].idPost.id })    
+                                dicken.update({'lenLikedsIDs':len(likedsIDs)})        
+                                subcomments = BlogComment.objects.filter(idPost= comments[p].idPost,idParentComment = comments[p].id, valid=1)
+                                dicken.update({'dic':len(subcomments)})
+                                com.append(dicken)
+                                #print('com',com)
+                        
+                        data[i][k].update({'comments':com})
+                        del data[i][k]['idPerson']
+                        del data[i][k]['idTopic']
+                        
+            
+            return HttpResponse(json.dumps(data,cls=DjangoJSONEncoder))
+        else:
+            return HttpResponse('OK')
+
+
+
+    $.fn.setIntervals = function(flag,id){
+    
+        
+    
+        if (flag == 1){
+            var add = 'Post';
+            
+            }
+        else{
+            var add = 'Comment';
+            
+        }
+        var incomCForm = $("incomCForm"+add+id+"") 
+        setInterval(function(){
+            $.fn.saveDisplayedIDs(flag,id);
+            $.ajax({
+                type: incomCForm.attr('method'),
+                url: incomCForm.attr('action'),
+                data: incomCForm.serialize(),                
+                success: function (msg) {
+                
+                    alert(msg)
+                    
+                    if (msg.length == 1){
+                    
+                        if ($('#incomingC'+add+id+'').length > 0){
+                            
+                            if (msg == 0){
+                                
+                                $('newCNotif'+add+id+'').remove()                
+                            }
+                            
+                            
+                            if ($('#incomingC'+add+id+'').text() != msg){
+                                $('#incomingC'+add+id+'').text(msg)
+                            }
+                        }else{
+                            if (msg != 0){
+                                
+                                
+                                
+                                
+                                $('#firstCDiv'+add+id+'').append('<div id = "newCNotif'+add+id+'">There are <div id="incomingC'+add+id+'" style="display:inline" >'+msg+'</div> new postsA</div>')
+                            }
+                        }
+                            
+                    }
+                    
+                        
+                    
+                       
+                        
+                    
+                },
+                error: function(msg) {
+                },
+            })
+        
+        
+        
+        
+        
+        
+        },5000);
+    }
+    
+    
+    $.fn.setIntervals(1,idcko);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    var interval = setInterval(function(){
+        
+        $.fn.saveDispPostIDs()
+        
+        $.ajax({
+            type: delPostsForm.attr('method'),
+            url: delPostsForm.attr('action'),
+            data: delPostsForm.serialize(),
+                       
+            success: function (msg) {
+                if (msg.length > 2){
+                    var datos = $.parseJSON(msg);
+                    $.each(datos, function(i,j) {
+                    
+
+                                        
+                        
+                        $('#post'+j+'').before('<div id="DPNotif'+j+'"><br><div>Post was deleted</div><input type="button" class="button gray" style="display: block;" id="DPNotifButton'+j+'" value="OK" ></div>')
+                        $('#DPNotifButton'+j+'').css('cursor','pointer');
+                        $('#DPNotifButton'+j+'').click(function(){
+                            $('#DPNotif'+j+'').remove()
+                        }) 
+                        
+                        
+                        
+                        $('#post'+j+'').remove()
+                    
+                    
+                    })
+                }    
+               
+                             
+            },
+            error: function(msg) {
+            alert('error')
+            },
+        });
+        
+        
+                  
+        $.ajax({
+            type: incomPostsForm.attr('method'),
+            url: incomPostsForm.attr('action'),
+            data: incomPostsForm.serialize(),                
+            success: function (msg) {
+                
+                if (msg.length == 1){
+                
+                    if ($('#incomingPosts').length > 0){
+                        
+                        if (msg == 0){
+                            
+                            $('#newPostsNotif').remove()                
+                        }
+                        
+                        
+                        if ($('#incomingPosts').text() != msg){
+                            $('#incomingPosts').text(msg)
+                        }
+                    }else{
+                        if (msg != 0){
+                
+                            $('#content').append('<div id = "newPostsNotif">There are <div id="incomingPosts" style="display:inline" >'+msg+'</div> new postsA</div>')
+                        }
+                    }
+                        
+                }
+                
+                    
+                if (msg.length > 2){                                                               
+                    var datos = $.parseJSON(msg);
+                    $.each(datos, function(key, val) {
+                       
+                        if ($('#beforePost'+key+'').length > 0){
+                            if (val == 0){
+                                $('#dummyPosts'+key+'').remove()
+                            }
+                            
+                            
+                            if ($('#beforePost'+key+'').text() != val){
+                                $('#beforePost'+key+'').text(val)
+                                $('#dummyAmountPInput'+key+'').attr('value',val)
+                            }
+                        }
+                        else{
+                            if (val != 0){
+                                addonD= "<div id = 'dummyPosts"+key+"' style= 'cursor:pointer' >There are <div id='beforePost"+key+"' style='display:inline'>"+val+"</div> new postsB";
+                                addonD = addonD + "<form id= 'dummyPostsForm"+key+"' action= '/adam/dummyPosts/' method='post' >{% csrf_token %}<input style='display: none;' name='ids' value='"+key+"'><input id = 'dummyAmountPInput"+key+"' style='display: none;' name='amount' value='"+val+"'><input style='display: none' name='currentTopic' value='{{ currentTopic }}'></form>";
+                                addonD = addonD + "</div>";
+                            
+                                    
+                            
+                                  
+                        
+                                $('#post'+key+'').before(addonD)
+                                $('#dummyPosts'+key+'').click(function(){
+                                    var dummyPForm = $('#dummyPostsForm'+key+'')
+                                    $.ajax({
+                                        type: dummyPForm.attr('method'),
+                                        url: dummyPForm.attr('action'),
+                                        data: dummyPForm.serialize(),           
+                                        success: function (msg) {
+                                            var data = $.parseJSON(msg)
+                                            $.each(data, function(keyP, valP) {
+                                                
+                                                
+                                                
+                                                $.fn.buildBaseForPost(valP.pk,valP.fields.personName,valP.fields.timestamp,valP.fields.body);  
+                                                $.fn.buildPosts(valP.pk,valP.fields.canLike,valP.fields.lenLikedsIDs,valP.fields.dic,valP.fields.canRemove,valP.fields.comments);
+                                                
+                                                 
+                                                          
+                                            });
+                                            $('#dummyPosts'+key+'').remove()   
+                                        
+                                        
+                                        },
+                                        error: function(msg) {
+                                            alert('error')
+                                        },    
+                                    })
+                                
+                                
+         
+                                })
+                            
+                            
+                            }
+                             
+                        
+                        }   
+                    })
+                }
+                   
+                    
+                
+            },
+            error: function(msg) {
+            },
+        })
+        
+     
+    },5000);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+                    
+                    
+                    if (msg.length == 1){
+                    
+                        if ($('#incomingC'+add+id+'').length > 0){
+                            
+                            if (msg == 0){
+                                
+                                $('newCNotif'+add+id+'').remove()                
+                            }
+                            
+                            
+                            if ($('#incomingC'+add+id+'').text() != msg){
+                                $('#incomingC'+add+id+'').text(msg)
+                            }
+                        }else{
+                            if (msg != 0){
+                                
+                                
+                                
+                                
+                                $('#firstCDiv'+add+id+'').append('<div id = "newCNotif'+add+id+'">There are <div id="incomingC'+add+id+'" style="display:inline" >'+msg+'</div> new postsA</div>')
+                            }
+                        }
+                            
+                    }
+                    
+                    
+                    
+                    $.fn.setIntervals(1,idcko);

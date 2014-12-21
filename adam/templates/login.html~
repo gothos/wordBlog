@@ -1,0 +1,290 @@
+<html>
+    <head>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/common.js'></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/focusUnfocusField.js'></script>
+        <script language='JavaScript' type='text/javascript' src='/wordBlog/adam/static/addMailCheck.js'></script>
+        <script language='JavaScript' type='text/javascript' >
+            
+            
+            
+            $.fn.buildLoad = function(){
+                var i = 0
+                var addon = []
+                
+
+
+
+                addon[i++] = "<div id = 'login' class= '' style= 'border: 1px solid #7A858D;'>"
+                    addon[i++] = "<div style='border-top-right-radius: 6px;border-top-left-radius: 6px'>"
+                        addon[i++] = "<div id='topLDiv' style=';margin:25px'>"
+                            addon[i++] = "<div style='display:inline-block;font-size:18px'>"
+                                addon[i++] = "Prihlásenie"
+                            addon[i++] = "</div>"
+                            addon[i++] = "<div id='close-btn' class='close-btn6' style=''>"
+                            addon[i++] = "</div>"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                    
+                    addon[i++] = "<div style='padding-bottom:25px;border-top: 1px solid #e5e5e5;background: #fff;border-bottom-right-radius: 6px;border-bottom-left-radius: 6px;'>"
+                        addon[i++] = "<div class='contento' style=''>"
+                        
+                        
+                        
+                            addon[i++] = "<form id='se' method='post' action='"+$.general.prefixReg+"/password/reset/'>{% csrf_token %}"
+                                addon[i++] = "<input style= 'display: none;' name='param' value='0' >";
+                            addon[i++] = "</form>"
+                        
+                        
+                            addon[i++] = "<form id='sa' method='post' action='"+$.general.prefixReg+"/login/'>"
+                                addon[i++] = "<input style='display:none' name='csrfmiddlewaretoken' value='' id ='linInput'>"
+                                addon[i++] = "<input style='display:none' name='captchaCheck' value= 0 id ='captchaCheck'>"
+                                
+                                addon[i++] = '<div style="margin-top:25px;position:relative" >'
+                                    
+                                    addon[i++] = '{{ form.username }}'
+                                    addon[i++]= '<span id="usrSpan" class="plac" style="top:6px">Email</span>'
+                                    
+                                    addon[i++] = "<div id ='errUsername' class ='block err' style=''>"
+                                    addon[i++] = "</div>"
+                                addon[i++] = '</div>'
+                                addon[i++] = '<div style="" class="inpFSpace">'      
+                                    
+                                    addon[i++] = '{{ form.password }}'
+                                    addon[i++]= '<span id="passwordSpan" class="plac" style="top:6px">Heslo</span>'
+                                    
+                                    
+                                    addon[i++] = "<div id='showP' style='' class='showP'>"
+                                    addon[i++] = "</div>"
+                                    
+                                    
+                                    addon[i++] = "<div id ='errPassword' class ='block err' style=''>"
+                                    addon[i++] = "</div>"
+                                    
+                                addon[i++] = '</div>'
+                                addon[i++] = "<div id ='showCaptcha' style=''>"
+                                addon[i++] = "</div>"
+                                
+                                addon[i++] = '<table id="outerDiv" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:15px;width:100%;position:relative">'
+                                    addon[i++] = '<tr>'
+                                        
+                                        addon[i++] = '<td valign="middle" id="" style="">'
+                                            addon[i++] = "<div>"
+                                            addon[i++] = "<input name='remember_me' id='remember_me' type='checkbox' style='' class='extra'>"
+                                            addon[i++] = "</div>"
+                                        addon[i++] = '</td>'
+                                        addon[i++] = '<td valign="middle" id="" style="">'
+                                            addon[i++] = "Prihlásiť trvale"
+                                        addon[i++] = '</td>'
+                                        
+                                        addon[i++] = '<td valign="middle" style="" id="inneDiv">'
+                                            addon[i++] = "<input id ='sub' type='button' class = 's' value='Prihlásiť' style='cursor:pointer;width:auto;float:right'>"
+                                        addon[i++] = '</td>'
+                                    addon[i++] = '</tr>'
+
+                                addon[i++] = '</table>'
+                                
+
+                                addon[i++] = "<div id='passwordForget' style='cursor:pointer;color:#2895f1;width:115px'>"
+                                    addon[i++] = "Zabudol si heslo?"
+                                addon[i++] = "</div>"
+                                
+                                        
+
+                            addon[i++] = "</form>"
+                            addon[i++] = "<div id='captchaForm'>"
+                            addon[i++] = "</div>"
+                        addon[i++] = "</div>"
+                    addon[i++] = "</div>"
+                    
+                addon[i++] = "</div>"
+                $('#mainL').append(addon.join(''));
+                $.fn.addCloseButtonHandler();
+                $('#id_password').showPassword({
+                    appTo: 'showP',
+                    linkClass: 'tyrkys',
+                    linkText: 'Ukázať heslo',
+                    showPasswordLinkText: 'Skryť heslo',
+                    showPasswordInputClass: 'spwdLog',
+                    idInput: 'idP'
+                });                
+                $('#idP').css('display','none')
+                
+                $.fn.addFadeOutSpanHandler($('#id_username'),$('#usrSpan'));
+                $.fn.addFadeOutSpanHandler($('#id_password'),$('#passwordSpan'));
+                $.fn.addFadeOutSpanHandler($('#idP'),$('#passwordSpan'));
+                $('#id_username').focus(function(){
+                    $.fn.changeOpacity(0,$( "#usrSpan" ))
+                    $('#errUsername').text('')
+                })
+                $('#id_username').focusout(function(){
+                    $.fn.changeOpacity(1,$( "#usrSpan" ))
+                    $.fn.addMailCheck($('#id_username'),$('#errUsername'))
+                })
+                
+                $.fn.addPasswordFocusHandler($('#id_password'),$('#idP'),$("#passwordSpan"),$('#errPassword'))
+                    
+                $('#passwordForget').click(function(e){
+
+                    $('#se').submit() 
+                    
+                })  
+                $('#sub').click(function(){
+                    if ($('#id_password').css('display') == 'inline-block'){
+                        console.log('awd')
+                        var value = ($.trim( $('#id_password').val()))
+                        $('#idP').val(value) 
+                    }
+                    if ($('#idP').css('display') == 'inline-block'){
+                        console.log('awdww')
+                        var value = ($.trim( $('#idP').val()))
+                        $('#id_password').val(value) 
+                    }
+                    console.log($('#id_password').val())
+                    console.log($('#idP').val())
+
+
+
+               
+                    $('#linInput').attr('value',$.cookie('csrftoken'))
+
+                    var frm = $('#sa')
+                   
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        cache: false,
+                        beforeSend: function(){
+                            if ($.fn.loginCheck() == 0){
+                                return false;
+                            }
+                            
+                        },   
+                        success: function (msg) {
+                            console.log('msg',msg)
+                            var data = $.parseJSON(msg)
+                                
+                            if (data.status == 'OK'){
+                                $.fn.unlockBackground()
+                                
+                                $.fn.buildLoggedUser(data)
+                                var num = parseInt($('#stuff').attr('value'))
+                                if (num != 0){
+                                    $('#stuff').load(''+$.general.prefix+'/openTopic/domain/'+num+'');
+                                }
+                                
+                            }else{                                
+                                $('#errPassword').text('')
+                                $('#idPassword').addClass('errBorder')
+                                if (data.errors.__all__){        
+                                    $('#errPassword').append(data.errors.__all__)
+                                    $('#idP').addClass('errBorder')
+                                    $('#id_password').addClass('errBorder')
+                                }
+                                
+                                
+                               
+                                
+                                
+                                if (data.isCaptcha == 1 ){
+                                    $('#captchaCheck').attr('value',1)
+                                    if ( $('#showCaptcha').children().length > 0 ){
+                                        $.fn.getErrsCaptcha(data)
+                                
+                                    }else{
+                                                                
+                                        $.fn.buildCaptcha('{{ formCap }}');
+                                        $('#remember_me').removeClass('upper')
+                                        $('#remember_me').addClass('lower')
+                                        $('#captchaSpan').addClass('loginCaptcha')
+                                    }
+                                }
+                                
+                                                
+                                
+                                
+                            }
+                                    
+
+                                         
+                        },
+                        error: function(msg) {
+                        alert('[e][login.html]')
+                        },
+                        complete:function(msg){
+                            
+                            
+                        },
+                    }).done(function(){
+                         
+                        
+                        
+                        
+                    })
+                    
+                    
+                })
+            
+            
+            } 
+            $.fn.loginCheck = function(){
+                
+                var flag = $.fn.addMailCheck($('#id_username'),$('#errUsername')) 
+                
+      
+                var flag = $.fn.checkPass(0,$('#id_password'),$('#idP'),$('#errPassword'))[0]
+       
+                if ($('#showCaptcha').children().length > 0){
+                    
+                    var flag = $.fn.checkCaptcha(flag)
+
+                }
+                
+                
+                
+                
+                
+                
+                if (flag == 1){
+                    return 0
+                }else{
+                    return 1
+                }
+                                
+                
+            }
+
+            $.fn.onStart = function(){
+                            
+                {% if isCaptcha == 1 %}
+                    $.fn.buildCaptcha('{{ formCap }}');
+                    $('#captchaSpan').addClass('loginCaptcha')
+                    $('#captchaCheck').attr('value',1)
+                    $('#remember_me').addClass('lower')
+                {% else %}
+                    $('#remember_me').addClass('upper')
+                {% endif %}
+                    
+            }    
+            
+            
+            $( document ).ready(function(e) {
+                
+                
+                $.fn.buildLoad()
+                $.fn.onStart();
+                $(document).keyup(function(e){
+                    if(e.which == 13) {
+                        $('#sub').click()
+                    }
+                })
+                
+            })
+        </script>
+    </head>
+    <body>
+        <div id='mainL' class='login'>
+        </div>
+    </body>
+</html>
+
